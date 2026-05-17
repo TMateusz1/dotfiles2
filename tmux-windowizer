@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+lines=$(tmux list-windows -F "#{window_index}: #{window_name}#{window_flags} (#{window_panes} panes) [#{pane_current_command}]")
+
+selected=$(echo "$lines" | fzf --reverse --header="Select Window")
+
+if [[ -z "$selected" ]]; then
+    exit 0
+fi
+
+window_index=$(echo "$selected" | cut -d: -f1)
+
+tmux select-window -t "$window_index"
