@@ -73,7 +73,7 @@ deleted = "✘${count} "
 [golang]
 symbol = " "
 style = "sapphire"
-format = "[$symbol$version]($style) "
+format = "[$symbol]($style) "
 
 [python]
 symbol = " "
@@ -86,6 +86,7 @@ python_binary = ["python3", "python"]
 symbol = " "
 style = "blue"
 format = "[$symbol$context]($style) "
+disabled = true
 only_with_files = true
 detect_files = [
   "docker-compose.yml",

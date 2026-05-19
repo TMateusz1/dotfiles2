@@ -65,9 +65,9 @@ opt.diffopt:append("linematch:60")
 -- Invisible characters
 opt.list = true
 opt.listchars = {
-    tab = "» ",
-    trail = "·",
-    nbsp = "␣",
+	tab = "» ",
+	trail = "·",
+	nbsp = "␣",
 }
 
 -- Keep command line clean unless needed
@@ -75,3 +75,27 @@ opt.cmdheight = 1
 
 -- Disable intro screen
 opt.shortmess:append("I")
+
+-- OSC52 over SSH
+
+if vim.env.SSH_TTY or vim.env.SSH_CONNECTION then
+	local ok, osc52 = pcall(require, "vim.ui.clipboard.osc52")
+
+	if ok then
+		vim.g.clipboard = {
+			name = "OSC 52",
+			copy = {
+				["+"] = osc52.copy("+"),
+				["*"] = osc52.copy("*"),
+			},
+			paste = {
+				["+"] = osc52.paste("+"),
+				["*"] = osc52.paste("*"),
+			},
+		}
+
+		vim.opt.clipboard = "unnamedplus"
+	else
+		vim.notify("OSC52 clipboard provider not avaliable", vim.log.levels.WARN)
+	end
+end
