@@ -1,111 +1,103 @@
 -- ~/.config/nvim/lua/plugins/bufferline.lua
 
 return {
-    {
-        "akinsho/bufferline.nvim",
-        version = "*",
-        event = "VeryLazy",
-        dependencies = {
-            "nvim-mini/mini.icons",
-        },
-        keys = {
-            {
-                "[[",
-                "<cmd>BufferLineCyclePrev<CR>",
-                desc = "Previous buffer",
-            },
-            {
-                "]]",
-                "<cmd>BufferLineCycleNext<CR>",
-                desc = "Next buffer",
-            },
-            {
-                "<leader>bp",
-                "<cmd>BufferLinePick<CR>",
-                desc = "Pick buffer",
-            },
-            {
-                "<leader>bX",
-                "<cmd>BufferLineCloseOthers<CR>",
-                desc = "Delete other buffers",
-            },
-            {
-                "<leader>bL",
-                "<cmd>BufferLineCloseRight<CR>",
-                desc = "Delete buffers to the right",
-            },
-            {
-                "<leader>bH",
-                "<cmd>BufferLineCloseLeft<CR>",
-                desc = "Delete buffers to the left",
-            },
-        },
-        opts = {
-            options = {
-                mode = "buffers",
+	{
+		"akinsho/bufferline.nvim",
+		version = "*",
+		event = "VeryLazy",
+		dependencies = {
+			"nvim-mini/mini.icons",
+		},
+		keys = {
+			{ "]b", "<cmd>BufferLineCycleNext<CR>", desc = "Next buffer" },
+			{ "[b", "<cmd>BufferLineCyclePrev<CR>", desc = "Previous buffer" },
+			{
+				"<leader>bp",
+				"<cmd>BufferLinePick<CR>",
+				desc = "Pick buffer",
+			},
+			{
+				"<leader>bX",
+				"<cmd>BufferLineCloseOthers<CR>",
+				desc = "Delete other buffers",
+			},
+			{
+				"<leader>bL",
+				"<cmd>BufferLineCloseRight<CR>",
+				desc = "Delete buffers to the right",
+			},
+			{
+				"<leader>bH",
+				"<cmd>BufferLineCloseLeft<CR>",
+				desc = "Delete buffers to the left",
+			},
+		},
+		opts = {
+			options = {
+				mode = "buffers",
 
-                numbers = "none",
+				numbers = "none",
 
-                close_command = "bdelete! %d",
-                right_mouse_command = "bdelete! %d",
-                left_mouse_command = "buffer %d",
-                middle_mouse_command = nil,
+				close_command = "bdelete! %d",
+				right_mouse_command = "bdelete! %d",
+				left_mouse_command = "buffer %d",
+				middle_mouse_command = nil,
 
-                indicator = {
-                    icon = "▎",
-                    style = "icon",
-                },
+				indicator = {
+					icon = "▎",
+					style = "icon",
+				},
 
-                buffer_close_icon = "󰅖",
-                modified_icon = "●",
-                close_icon = "",
-                left_trunc_marker = "",
-                right_trunc_marker = "",
+				buffer_close_icon = "󰅖",
+				modified_icon = "●",
+				close_icon = "",
+				left_trunc_marker = "",
+				right_trunc_marker = "",
 
-                max_name_length = 24,
-                max_prefix_length = 15,
-                truncate_names = true,
-                tab_size = 18,
+				max_name_length = 24,
+				max_prefix_length = 15,
+				truncate_names = true,
+				tab_size = 18,
 
-                diagnostics = "nvim_lsp",
+				diagnostics = "nvim_lsp",
 
-                diagnostics_indicator = function(count, level)
-                    local icon = level:match("error") and " " or " "
-                    return " " .. icon .. count
-                end,
+				diagnostics_indicator = function(count, level)
+					local icon = level:match("error") and " " or " "
+					return " " .. icon .. count
+				end,
 
-                offsets = {
-                    {
-                        filetype = "minifiles",
-                        text = "Explorer",
-                        text_align = "center",
-                        separator = true,
-                    },
-                },
+				offsets = {
+					{
+						filetype = "minifiles",
+						text = "Explorer",
+						text_align = "center",
+						separator = true,
+					},
+				},
 
-                color_icons = true,
-                show_buffer_icons = true,
-                show_buffer_close_icons = true,
-                show_close_icon = false,
-                show_tab_indicators = true,
-                persist_buffer_sort = true,
+				color_icons = true,
+				show_buffer_icons = true,
+				show_buffer_close_icons = true,
+				show_close_icon = false,
+				show_tab_indicators = true,
+				persist_buffer_sort = true,
 
-                separator_style = "slant",
+				separator_style = "slant",
 
-                enforce_regular_tabs = false,
-                always_show_bufferline = true,
+				enforce_regular_tabs = false,
+				always_show_bufferline = true,
 
-                hover = {
-                    enabled = true,
-                    delay = 200,
-                    reveal = { "close" },
-                },
+				hover = {
+					enabled = true,
+					delay = 200,
+					reveal = { "close" },
+				},
 
-                sort_by = "insert_after_current",
-            },
-        },
-        config = function(_, opts)
-            require("bufferline").setup(opts)
-        end,
-    },
+				sort_by = "insert_after_current",
+			},
+		},
+		config = function(_, opts)
+			require("bufferline").setup(opts)
+		end,
+	},
 }
