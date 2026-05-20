@@ -47,8 +47,8 @@ return {
 				{ "<leader>q", desc = "Quit" },
 
 				-- Buffers
-				{ "[[", desc = "Previous buffer" },
-				{ "]]", desc = "Next buffer" },
+				{ "[b", desc = "Previous buffer" },
+				{ "]b", desc = "Next buffer" },
 				{ "<leader>be", desc = "Buffers tree" },
 				{ "<leader>bx", desc = "Delete buffer" },
 				{ "<leader>bp", desc = "Pick buffer" },

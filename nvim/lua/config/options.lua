@@ -76,6 +76,8 @@ opt.cmdheight = 1
 -- Disable intro screen
 opt.shortmess:append("I")
 
+opt.winborder = "rounded"
+
 -- OSC52 over SSH
 
 if vim.env.SSH_TTY or vim.env.SSH_CONNECTION then

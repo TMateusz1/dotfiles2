@@ -88,6 +88,27 @@ return {
 				end,
 				desc = "Commands",
 			},
+			{
+				"<leader>gc",
+				function()
+					require("fzf-lua").git_commits()
+				end,
+				desc = "Git commits",
+			},
+			{
+				"<leader>gb",
+				function()
+					require("fzf-lua").git_branches()
+				end,
+				desc = "Git branches",
+			},
+			{
+				"<leader>gC",
+				function()
+					require("fzf-lua").git_bcommits()
+				end,
+				desc = "Git buffer commits",
+			},
 		},
 		opts = {
 			"default-title",

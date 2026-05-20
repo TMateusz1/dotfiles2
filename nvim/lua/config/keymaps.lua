@@ -12,11 +12,11 @@ keymap("n", "<C-j>", "<C-w>j", { desc = "Move to lower window" })
 keymap("n", "<C-k>", "<C-w>k", { desc = "Move to upper window" })
 keymap("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 
--- Resize windows
-keymap("n", "<C-Up>", "<cmd>resize +2<CR>", { desc = "Increase window height" })
-keymap("n", "<C-Down>", "<cmd>resize -2<CR>", { desc = "Decrease window height" })
-keymap("n", "<C-Left>", "<cmd>vertical resize -2<CR>", { desc = "Decrease window width" })
-keymap("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Increase window width" })
+-- Better window navigation with arrows
+keymap("n", "<C-Left>", "<C-w>h", { desc = "Move to left window" })
+keymap("n", "<C-Down>", "<C-w>j", { desc = "Move to lower window" })
+keymap("n", "<C-Up>", "<C-w>k", { desc = "Move to upper window" })
+keymap("n", "<C-Right>", "<C-w>l", { desc = "Move to right window" })
 
 -- Move selected lines
 keymap("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })

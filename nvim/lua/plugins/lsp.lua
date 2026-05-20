@@ -39,6 +39,12 @@ return {
 				"staticcheck",
 
 				-- Docker yaml helm
+				"stylua",
+				"shfmt",
+				"prettier",
+				"yamlfmt",
+				"yamllint",
+				"hadolint",
 			},
 			auto_update = false,
 			run_on_start = true,
@@ -281,13 +287,27 @@ return {
 					-- Navigation
 					map("n", "gd", vim.lsp.buf.definition, "Go to definition")
 					map("n", "gD", vim.lsp.buf.declaration, "Go to declaration")
-					map("n", "gi", vim.lsp.buf.implementation, "Go to implementation")
-					map("n", "gr", vim.lsp.buf.references, "Go to references")
+
+					map("n", "gr", function()
+						require("fzf-lua").lsp_references()
+					end, "Go to references")
+
+					map("n", "gi", function()
+						require("fzf-lua").lsp_implementations()
+					end, "Go to implementation")
 					map("n", "K", vim.lsp.buf.hover, "Hover documentation")
 
 					-- Code actions
 					map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "Code action")
 					map("n", "<leader>cr", vim.lsp.buf.rename, "Rename symbol")
+
+					map("n", "<leader>cs", function()
+						require("fzf-lua").lsp_document_symbols()
+					end, "Document symbols")
+
+					map("n", "<leader>cS", function()
+						require("fzf-lua").lsp_workspace_symbols()
+					end, "Workspace symbols")
 
 					-- Diagnostics
 					map("n", "<leader>cd", vim.diagnostic.open_float, "Line diagnostics")
