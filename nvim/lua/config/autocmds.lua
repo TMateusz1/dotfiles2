@@ -36,3 +36,30 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 	desc = "Disable auto comment on new line",
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+	group = augroup,
+	pattern = {
+		"qf",
+		"help",
+		"man",
+		"notify",
+		"neotest-summary",
+		"neotest-output",
+		"neotest-output-panel",
+	},
+	callback = function(event)
+		vim.keymap.set("n", "q", "<cmd>close<CR>", {
+			buffer = event.buf,
+			silent = true,
+			desc = "Close window",
+		})
+
+		vim.keymap.set("n", "<Esc>", "<cmd>close<CR>", {
+			buffer = event.buf,
+			silent = true,
+			desc = "Close window",
+		})
+	end,
+	desc = "Close temporary windows with q or Esc",
+})

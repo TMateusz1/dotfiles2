@@ -2,8 +2,31 @@
 
 local keymap = vim.keymap.set
 
-keymap("n", "<Esc>", "<cmd>nohlsearch<CR>", {
-	desc = "Clear search highlight",
+local function close_floating_windows()
+	local closed = false
+
+	for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+		if vim.api.nvim_win_is_valid(win) then
+			local config = vim.api.nvim_win_get_config(win)
+
+			if config.relative ~= "" then
+				vim.api.nvim_win_close(win, false)
+				closed = true
+			end
+		end
+	end
+
+	return closed
+end
+
+keymap("n", "<Esc>", function()
+	if close_floating_windows() then
+		return
+	end
+
+	vim.cmd("nohlsearch")
+end, {
+	desc = "Close floating windows or clear search highlight",
 })
 
 -- Better window navigation
