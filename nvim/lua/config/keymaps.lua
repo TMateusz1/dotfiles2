@@ -1,6 +1,6 @@
 -- ~/.config/nvim/lua/config/keymaps.lua
 
-local keymap = vim.keymap.set
+loal keymap = vim.keymap.set
 
 keymap("n", "<Esc>", "<cmd>nohlsearch<CR>", {
 	desc = "Clear search highlight",
@@ -32,4 +32,4 @@ keymap("n", "N", "Nzzzv", { desc = "Previous search result and center" })
 keymap("n", "<leader>w", "<cmd>write<CR>", { desc = "Save file" })
 
 -- Quit
-keymap("n", "<leader>q", "<cmd>quit<CR>", { desc = "Quit" })
+keymap("n", "<leader>Q", "<cmd>quit!<CR>", { desc = "Quit" })

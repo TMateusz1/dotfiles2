@@ -109,6 +109,34 @@ return {
 				end,
 				desc = "Git buffer commits",
 			},
+			{
+				"<leader>fd",
+				function()
+					require("fzf-lua").diagnostics_document()
+				end,
+				desc = "Document diagnostics",
+			},
+			{
+				"<leader>fD",
+				function()
+					require("fzf-lua").diagnostics_workspace()
+				end,
+				desc = "Workspace diagnostics",
+			},
+			{
+				"<leader>fq",
+				function()
+					require("fzf-lua").quickfix()
+				end,
+				desc = "Quickfix list",
+			},
+			{
+				"<leader>fl",
+				function()
+					require("fzf-lua").loclist()
+				end,
+				desc = "Location list",
+			},
 		},
 		opts = {
 			"default-title",

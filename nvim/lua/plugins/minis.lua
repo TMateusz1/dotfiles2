@@ -51,7 +51,7 @@ return {
 		version = false,
 		keys = {
 			{
-				"<leader>x",
+				"<leader>q",
 				function()
 					require("mini.bufremove").delete(0, false)
 				end,

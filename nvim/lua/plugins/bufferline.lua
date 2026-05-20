@@ -11,6 +11,8 @@ return {
 		keys = {
 			{ "]b", "<cmd>BufferLineCycleNext<CR>", desc = "Next buffer" },
 			{ "[b", "<cmd>BufferLineCyclePrev<CR>", desc = "Previous buffer" },
+			{ "]]", "<cmd>BufferLineCycleNext<CR>", desc = "Next buffer" },
+			{ "[[", "<cmd>BufferLineCyclePrev<CR>", desc = "Previous buffer" },
 			{
 				"<leader>bp",
 				"<cmd>BufferLinePick<CR>",
@@ -68,7 +70,7 @@ return {
 
 				offsets = {
 					{
-						filetype = "minifiles",
+						filetype = "neo-tree",
 						text = "Explorer",
 						text_align = "center",
 						separator = true,
