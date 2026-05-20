@@ -1,6 +1,6 @@
 -- ~/.config/nvim/lua/config/keymaps.lua
 
-loal keymap = vim.keymap.set
+local keymap = vim.keymap.set
 
 keymap("n", "<Esc>", "<cmd>nohlsearch<CR>", {
 	desc = "Clear search highlight",
