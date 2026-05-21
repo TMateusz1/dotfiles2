@@ -1,5 +1,47 @@
 -- ~/.config/nvim/lua/plugins/minis.lua
 
+-- custom funcs, return below
+
+local function is_floating_window()
+	local config = vim.api.nvim_win_get_config(0)
+
+	return config.relative ~= ""
+end
+
+local function is_special_window()
+	local filetype = vim.bo.filetype
+	local buftype = vim.bo.buftype
+
+	local special_filetypes = {
+		["neo-tree"] = true,
+		["qf"] = true,
+		["help"] = true,
+		["man"] = true,
+
+		["neotest-summary"] = true,
+		["neotest-output"] = true,
+		["neotest-output-panel"] = true,
+	}
+
+	if special_filetypes[filetype] then
+		return true
+	end
+
+	if buftype ~= "" then
+		return true
+	end
+
+	return false
+end
+
+local function smart_close()
+	if is_floating_window() or is_special_window() then
+		vim.cmd("close")
+		return
+	end
+
+	require("mini.bufremove").delete(0, false)
+end
 return {
 	{
 		"nvim-mini/mini.ai",
@@ -53,9 +95,9 @@ return {
 			{
 				"<leader>q",
 				function()
-					require("mini.bufremove").delete(0, false)
+					smart_close()
 				end,
-				desc = "Delete buffer",
+				desc = "Smart close",
 			},
 			{
 				"<leader>W",
