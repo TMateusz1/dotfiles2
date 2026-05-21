@@ -58,6 +58,21 @@ return {
 				desc = "Delete buffer",
 			},
 			{
+				"<leader>W",
+				function()
+					local ok, err = pcall(vim.cmd.write)
+
+					if not ok then
+						vim.notify("Save failed: " .. tostring(err), vim.log.levels.ERROR, {
+							title = "Buffer",
+						})
+						return
+					end
+					require("mini.bufremove").delete(0, false)
+				end,
+				desc = "Save and close buffer",
+			},
+			{
 				"<leader>bx",
 				function()
 					require("mini.bufremove").delete(0, false)

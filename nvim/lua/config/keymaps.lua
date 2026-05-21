@@ -52,7 +52,13 @@ keymap("n", "n", "nzzzv", { desc = "Next search result and center" })
 keymap("n", "N", "Nzzzv", { desc = "Previous search result and center" })
 
 -- Save
+-- leaderW is mapped in minis.bufremove as save + buffer delete, same as leaderw + leaderq
 keymap("n", "<leader>w", "<cmd>write<CR>", { desc = "Save file" })
-
 -- Quit
-keymap("n", "<leader>Q", "<cmd>quit!<CR>", { desc = "Quit" })
+-- Leader<q> is mapped in minis.bufremove as buffer delete
+-- this mean:
+-- leaderq - buffer delete
+-- leaderQ - window Quit
+-- leaderC - close vim
+keymap("n", "<leader>Q", "<cmd>quit<CR>", { desc = "Quit" })
+keymap("n", "<leader>C", "<cmd>quitall!<CR>", { desc = "Quit" })
