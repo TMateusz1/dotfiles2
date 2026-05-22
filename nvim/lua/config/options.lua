@@ -101,3 +101,18 @@ if vim.env.SSH_TTY or vim.env.SSH_CONNECTION then
 		vim.notify("OSC52 clipboard provider not avaliable", vim.log.levels.WARN)
 	end
 end
+
+vim.opt.fillchars = {
+	vert = "┃",
+	horiz = "━",
+	horizup = "┻",
+	horizdown = "┳",
+	vertleft = "┫",
+	vertright = "┣",
+	verthoriz = "╋",
+}
+
+vim.api.nvim_set_hl(0, "WinSeparator", {
+	fg = "#7c7c7c",
+	bg = "NONE",
+})

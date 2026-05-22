@@ -89,6 +89,11 @@ return {
 		end,
 	},
 	{
+		"nvim-mini/mini.animate",
+		event = "VeryLazy",
+		opts = {},
+	},
+	{
 		"nvim-mini/mini.bufremove",
 		version = false,
 		keys = {
