@@ -195,6 +195,7 @@ The same Catppuccin Mocha direction is used by Ghostty and Starship, so the term
 - Snippets use friendly-snippets plus local snippets from `nvim/snippets/`.
 - Kubernetes snippets from friendly-snippets are filtered out so the local Kubernetes snippets take precedence.
 - Documentation and completion windows use rounded borders.
+- Go completions that come from unimported packages use a `go doc` fallback when `gopls` does not return full completion documentation.
 - Ghost text and signature help are enabled.
 - `<Tab>` accepts the selected completion or jumps through snippets.
 - `<S-Tab>` jumps backward through snippets.
@@ -231,7 +232,7 @@ LSP behavior:
 
 - Diagnostics use signs and underlines, with virtual text disabled.
 - Floating diagnostic windows use rounded borders and show sources.
-- `gopls` enables gofumpt, staticcheck, semantic tokens, selected analyses, code lenses, and inlay hints support.
+- `gopls` enables gofumpt, unimported package completions, staticcheck, semantic tokens, selected analyses, code lenses, and inlay hints support.
 - `lua_ls` is configured for Neovim Lua, LuaJIT, `vim` globals, local config workspace, and disabled telemetry.
 - `yamlls` validates YAML, uses schemastore data, supports Kubernetes schemas, and reads the local CRD schema cache.
 - `helm_ls` delegates YAML behavior to `yaml-language-server` and recognizes `values*.yaml`.

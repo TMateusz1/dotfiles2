@@ -101,7 +101,7 @@ return {
 					gopls = {
 						gofumpt = true,
 						usePlaceholders = false,
-						completeUnimported = false,
+						completeUnimported = true,
 						staticcheck = true,
 						semanticTokens = true,
 						experimentalPostfixCompletions = true,
