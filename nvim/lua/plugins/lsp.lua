@@ -8,7 +8,22 @@ return {
 
 	{
 		"qvalentin/helm-ls.nvim",
-		ft = "helm",
+		ft = {
+			"helm",
+			"yaml.helm-values",
+		},
+		opts = {
+			conceal_templates = {
+				enabled = true,
+			},
+			indent_hints = {
+				enabled = true,
+				only_for_current_line = true,
+			},
+			action_highlight = {
+				enabled = true,
+			},
+		},
 	},
 	{
 		"mason-org/mason.nvim",
@@ -70,6 +85,7 @@ return {
 			-- ------------------------------------------------------------
 
 			local capabilities = require("blink.cmp").get_lsp_capabilities()
+			local kubernetes = require("config.kubernetes")
 
 			vim.lsp.config("*", {
 				capabilities = capabilities,
@@ -79,16 +95,34 @@ return {
 				settings = {
 					gopls = {
 						gofumpt = true,
-						usePlaceholders = true,
-						completeUnimported = true,
+						usePlaceholders = false,
+						completeUnimported = false,
 						staticcheck = true,
 						semanticTokens = true,
+						experimentalPostfixCompletions = true,
+						directoryFilters = {
+							"-**/.git",
+							"-**/.direnv",
+							"-**/node_modules",
+							"-**/tmp",
+						},
 
 						analyses = {
 							unusedparams = true,
 							unusedwrite = true,
 							nilness = true,
 							shadow = true,
+						},
+
+						codelenses = {
+							generate = true,
+							gc_details = true,
+							regenerate_cgo = true,
+							run_govulncheck = true,
+							test = true,
+							tidy = true,
+							upgrade_dependency = true,
+							vendor = true,
 						},
 
 						hints = {
@@ -152,6 +186,12 @@ return {
 			vim.lsp.config("docker_compose_language_service", {})
 
 			vim.lsp.config("yamlls", {
+				filetypes = {
+					"yaml",
+					"yaml.docker-compose",
+					"yaml.gitlab",
+					"yaml.helm-values",
+				},
 				settings = {
 					redhat = {
 						telemetry = {
@@ -162,43 +202,18 @@ return {
 						validate = true,
 						completion = true,
 						hover = true,
+						format = {
+							enable = true,
+						},
+						maxItemsComputed = 10000,
+						kubernetesCRDStore = kubernetes.crd_store_settings(),
 
 						schemaStore = {
 							enable = false,
 							url = "",
 						},
 
-						schemas = require("schemastore").yaml.schemas({
-							extra = {
-								{
-									name = "Kubernetes",
-									description = "Kubernetes resources",
-									fileMatch = {
-										"k8s/**/*.yaml",
-										"k8s/**/*.yml",
-										"k8s/*.yaml",
-										"k8s/*.yml",
-										"**/k8s/*.yaml",
-										"**/k8s/*.yml",
-										"**/k8s/**/*.yaml",
-										"**/k8s/**/*.yml",
-
-										"**/deploy/k8s/*.yaml",
-										"**/deploy/k8s/*.yml",
-										"**/deploy/k8s/**/*.yaml",
-										"**/deploy/k8s/**/*.yml",
-
-										"**/manifests/*.yaml",
-										"**/manifests/*.yml",
-										"**/manifests/**/*.yaml",
-										"**/manifests/**/*.yml",
-										"*.k8s.yaml",
-										"*.k8s.yml",
-									},
-									url = "kubernetes",
-								},
-							},
-						}),
+						schemas = kubernetes.yaml_schemas(),
 					},
 				},
 			})
@@ -208,6 +223,11 @@ return {
 					["helm-ls"] = {
 						yamlls = {
 							path = "yaml-language-server",
+						},
+						valuesFiles = {
+							mainValuesFile = "values.yaml",
+							lintOverlayValuesFile = "values.lint.yaml",
+							additionalValuesFilesGlobPattern = "values*.yaml",
 						},
 					},
 				},
@@ -309,6 +329,9 @@ return {
 					map("n", "<leader>cS", function()
 						require("fzf-lua").lsp_workspace_symbols()
 					end, "Workspace symbols")
+
+					map("n", "<leader>ci", "<cmd>LspInfo<CR>", "LSP info")
+					map("n", "<leader>cR", "<cmd>LspRestart<CR>", "Restart LSP")
 
 					-- Diagnostics
 					map("n", "<leader>cd", vim.diagnostic.open_float, "Line diagnostics")

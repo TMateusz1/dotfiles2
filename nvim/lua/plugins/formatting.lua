@@ -24,6 +24,8 @@ return {
 				bash = { "shfmt" },
 				yaml = { "yamlfmt" },
 				yml = { "yamlfmt" },
+				["yaml.docker-compose"] = { "yamlfmt" },
+				["yaml.helm-values"] = { "yamlfmt" },
 				json = { "prettier" },
 				jsonc = { "prettier" },
 				markdown = { "prettier" },

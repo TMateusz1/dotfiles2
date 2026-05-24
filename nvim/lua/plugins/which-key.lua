@@ -99,8 +99,12 @@ return {
 				{ "<leader>ca", desc = "Code action" },
 				{ "<leader>cr", desc = "Rename symbol" },
 				{ "<leader>cd", desc = "Line diagnostics" },
+				{ "<leader>ci", desc = "LSP info" },
 				{ "<leader>cq", desc = "Diagnostics quickfix" },
 				{ "<leader>cl", desc = "Format file" },
+				{ "<leader>cs", desc = "Document symbols" },
+				{ "<leader>cS", desc = "Workspace symbols" },
+				{ "<leader>cR", desc = "Restart LSP" },
 
 				-- Diagnostics
 				{ "]d", desc = "Next diagnostic" },

@@ -25,7 +25,6 @@ return {
 				"html",
 				"javascript",
 				"json",
-				"jsonc",
 				"lua",
 				"markdown",
 				"markdown_inline",
@@ -41,6 +40,7 @@ return {
 			}
 
 			require("nvim-treesitter").install(parsers)
+			vim.treesitter.language.register("json", "jsonc")
 
 			vim.api.nvim_create_autocmd("FileType", {
 				group = vim.api.nvim_create_augroup("user_treesitter", { clear = true }),

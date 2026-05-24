@@ -1,0 +1,169 @@
+{
+  "Kubernetes Deployment": {
+    "prefix": [
+      "k-deploy",
+      "k-deployment"
+    ],
+    "description": "Minimal Kubernetes Deployment",
+    "body": [
+      "apiVersion: apps/v1",
+      "kind: Deployment",
+      "metadata:",
+      "  name: ${1:app}",
+      "  labels:",
+      "    app: ${1:app}",
+      "spec:",
+      "  replicas: ${2:1}",
+      "  selector:",
+      "    matchLabels:",
+      "      app: ${1:app}",
+      "  template:",
+      "    metadata:",
+      "      labels:",
+      "        app: ${1:app}",
+      "    spec:",
+      "      containers:",
+      "        - name: ${1:app}",
+      "          image: ${3:image:tag}",
+      "          ports:",
+      "            - containerPort: ${4:8080}",
+      "          ${0}"
+    ]
+  },
+  "Kubernetes Service": {
+    "prefix": "k-svc",
+    "description": "Minimal Kubernetes Service",
+    "body": [
+      "apiVersion: v1",
+      "kind: Service",
+      "metadata:",
+      "  name: ${1:app}",
+      "spec:",
+      "  selector:",
+      "    app: ${1:app}",
+      "  ports:",
+      "    - port: ${2:80}",
+      "      targetPort: ${3:8080}",
+      "      protocol: TCP",
+      "  type: ${4:ClusterIP}",
+      "  ${0}"
+    ]
+  },
+  "Kubernetes ConfigMap": {
+    "prefix": "k-cm",
+    "description": "Minimal Kubernetes ConfigMap",
+    "body": [
+      "apiVersion: v1",
+      "kind: ConfigMap",
+      "metadata:",
+      "  name: ${1:config}",
+      "data:",
+      "  ${2:key}: ${3:value}",
+      "${0}"
+    ]
+  },
+  "Kubernetes Secret": {
+    "prefix": "k-secret",
+    "description": "Minimal Kubernetes Secret",
+    "body": [
+      "apiVersion: v1",
+      "kind: Secret",
+      "metadata:",
+      "  name: ${1:secret}",
+      "type: ${2:Opaque}",
+      "stringData:",
+      "  ${3:key}: ${4:value}",
+      "${0}"
+    ]
+  },
+  "Kubernetes Ingress": {
+    "prefix": "k-ingress",
+    "description": "Minimal Kubernetes Ingress",
+    "body": [
+      "apiVersion: networking.k8s.io/v1",
+      "kind: Ingress",
+      "metadata:",
+      "  name: ${1:app}",
+      "spec:",
+      "  rules:",
+      "    - host: ${2:example.local}",
+      "      http:",
+      "        paths:",
+      "          - path: /",
+      "            pathType: Prefix",
+      "            backend:",
+      "              service:",
+      "                name: ${1:app}",
+      "                port:",
+      "                  number: ${3:80}",
+      "  ${0}"
+    ]
+  },
+  "Kubernetes Namespace": {
+    "prefix": "k-ns",
+    "description": "Minimal Kubernetes Namespace",
+    "body": [
+      "apiVersion: v1",
+      "kind: Namespace",
+      "metadata:",
+      "  name: ${1:namespace}",
+      "${0}"
+    ]
+  },
+  "Kubernetes Job": {
+    "prefix": "k-job",
+    "description": "Minimal Kubernetes Job",
+    "body": [
+      "apiVersion: batch/v1",
+      "kind: Job",
+      "metadata:",
+      "  name: ${1:job}",
+      "spec:",
+      "  template:",
+      "    spec:",
+      "      restartPolicy: Never",
+      "      containers:",
+      "        - name: ${1:job}",
+      "          image: ${2:image:tag}",
+      "          ${0}"
+    ]
+  },
+  "Kubernetes CronJob": {
+    "prefix": "k-cronjob",
+    "description": "Minimal Kubernetes CronJob",
+    "body": [
+      "apiVersion: batch/v1",
+      "kind: CronJob",
+      "metadata:",
+      "  name: ${1:cronjob}",
+      "spec:",
+      "  schedule: ${2:\"*/5 * * * *\"}",
+      "  jobTemplate:",
+      "    spec:",
+      "      template:",
+      "        spec:",
+      "          restartPolicy: OnFailure",
+      "          containers:",
+      "            - name: ${1:cronjob}",
+      "              image: ${3:image:tag}",
+      "              ${0}"
+    ]
+  },
+  "Kubernetes Pod": {
+    "prefix": "k-pod",
+    "description": "Minimal Kubernetes Pod",
+    "body": [
+      "apiVersion: v1",
+      "kind: Pod",
+      "metadata:",
+      "  name: ${1:pod}",
+      "  labels:",
+      "    app: ${1:pod}",
+      "spec:",
+      "  containers:",
+      "    - name: ${1:pod}",
+      "      image: ${2:image:tag}",
+      "      ${0}"
+    ]
+  }
+}
