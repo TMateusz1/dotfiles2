@@ -1,0 +1,20 @@
+theme = Catppuccin Mocha
+
+background-opacity = 0.97
+
+window-padding-x = 0
+window-padding-y = 0
+window-padding-balance = false
+
+window-decoration = auto
+macos-titlebar-style = native
+
+font-family = FiraCode Nerd Font
+font-size = 16
+
+font-feature = calt=1
+font-feature = clig=1
+font-feature = liga=1
+
+# cursor blink
+cursor-style-blink = true
