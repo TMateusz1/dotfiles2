@@ -24,30 +24,17 @@ return {
 					"show_documentation",
 					"hide_documentation",
 				},
-				["<C-e>"] = { "hide" },
-				["<Esc>"] = {
-					function(cmp)
-						if cmp.is_visible() then
-							cmp.hide()
-							return true
-						end
-
-						if vim.snippet and vim.snippet.active() then
-							pcall(vim.snippet.stop)
-						end
-					end,
-					"fallback",
-				},
-
-				["<CR>"] = { "accept", "fallback" },
+				["<C-e>"] = { "cancel", "fallback" },
+				["<CR>"] = { "fallback" },
 
 				["<Tab>"] = {
-					"select_next",
+					function(cmp)
+						return cmp.select_and_accept()
+					end,
 					"snippet_forward",
 					"fallback",
 				},
 				["<S-Tab>"] = {
-					"select_prev",
 					"snippet_backward",
 					"fallback",
 				},
@@ -175,10 +162,10 @@ return {
 					["<C-k>"] = { "select_prev", "fallback" },
 					["<C-j>"] = { "select_next", "fallback" },
 
-					["<Tab>"] = { "show_and_insert_or_accept_single", "select_next", "fallback" },
-					["<S-Tab>"] = { "show_and_insert_or_accept_single", "select_prev", "fallback" },
+					["<Tab>"] = { "select_and_accept", "fallback" },
+					["<S-Tab>"] = { "select_prev", "fallback" },
 
-					["<CR>"] = { "accept_and_enter", "fallback" },
+					["<CR>"] = { "fallback" },
 					["<C-space>"] = { "show", "fallback" },
 					["<C-e>"] = {
 						function(cmp)
@@ -198,8 +185,8 @@ return {
 					},
 					list = {
 						selection = {
-							preselect = true,
-							auto_insert = true,
+							preselect = false,
+							auto_insert = false,
 						},
 					},
 					menu = {

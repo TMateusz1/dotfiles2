@@ -46,7 +46,7 @@ return {
 				middle_mouse_command = nil,
 
 				indicator = {
-					icon = "▎",
+					icon = "▌",
 					style = "icon",
 				},
 
@@ -64,15 +64,15 @@ return {
 				diagnostics = "nvim_lsp",
 
 				diagnostics_indicator = function(count, level)
-					local icon = level:match("error") and " " or " "
-					return " " .. icon .. count
+					local icon = level:match("error") and "E" or "W"
+					return (" %s:%d"):format(icon, count)
 				end,
 
 				offsets = {
 					{
 						filetype = "neo-tree",
-						text = "Explorer",
-						text_align = "center",
+						text = "Project",
+						text_align = "left",
 						separator = true,
 					},
 				},
@@ -84,7 +84,7 @@ return {
 				show_tab_indicators = true,
 				persist_buffer_sort = true,
 
-				separator_style = "slant",
+				separator_style = "thin",
 
 				enforce_regular_tabs = false,
 				always_show_bufferline = true,

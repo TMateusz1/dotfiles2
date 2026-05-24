@@ -42,6 +42,11 @@ opt.cursorline = true
 opt.wrap = false
 opt.scrolloff = 8
 opt.sidescrolloff = 8
+opt.pumheight = 14
+opt.showmode = false
+opt.ruler = false
+opt.laststatus = 3
+opt.splitkeep = "screen"
 
 -- Splits
 opt.splitright = true
@@ -103,13 +108,13 @@ if vim.env.SSH_TTY or vim.env.SSH_CONNECTION then
 end
 
 vim.opt.fillchars = {
-	vert = "┃",
-	horiz = "━",
-	horizup = "┻",
-	horizdown = "┳",
-	vertleft = "┫",
-	vertright = "┣",
-	verthoriz = "╋",
+	vert = "│",
+	horiz = "─",
+	horizup = "┴",
+	horizdown = "┬",
+	vertleft = "┤",
+	vertright = "├",
+	verthoriz = "┼",
 }
 
 vim.api.nvim_set_hl(0, "WinSeparator", {

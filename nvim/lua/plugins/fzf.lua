@@ -11,7 +11,9 @@ return {
 			{
 				"<leader>ff",
 				function()
-					require("fzf-lua").files()
+					require("fzf-lua").files({
+						cwd = vim.fn.getcwd(-1, -1),
+					})
 				end,
 				desc = "Find files",
 			},
@@ -87,6 +89,34 @@ return {
 					require("fzf-lua").commands()
 				end,
 				desc = "Commands",
+			},
+			{
+				"<leader>fj",
+				function()
+					require("fzf-lua").jumps()
+				end,
+				desc = "Jump list",
+			},
+			{
+				"<leader>fm",
+				function()
+					require("fzf-lua").marks()
+				end,
+				desc = "Marks",
+			},
+			{
+				"<leader>f;",
+				function()
+					require("fzf-lua").command_history()
+				end,
+				desc = "Command history",
+			},
+			{
+				"<leader>f/",
+				function()
+					require("fzf-lua").search_history()
+				end,
+				desc = "Search history",
 			},
 			{
 				"<leader>gc",

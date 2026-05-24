@@ -44,12 +44,18 @@ keymap("n", "<C-Right>", "<C-w>l", { desc = "Move to right window" })
 -- Move selected lines
 keymap("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 keymap("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+keymap("n", "<A-j>", "<cmd>move .+1<CR>==", { desc = "Move line down" })
+keymap("n", "<A-k>", "<cmd>move .-2<CR>==", { desc = "Move line up" })
+keymap("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+keymap("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 
 -- Keep cursor centered when jumping
 keymap("n", "<C-d>", "<C-d>zz", { desc = "Half page down and center" })
 keymap("n", "<C-u>", "<C-u>zz", { desc = "Half page up and center" })
 keymap("n", "n", "nzzzv", { desc = "Next search result and center" })
 keymap("n", "N", "Nzzzv", { desc = "Previous search result and center" })
+keymap("n", "]q", "<cmd>cnext<CR>zz", { desc = "Next quickfix item" })
+keymap("n", "[q", "<cmd>cprev<CR>zz", { desc = "Previous quickfix item" })
 
 -- Save
 -- leaderW is mapped in minis.bufremove as save + buffer delete, same as leaderw + leaderq

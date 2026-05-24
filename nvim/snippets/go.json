@@ -125,5 +125,38 @@
       "\treturn ${3:ctx}.Err()",
       "}"
     ]
+  },
+  "controller reconcile": {
+    "prefix": "reconcile",
+    "description": "controller-runtime Reconcile method",
+    "body": [
+      "func (r *${1:Kind}Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {",
+      "\tlog := ctrl.LoggerFrom(ctx).WithValues(\"name\", req.NamespacedName)",
+      "\t_ = log",
+      "",
+      "\t${0:return ctrl.Result{}, nil}",
+      "}"
+    ]
+  },
+  "controller get object": {
+    "prefix": "kget",
+    "description": "controller-runtime client Get with IgnoreNotFound",
+    "body": [
+      "var ${1:obj} ${2:appv1.MyKind}",
+      "if err := r.Get(ctx, req.NamespacedName, &${1:obj}); err != nil {",
+      "\treturn ctrl.Result{}, client.IgnoreNotFound(err)",
+      "}",
+      "${0}"
+    ]
+  },
+  "controller set owner": {
+    "prefix": "ownerref",
+    "description": "controller-runtime SetControllerReference",
+    "body": [
+      "if err := ctrl.SetControllerReference(&${1:owner}, &${2:child}, r.Scheme); err != nil {",
+      "\treturn ctrl.Result{}, err",
+      "}",
+      "${0}"
+    ]
   }
 }

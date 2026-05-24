@@ -50,8 +50,13 @@ return {
 				-- Go
 				"goimports",
 				"gofumpt",
+				"golines",
 				"delve",
 				"staticcheck",
+				"gotestsum",
+				"gomodifytags",
+				"impl",
+				"gotests",
 
 				-- Docker yaml helm
 				"stylua",
@@ -112,6 +117,9 @@ return {
 							unusedwrite = true,
 							nilness = true,
 							shadow = true,
+							lostcancel = true,
+							unusedresult = true,
+							unreachable = true,
 						},
 
 						codelenses = {
@@ -316,19 +324,51 @@ return {
 					map("n", "gi", function()
 						require("fzf-lua").lsp_implementations()
 					end, "Go to implementation")
+					map("n", "gy", function()
+						require("fzf-lua").lsp_typedefs()
+					end, "Go to type definition")
 					map("n", "K", vim.lsp.buf.hover, "Hover documentation")
 
 					-- Code actions
 					map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "Code action")
 					map("n", "<leader>cr", vim.lsp.buf.rename, "Rename symbol")
+					map("n", "<leader>co", function()
+						require("config.go").organize_imports(bufnr)
+					end, "Organize imports")
+					map("n", "<leader>cf", function()
+						require("config.go").fix_all(bufnr)
+					end, "Fix all")
+					map("n", "<leader>cF", function()
+						require("fzf-lua").lsp_finder()
+					end, "LSP finder")
+					map("n", "<leader>cu", function()
+						require("fzf-lua").lsp_references({
+							includeDeclaration = false,
+						})
+					end, "Find usages")
+					map("n", "<leader>cI", function()
+						require("fzf-lua").lsp_incoming_calls()
+					end, "Incoming calls")
+					map("n", "<leader>cO", function()
+						require("fzf-lua").lsp_outgoing_calls()
+					end, "Outgoing calls")
+
+					if client:supports_method("textDocument/codeLens") then
+						map("n", "<leader>cc", vim.lsp.codelens.run, "Run code lens")
+						map("n", "<leader>cC", function()
+							pcall(vim.lsp.codelens.enable, true, {
+								bufnr = bufnr,
+							})
+						end, "Refresh code lens")
+					end
 
 					map("n", "<leader>cs", function()
 						require("fzf-lua").lsp_document_symbols()
 					end, "Document symbols")
 
 					map("n", "<leader>cS", function()
-						require("fzf-lua").lsp_workspace_symbols()
-					end, "Workspace symbols")
+						require("fzf-lua").lsp_live_workspace_symbols()
+					end, "Live workspace symbols")
 
 					map("n", "<leader>ci", "<cmd>LspInfo<CR>", "LSP info")
 					map("n", "<leader>cR", "<cmd>LspRestart<CR>", "Restart LSP")
@@ -345,9 +385,23 @@ return {
 						vim.diagnostic.jump({ count = -1, float = true })
 					end, "Previous diagnostic")
 
+					if vim.bo[bufnr].filetype == "go" then
+						map("n", "<leader>cgm", function()
+							require("config.go").mod_tidy(bufnr)
+						end, "Go mod tidy")
+
+						map("n", "<leader>cgg", function()
+							require("config.go").generate(bufnr)
+						end, "Go generate")
+
+						map("n", "<leader>cgv", function()
+							require("config.go").vulncheck(bufnr)
+						end, "Go vulncheck")
+					end
+
 					-- Inlay hints
 					if client:supports_method("textDocument/inlayHint") then
-						vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+						vim.lsp.inlay_hint.enable(false, { bufnr = bufnr })
 
 						map("n", "<leader>uh", function()
 							local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr })

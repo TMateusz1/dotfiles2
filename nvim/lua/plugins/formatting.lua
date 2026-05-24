@@ -18,7 +18,7 @@ return {
 		},
 		opts = {
 			formatters_by_ft = {
-				go = { "goimports", "gofumpt" },
+				go = { "goimports", "gofumpt", "golines" },
 				lua = { "stylua" },
 				sh = { "shfmt" },
 				bash = { "shfmt" },
@@ -31,26 +31,16 @@ return {
 				markdown = { "prettier" },
 			},
 
-			format_on_save = function(bufnr)
-				local filetype = vim.bo[bufnr].filetype
-
-				local disabled_filetypes = {
-					-- example:
-					-- markdown = true,
-				}
-
-				if disabled_filetypes[filetype] then
-					return nil
-				end
-
-				return {
-					timeout_ms = 3000,
-					lsp_fallback = true,
-				}
-			end,
-
 			notify_on_error = true,
 			notify_no_formatters = false,
+
+			formatters = {
+				golines = {
+					prepend_args = {
+						"--max-len=120",
+					},
+				},
+			},
 		},
 	},
 }

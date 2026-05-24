@@ -40,6 +40,19 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("FileType", {
 	group = augroup,
 	pattern = {
+		"go",
+		"gomod",
+		"gowork",
+	},
+	callback = function()
+		vim.opt_local.colorcolumn = "120"
+	end,
+	desc = "Show Go right margin",
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	group = augroup,
+	pattern = {
 		"qf",
 		"help",
 		"man",
