@@ -1,5 +1,201 @@
 -- ~/.config/nvim/lua/plugins/fzf.lua
 
+local explorer_entry_separator = "\t"
+
+local open_file_explorer
+
+local function explorer_icon(kind, name)
+	local ok, mini_icons = pcall(require, "mini.icons")
+
+	if ok then
+		local icon = mini_icons.get(kind == "dir" and "directory" or "file", name)
+
+		if icon then
+			return icon
+		end
+	end
+
+	return kind == "dir" and "" or "󰈙"
+end
+
+local function explorer_entry(label, path, kind)
+	return table.concat({
+		label,
+		path,
+		kind,
+	}, explorer_entry_separator)
+end
+
+local function parse_explorer_entry(line)
+	if not line then
+		return nil
+	end
+
+	local path, kind = line:match("\t([^\t]+)\t([^\t]+)$")
+
+	if not path or not kind then
+		return nil
+	end
+
+	return {
+		path = path,
+		kind = kind,
+	}
+end
+
+local function explorer_entries(cwd)
+	local entries = {}
+	local dirs = {}
+	local files = {}
+	local parent = vim.fs.dirname(cwd)
+	local skip_names = {
+		[".git"] = true,
+		[".idea"] = true,
+		[".vscode"] = true,
+		["build"] = true,
+		["dist"] = true,
+		["node_modules"] = true,
+		["target"] = true,
+	}
+
+	if parent and parent ~= cwd then
+		table.insert(entries, explorer_entry("󰉖 ../", parent, "dir"))
+	end
+
+	local scan = vim.uv.fs_scandir(cwd)
+
+	if not scan then
+		return entries
+	end
+
+	while true do
+		local name, kind = vim.uv.fs_scandir_next(scan)
+
+		if not name then
+			break
+		end
+
+		if not skip_names[name] then
+			local path = vim.fs.joinpath(cwd, name)
+
+			if kind == "directory" then
+				table.insert(dirs, {
+					label = ("%s %s/"):format(explorer_icon("dir", name), name),
+					path = path,
+				})
+			else
+				table.insert(files, {
+					label = ("%s %s"):format(explorer_icon("file", name), name),
+					path = path,
+				})
+			end
+		end
+	end
+
+	local function sort_by_label(left, right)
+		return left.label:lower() < right.label:lower()
+	end
+
+	table.sort(dirs, sort_by_label)
+	table.sort(files, sort_by_label)
+
+	for _, dir in ipairs(dirs) do
+		table.insert(entries, explorer_entry(dir.label, dir.path, "dir"))
+	end
+
+	for _, file in ipairs(files) do
+		table.insert(entries, explorer_entry(file.label, file.path, "file"))
+	end
+
+	return entries
+end
+
+local function open_file(path, command)
+	vim.cmd[command](vim.fn.fnameescape(path))
+end
+
+local function explorer_preview_command()
+	return table.concat({
+		"if [ -d {2} ]; then",
+		"(command -v eza >/dev/null && eza -la --color=always --icons --group-directories-first {2}) ||",
+		"(command -v lsd >/dev/null && lsd -la --color=always --icon=always --group-directories-first {2}) ||",
+		"ls -la {2};",
+		"else",
+		"(command -v bat >/dev/null && bat --color=always --style=numbers --line-range=:200 {2}) ||",
+		"sed -n '1,200p' {2};",
+		"fi",
+	}, " ")
+end
+
+local function select_explorer_entry(selected, command)
+	local entry = parse_explorer_entry(selected and selected[1])
+
+	if not entry then
+		return
+	end
+
+	if entry.kind == "dir" then
+		open_file_explorer(entry.path)
+		return
+	end
+
+	open_file(entry.path, command)
+end
+
+open_file_explorer = function(cwd)
+	cwd = vim.fs.normalize(cwd or vim.fn.getcwd(-1, -1))
+
+	local function open_parent()
+		local parent = vim.fs.dirname(cwd)
+
+		if parent and parent ~= cwd then
+			open_file_explorer(parent)
+		end
+	end
+
+	require("fzf-lua").fzf_exec(explorer_entries(cwd), {
+		cwd = cwd,
+		prompt = "Explorer> ",
+		cwd_prompt = true,
+		winopts = {
+			title = " File Explorer ",
+			height = 0.90,
+			width = 0.92,
+			preview = {
+				layout = "flex",
+				vertical = "down:50%",
+				horizontal = "right:60%",
+			},
+		},
+		actions = {
+			["enter"] = function(selected)
+				select_explorer_entry(selected, "edit")
+			end,
+			["ctrl-v"] = function(selected)
+				select_explorer_entry(selected, "vsplit")
+			end,
+			["ctrl-s"] = function(selected)
+				select_explorer_entry(selected, "split")
+			end,
+			["ctrl-t"] = function(selected)
+				select_explorer_entry(selected, "tabedit")
+			end,
+			["ctrl-o"] = open_parent,
+			["ctrl-h"] = open_parent,
+			["ctrl-r"] = function()
+				open_file_explorer(cwd)
+			end,
+		},
+		fzf_opts = {
+			["--delimiter"] = explorer_entry_separator,
+			["--with-nth"] = "1",
+			["--header"] = "Enter open/descend | Ctrl-o parent | Ctrl-r refresh | Ctrl-v vertical | Ctrl-s split | Ctrl-t tab",
+			["--info"] = "inline-right",
+			["--preview"] = explorer_preview_command(),
+		},
+	})
+end
+
 return {
 	{
 		"ibhagwan/fzf-lua",
@@ -16,6 +212,11 @@ return {
 					})
 				end,
 				desc = "Find files",
+			},
+			{
+				"<leader>fe",
+				open_file_explorer,
+				desc = "File explorer",
 			},
 			{
 				"<leader>fg",

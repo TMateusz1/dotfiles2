@@ -50,7 +50,7 @@ return {
 				-- Buffers
 				{ "[b", desc = "Previous buffer" },
 				{ "]b", desc = "Next buffer" },
-				{ "<leader>be", desc = "Buffers tree" },
+				{ "<leader>bE", desc = "Buffers tree" },
 				{ "<leader>bx", desc = "Delete buffer" },
 				{ "<leader>bp", desc = "Pick buffer" },
 				{ "<leader>bX", desc = "Delete other buffers" },
@@ -58,7 +58,12 @@ return {
 				{ "<leader>bH", desc = "Delete buffers to the left" },
 
 				-- Git
-				{ "<leader>ge", desc = "Git status tree" },
+				{ "<leader>gE", desc = "Git status tree" },
+				{ "<leader>gg", desc = "LazyGit" },
+				{ "<leader>gG", desc = "LazyGit current file" },
+				{ "<leader>gc", desc = "Git commits" },
+				{ "<leader>gC", desc = "Git buffer commits" },
+				{ "<leader>gb", desc = "Git branches" },
 				{ "<leader>gh", group = "Git Hunks" },
 
 				{ "]h", desc = "Next git hunk" },
@@ -81,6 +86,8 @@ return {
 
 				-- FZF
 				{ "<leader>ff", desc = "Find files" },
+				{ "<leader>fe", desc = "File explorer hierarchy" },
+				{ "<leader>fG", desc = "Git changed files" },
 				{ "<leader>fg", desc = "Live grep" },
 				{ "<leader>fb", desc = "Find buffers" },
 				{ "<leader>fr", desc = "Recent files" },
@@ -94,6 +101,10 @@ return {
 				{ "<leader>fm", desc = "Marks" },
 				{ "<leader>f;", desc = "Command history" },
 				{ "<leader>f/", desc = "Search history" },
+				{ "<leader>fd", desc = "Document diagnostics" },
+				{ "<leader>fD", desc = "Workspace diagnostics" },
+				{ "<leader>fq", desc = "Quickfix list" },
+				{ "<leader>fl", desc = "Location list" },
 
 				-- LSP / Code
 				{ "gd", desc = "Go to definition" },

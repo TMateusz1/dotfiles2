@@ -120,23 +120,183 @@ The config also customizes separator fill characters and highlights `WinSeparato
 
 ### Keymaps
 
-`nvim/lua/config/keymaps.lua` defines global editor mappings:
+Leader is `<Space>`. Most mappings are discoverable in Neovim with `<leader>` through which-key, and `<leader>fk` opens a searchable list of keymaps.
 
-- `<Esc>` closes floating windows first; if no float is open, it clears search highlighting.
-- `<C-h>`, `<C-j>`, `<C-k>`, `<C-l>` move between windows.
-- Arrow variants of the same control mappings also move between windows.
-- Visual `J` and `K`, plus `<A-j>` and `<A-k>`, move lines or selections.
-- `<C-d>`, `<C-u>`, `n`, and `N` keep the cursor centered after jumps.
-- `]q` and `[q` navigate the quickfix list.
-- `<leader>w` saves the current file.
-- `<leader>Q` quits the current window.
-- `<leader>C` force-quits all Neovim windows.
+Core editing and window movement:
 
-Buffer closing is mostly delegated to `mini.bufremove`:
+| Key | Action |
+| --- | --- |
+| `<Esc>` | Close floating windows; otherwise clear search highlighting |
+| `<C-h>`, `<C-j>`, `<C-k>`, `<C-l>` | Move to the left, lower, upper, or right window |
+| `<C-Left>`, `<C-Down>`, `<C-Up>`, `<C-Right>` | Same window movement with arrow keys |
+| `<A-j>`, `<A-k>` | Move the current line or visual selection down/up |
+| Visual `J`, Visual `K` | Move the selected lines down/up |
+| `<C-d>`, `<C-u>` | Half-page down/up and keep the cursor centered |
+| `n`, `N` | Next/previous search result and keep the cursor centered |
+| `]q`, `[q` | Next/previous quickfix item |
+| `q`, `<Esc>` in temporary windows | Close quickfix, help, man, notify, and neotest windows |
 
-- `<leader>q` smart-closes the current buffer or special window.
-- `<leader>W` saves and closes the buffer.
-- `<leader>bx` deletes the current buffer.
+Save, quit, and buffers:
+
+| Key | Action |
+| --- | --- |
+| `<leader>w` | Save file |
+| `<leader>q` | Smart close: close special/floating window or delete current buffer |
+| `<leader>W` | Save and delete current buffer |
+| `<leader>Q` | Quit current window |
+| `<leader>C` | Force-quit all Neovim windows |
+| `[b`, `]b` | Previous/next buffer |
+| `[[`, `]]` | Previous/next buffer |
+| `<leader>bx` | Delete current buffer |
+| `<leader>bp` | Pick buffer from bufferline |
+| `<leader>bX` | Delete all other buffers |
+| `<leader>bH`, `<leader>bL` | Delete buffers to the left/right |
+| `<leader>bE` | Open Neo-tree buffers view |
+
+Completion and snippets:
+
+| Key | Action |
+| --- | --- |
+| `<C-space>` | Show LSP completion; also attach Kubernetes schemas in YAML buffers |
+| `<Tab>` | Accept selected completion or jump forward in a snippet |
+| `<S-Tab>` | Jump backward in a snippet |
+| `<C-j>`, `<C-k>` | Select next/previous completion item |
+| `<C-d>`, `<C-u>` in completion docs | Scroll documentation down/up |
+| `<C-e>` | Cancel completion |
+| Command-line `<C-space>` | Show command-line completion |
+| Command-line `<Tab>`, `<S-Tab>` | Accept/select command-line completion |
+| Command-line `<Up>`, `<Down>`, `<C-k>`, `<C-j>` | Move through command-line completion items |
+
+Find and search with fzf-lua:
+
+| Key | Action |
+| --- | --- |
+| `<leader>ff` | Find files |
+| `<leader>fe` | Hierarchical fzf file explorer |
+| `<leader>fg` | Live grep |
+| `<leader>fG` | Git changed files |
+| `<leader>fb` | Find buffers |
+| `<leader>fr` | Recent files |
+| `<leader>fc` | Find Neovim config files |
+| `<leader>fw`, `<leader>fW` | Grep word/WORD under cursor |
+| `<leader>fh` | Help tags |
+| `<leader>fk` | Keymaps |
+| `<leader>f:` | Commands |
+| `<leader>fj` | Jump list |
+| `<leader>fm` | Marks |
+| `<leader>f;`, `<leader>f/` | Command/search history |
+| `<leader>fd`, `<leader>fD` | Document/workspace diagnostics |
+| `<leader>fq`, `<leader>fl` | Quickfix/location list |
+| fzf `<Esc>` | Hide picker |
+| fzf `<C-d>`, `<C-u>` | Scroll preview down/up |
+| fzf `<C-q>` | Select all and accept |
+| fzf explorer `<Enter>` | Open file or descend into directory |
+| fzf explorer `<C-o>`, `<C-r>` | Go to parent directory/refresh current directory |
+
+Files and project navigation:
+
+| Key | Action |
+| --- | --- |
+| `<leader>e` | Open Oil column-mode file manager |
+| `-` | Open Oil parent directory in a float |
+| `<leader>E` | Toggle Neo-tree filesystem view |
+| `<leader>gE` | Toggle Neo-tree Git status view |
+| `<leader>bE` | Toggle Neo-tree buffers view |
+| Oil `<CR>`, `l`, `<Right>` | Smart open file or directory |
+| Oil `h`, `<Left>`, `<BS>` | Smart back |
+| Oil `<C-v>`, `<C-s>`, `<C-t>` | Open in vertical split, split, or tab |
+| Oil `q`, `<Esc>` | Close all Oil columns |
+| Oil `-`, `_` | Parent directory/current working directory |
+| Oil `` ` ``, `~` | Set cwd/tab cwd to selected directory |
+| Oil `g.`, `R` | Toggle hidden files/refresh |
+| Neo-tree `<CR>`, `l`, `h` | Open item/close node |
+| Neo-tree `o`, `O`, `r`, `d`, `m`, `c` | Add file, add directory, rename, delete, move, copy |
+| Neo-tree `y`, `x`, `p` | Copy, cut, paste through clipboard |
+| Neo-tree `.`, `R`, `?` or `g?` | Toggle hidden, refresh, help |
+
+Code, LSP, diagnostics, and formatting:
+
+| Key | Action |
+| --- | --- |
+| `gd`, `gD` | Go to definition/declaration |
+| `gr`, `gi`, `gy` | References, implementations, type definitions through fzf-lua |
+| `K` | Hover documentation |
+| `<leader>ca` | Code action in normal or visual mode |
+| `<leader>cl` | Format file or visual selection |
+| `<leader>cr` | Rename symbol |
+| `<leader>co` | Organize imports |
+| `<leader>cf` | Fix all |
+| `<leader>cF` | LSP finder |
+| `<leader>cu` | Find usages without declaration |
+| `<leader>cI`, `<leader>cO` | Incoming/outgoing calls |
+| `<leader>cc`, `<leader>cC` | Run/refresh code lens when supported |
+| `<leader>cs`, `<leader>cS` | Document/workspace symbols |
+| `<leader>ci`, `<leader>cR` | LSP info/restart LSP |
+| `<leader>cd`, `<leader>cq` | Line diagnostics/diagnostics quickfix |
+| `]d`, `[d` | Next/previous diagnostic with float |
+| `<leader>uh` | Toggle inlay hints when supported |
+
+Go-specific code mappings:
+
+| Key | Action |
+| --- | --- |
+| `<leader>cgm` | Run `go mod tidy` |
+| `<leader>cgg` | Run `go generate ./...` |
+| `<leader>cgv` | Run `govulncheck ./...` |
+
+Git:
+
+| Key | Action |
+| --- | --- |
+| `<leader>gg` | Open LazyGit |
+| `<leader>gG` | Open LazyGit for current file |
+| `<leader>gc`, `<leader>gC` | Git commits/all commits for current buffer |
+| `<leader>gb` | Git branches |
+| `<leader>gE` | Neo-tree Git status view |
+| `]h`, `[h` | Next/previous Git hunk |
+| `<leader>ghp` | Preview hunk |
+| `<leader>ghs`, `<leader>ghr` | Stage/reset hunk or visual selection |
+| `<leader>ghu` | Undo staged hunk |
+| `<leader>ghb`, `<leader>ghB` | Blame line/full blame line |
+| `<leader>ghl` | Toggle inline blame |
+| `<leader>ghd`, `<leader>ghD` | Diff file against index/previous commit |
+| `<leader>ght`, `<leader>ghw` | Toggle deleted lines/word diff |
+| Neo-tree Git `A`, `ga`, `gu`, `gr` | Add all, add file, unstage file, revert file |
+| Neo-tree Git `gc`, `gp`, `gg` | Commit, push, commit and push |
+
+Tests:
+
+| Key | Action |
+| --- | --- |
+| `<leader>tf` | Test current function |
+| `<leader>tF` | Test current file |
+| `<leader>tp` | Test current package |
+| `<leader>tP` | Test entire project |
+| `<leader>tr` | Rerun last test |
+| `<leader>ts` | Toggle test summary |
+| `<leader>to`, `<leader>tO` | Open test output/toggle output panel |
+| `<leader>tq`, `<leader>tQ` | Next/previous failed test |
+| `<leader>tw` | Watch current file |
+| `<leader>tx` | Stop tests |
+
+Markdown:
+
+| Key | Action |
+| --- | --- |
+| `<leader>md` | Toggle rendered Markdown view |
+| `<leader>mD` | Open rendered Markdown preview in a side window |
+| `<leader>me` | Toggle browser Markdown preview |
+
+Surround editing from `mini.surround`:
+
+| Key | Action |
+| --- | --- |
+| `sa` | Add surrounding |
+| `sd` | Delete surrounding |
+| `sr` | Replace surrounding |
+| `sf`, `sF` | Find surrounding to the right/left |
+| `sh` | Highlight surrounding |
+| `sn` | Update surrounding search line count |
 
 ### Autocmds
 
@@ -342,6 +502,7 @@ Treesitter highlighting is enabled on filetype events for the supported language
 Mappings:
 
 - `<leader>ff` find files
+- `<leader>fe` hierarchical file explorer picker
 - `<leader>fg` live grep
 - `<leader>fG` Git changed files
 - `<leader>fb` buffers
@@ -364,7 +525,7 @@ Mappings:
 - `<leader>fq` quickfix list
 - `<leader>fl` location list
 
-File search uses `fd` where available and falls back to `rg --files`. Hidden files and symlinks are included, while noisy directories such as `.git`, `.vscode`, `node_modules`, `dist`, `build`, `target`, and `.idea` are excluded.
+File search uses `fd` where available and falls back to `rg --files`. Hidden files and symlinks are included, while noisy directories such as `.git`, `.vscode`, `node_modules`, `dist`, `build`, `target`, and `.idea` are excluded. `<leader>fe` is intentionally different from `<leader>ff`: it behaves like a hierarchy browser, showing one directory level at a time with `../`, directories first, file/directory previews, Enter to descend/open, `<C-o>` to go up, and `<C-r>` to refresh.
 
 ### File Explorers
 
@@ -389,7 +550,7 @@ Oil is used as an editable file manager:
 - `h`, left arrow, and backspace go back.
 - `l`, right arrow, and enter open.
 - `<C-v>`, `<C-s>`, and `<C-t>` open in vertical split, split, and tab.
-- `q` and `<Esc>` close Oil.
+- `q` and `<Esc>` close all Oil columns.
 - `g.` toggles hidden files.
 - Deletes go to trash.
 - Oil uses LSP file methods for rename/move support.

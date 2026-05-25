@@ -96,6 +96,16 @@ local function close_oil_windows(keep_win)
 	vim.t.oil_column_wins = keep_win and is_oil_win(keep_win) and { keep_win } or {}
 end
 
+local function close_all_oil_columns()
+	local target_win = find_main_win()
+
+	close_oil_windows()
+
+	if target_win and vim.api.nvim_win_is_valid(target_win) then
+		vim.api.nvim_set_current_win(target_win)
+	end
+end
+
 local function close_oil_columns_after(win)
 	local wins = get_oil_column_wins()
 	local next_wins = {}
@@ -491,8 +501,14 @@ return {
 				["<C-s>"] = "actions.select_split",
 				["<C-t>"] = "actions.select_tab",
 
-				["<Esc>"] = "actions.close",
-				["q"] = "actions.close",
+				["<Esc>"] = {
+					callback = close_all_oil_columns,
+					desc = "Close all Oil columns",
+				},
+				["q"] = {
+					callback = close_all_oil_columns,
+					desc = "Close all Oil columns",
+				},
 
 				["-"] = "actions.parent",
 				["_"] = "actions.open_cwd",
