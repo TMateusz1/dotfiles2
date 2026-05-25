@@ -75,6 +75,8 @@ local function draw_completion_documentation(opts)
 			local lines = vim.split(vim.trim(result.stdout), "\n", {
 				plain = true,
 			})
+			local docs = require("blink.cmp.lib.window.docs")
+			local highlight_ns = require("blink.cmp.config").appearance.highlight_ns
 
 			vim.api.nvim_set_option_value("modifiable", true, {
 				buf = bufnr,
@@ -83,6 +85,10 @@ local function draw_completion_documentation(opts)
 			vim.api.nvim_set_option_value("modifiable", false, {
 				buf = bufnr,
 			})
+			vim.api.nvim_buf_clear_namespace(bufnr, highlight_ns, 0, -1)
+			if opts.config.treesitter_highlighting then
+				docs.highlight_with_treesitter(bufnr, "go", 0, #lines)
+			end
 			opts.window:update_size()
 		end)
 	end)
