@@ -121,7 +121,7 @@ return {
 					"hide_documentation",
 				},
 				["<C-e>"] = { "cancel", "fallback" },
-				["<CR>"] = { "fallback" },
+				["<CR>"] = { "accept", "fallback" },
 
 				["<Tab>"] = {
 					function(cmp)
@@ -262,7 +262,7 @@ return {
 					["<Tab>"] = { "select_and_accept", "fallback" },
 					["<S-Tab>"] = { "select_prev", "fallback" },
 
-					["<CR>"] = { "fallback" },
+					["<CR>"] = { "accept_and_enter", "fallback" },
 					["<C-space>"] = { "show", "fallback" },
 					["<C-e>"] = {
 						function(cmp)
