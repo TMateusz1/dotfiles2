@@ -98,7 +98,7 @@ return {
 				{ "<leader>fk", desc = "Keymaps" },
 				{ "<leader>f:", desc = "Commands" },
 				{ "<leader>fj", desc = "Jump list" },
-				{ "<leader>fm", desc = "Marks" },
+				{ "<leader>fm", desc = "Harpoon files" },
 				{ "<leader>f;", desc = "Command history" },
 				{ "<leader>f/", desc = "Search history" },
 				{ "<leader>fd", desc = "Document diagnostics" },
@@ -155,6 +155,16 @@ return {
 				{ "[q", desc = "Previous quickfix item" },
 
 				-- Movement
+				{ "<leader>m1", desc = "Mark Harpoon file 1" },
+				{ "<leader>m2", desc = "Mark Harpoon file 2" },
+				{ "<leader>m3", desc = "Mark Harpoon file 3" },
+				{ "<leader>m4", desc = "Mark Harpoon file 4" },
+				{ "<leader>m5", desc = "Mark Harpoon file 5" },
+				{ "<leader>1", desc = "Go to Harpoon file 1" },
+				{ "<leader>2", desc = "Go to Harpoon file 2" },
+				{ "<leader>3", desc = "Go to Harpoon file 3" },
+				{ "<leader>4", desc = "Go to Harpoon file 4" },
+				{ "<leader>5", desc = "Go to Harpoon file 5" },
 				{ "<A-j>", desc = "Move line down", mode = { "n", "v" } },
 				{ "<A-k>", desc = "Move line up", mode = { "n", "v" } },
 

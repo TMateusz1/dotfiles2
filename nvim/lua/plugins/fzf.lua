@@ -299,13 +299,6 @@ return {
 				desc = "Jump list",
 			},
 			{
-				"<leader>fm",
-				function()
-					require("fzf-lua").marks()
-				end,
-				desc = "Marks",
-			},
-			{
 				"<leader>f;",
 				function()
 					require("fzf-lua").command_history()
