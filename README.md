@@ -157,7 +157,7 @@ Completion and snippets:
 
 | Key | Action |
 | --- | --- |
-| `<C-space>` | Show LSP completion; also attach Kubernetes schemas in YAML buffers |
+| `<C-space>` | Show LSP completion; include Go struct tags in Go buffers; also attach Kubernetes schemas in YAML buffers |
 | `<Tab>` | Accept selected completion or jump forward in a snippet |
 | `<S-Tab>` | Jump backward in a snippet |
 | `<C-j>`, `<C-k>` | Select next/previous completion item |
@@ -351,16 +351,17 @@ The same Catppuccin Mocha direction is used by Ghostty and Starship, so the term
 `nvim/lua/plugins/blink.lua` configures `saghen/blink.cmp`:
 
 - Loads on `InsertEnter`.
-- Completion sources are LSP, path, snippets, and buffer.
+- Completion sources are LSP, path, snippets, buffer, and Go struct tags.
 - Snippets use friendly-snippets plus local snippets from `nvim/snippets/`.
 - Kubernetes snippets from friendly-snippets are filtered out so the local Kubernetes snippets take precedence.
 - Documentation and completion windows use rounded borders.
 - Go completions that come from unimported packages use a `go doc` fallback when `gopls` does not return full completion documentation.
+- Go struct fields get tag completions for `json`, `yaml`, `bson`, `xml`, `toml`, `mapstructure`, `db`, `env`, `validate`, and common HTTP binding tags.
 - Ghost text and signature help are enabled.
 - `<Tab>` accepts the selected completion or jumps through snippets.
 - `<S-Tab>` jumps backward through snippets.
 - `<C-j>` and `<C-k>` move through completion items.
-- `<C-space>` shows LSP completions and also tries to attach Kubernetes schemas to suitable YAML buffers.
+- `<C-space>` shows LSP completions, includes Go struct-tag completions in Go buffers, and tries to attach Kubernetes schemas to suitable YAML buffers.
 - Command-line completion is enabled for `:` commands.
 
 ### LSP

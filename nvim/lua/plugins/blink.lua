@@ -113,8 +113,10 @@ return {
 							require("config.kubernetes").attach_buffer_schema(0)
 						end)
 
+						local providers = vim.bo.filetype == "go" and { "go_struct_tags", "lsp" } or { "lsp" }
+
 						return cmp.show({
-							providers = { "lsp" },
+							providers = providers,
 						})
 					end,
 					"show_documentation",
@@ -207,6 +209,11 @@ return {
 				},
 
 				providers = {
+					go_struct_tags = {
+						name = "Go tags",
+						module = "config.blink_go_struct_tags",
+						score_offset = 20,
+					},
 					lsp = {
 						fallbacks = {},
 					},
@@ -231,6 +238,7 @@ return {
 
 					go = {
 						inherit_defaults = true,
+						"go_struct_tags",
 					},
 
 					yaml = {
