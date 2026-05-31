@@ -149,9 +149,7 @@ local function harpoon_entry(index, item)
 end
 
 local function harpoon_entry_sort_key(record)
-	local row = item_position(record.item)
-
-	return ("%s\t%010d"):format(record.item.value:lower(), row)
+	return record.index
 end
 
 local function harpoon_entry_records()
