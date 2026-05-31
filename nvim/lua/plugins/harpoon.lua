@@ -148,19 +148,74 @@ local function harpoon_entry(index, item)
 	}, harpoon_entry_separator)
 end
 
-local function harpoon_entries()
+local function harpoon_entry_sort_key(record)
+	local row = item_position(record.item)
+
+	return ("%s\t%010d"):format(record.item.value:lower(), row)
+end
+
+local function harpoon_entry_records()
 	local list = current_list()
-	local entries = {}
+	local records = {}
 
 	for index = 1, list:length() do
 		local item = list:get(index)
 
 		if item then
-			table.insert(entries, harpoon_entry(index, item))
+			table.insert(records, {
+				index = index,
+				item = item,
+				entry = harpoon_entry(index, item),
+			})
 		end
 	end
 
+	table.sort(records, function(a, b)
+		local a_key = harpoon_entry_sort_key(a)
+		local b_key = harpoon_entry_sort_key(b)
+
+		if a_key == b_key then
+			return a.index < b.index
+		end
+
+		return a_key < b_key
+	end)
+
+	return records
+end
+
+local function harpoon_entries()
+	local records = harpoon_entry_records()
+	local entries = {}
+
+	for _, record in ipairs(records) do
+		table.insert(entries, record.entry)
+	end
+
 	return entries
+end
+
+local function current_buffer_focus_position(list, records)
+	local current = list.config.create_list_item(list.config)
+
+	if not current or current.value == "" then
+		return 1
+	end
+
+	local current_row = item_position(current)
+	local same_file_position
+
+	for position, record in ipairs(records) do
+		if record.item.value == current.value then
+			same_file_position = same_file_position or position
+
+			if item_position(record.item) == current_row then
+				return position
+			end
+		end
+	end
+
+	return same_file_position or 1
 end
 
 local function parse_harpoon_entry(line)
@@ -258,14 +313,15 @@ local function harpoon_preview_command()
 end
 
 local function open_harpoon_files()
-	local entries = harpoon_entries()
+	local records = harpoon_entry_records()
 
-	if #entries == 0 then
+	if #records == 0 then
 		notify("No Harpoon files marked yet")
 		return
 	end
 
 	local list = current_list()
+	local focus_position = current_buffer_focus_position(list, records)
 
 	require("fzf-lua").fzf_exec(function(cb)
 		for _, entry in ipairs(harpoon_entries()) do
@@ -284,6 +340,11 @@ local function open_harpoon_files()
 				layout = "flex",
 				vertical = "down:45%",
 				horizontal = "right:55%",
+			},
+		},
+		keymap = {
+			fzf = {
+				["start"] = ("pos(%d)"):format(focus_position),
 			},
 		},
 		actions = {
