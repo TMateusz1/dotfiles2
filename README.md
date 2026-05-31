@@ -78,6 +78,7 @@ Create the symlinks:
 ln -s ~/dev/dotfiles2/nvim ~/.config/nvim
 ln -s ~/dev/dotfiles2/ghostty/config ~/.config/ghostty/config
 ln -s ~/dev/dotfiles2/starship.toml ~/.config/starship.toml
+ln -s ~/dev/dotfiles2/.tmux.conf ~/.tmux.conf
 ```
 
 If a target file already exists, move it out of the way first:
@@ -127,8 +128,8 @@ Core editing and window movement:
 | Key | Action |
 | --- | --- |
 | `<Esc>` | Close floating windows; otherwise clear search highlighting |
-| `<C-h>`, `<C-j>`, `<C-k>`, `<C-l>` | Move to the left, lower, upper, or right window |
-| `<C-Left>`, `<C-Down>`, `<C-Up>`, `<C-Right>` | Same window movement with arrow keys |
+| `<C-h>`, `<C-j>`, `<C-k>`, `<C-l>` | Move to the left, lower, upper, or right Neovim window or tmux pane |
+| `<C-Left>`, `<C-Down>`, `<C-Up>`, `<C-Right>` | Same Neovim window or tmux pane movement with arrow keys |
 | `<A-j>`, `<A-k>` | Move the current line or visual selection down/up |
 | Visual `J`, Visual `K` | Move the selected lines down/up |
 | `<C-d>`, `<C-u>` | Half-page down/up and keep the cursor centered |
@@ -762,7 +763,9 @@ Disabled or hidden modules:
 
 ## tmux
 
-tmux is not configured by this repo, but it is part of the expected terminal workflow. The most important raw commands are listed here so session and window management does not depend on wrapper scripts.
+tmux is configured by this repo through `.tmux.conf`. The prefix is `Ctrl-Space`, and the most important raw commands are listed here so session and window management does not depend on wrapper scripts.
+
+Pane navigation is integrated with Neovim. `<C-h>`, `<C-j>`, `<C-k>`, `<C-l>` and `<C-Left>`, `<C-Down>`, `<C-Up>`, `<C-Right>` move between Neovim windows first, then cross into adjacent tmux panes when pressed at a Neovim edge. Outside Neovim, the same keys move directly between tmux panes.
 
 ### Sessions
 
@@ -959,15 +962,17 @@ Reload a config from inside tmux command mode:
 source-file ~/.tmux.conf
 ```
 
-There is no built-in default reload hotkey. Without a custom tmux config binding, reload through command mode with `Ctrl-b :`, then run:
+This config also binds prefix `r` to reload `~/.tmux.conf`, so press `Ctrl-Space r` inside tmux.
+
+You can also reload through command mode with `Ctrl-Space :`, then run:
 
 ```tmux
 source-file ~/.tmux.conf
 ```
 
-### Default tmux Bindings
+### Prefix Bindings
 
-The default tmux prefix is `Ctrl-b`. Press the prefix first, release it, then press the binding key.
+This config changes the tmux prefix to `Ctrl-Space`. Press the prefix first, release it, then press the binding key.
 
 Print every active binding on the current machine:
 
@@ -978,48 +983,48 @@ tmux lsk
 
 Session bindings:
 
-- `Ctrl-b d` detach from the current session.
-- `Ctrl-b s` choose a session.
-- `Ctrl-b $` rename the current session.
-- `Ctrl-b (` switch to the previous session.
-- `Ctrl-b )` switch to the next session.
+- `Ctrl-Space d` detach from the current session.
+- `Ctrl-Space s` choose a session.
+- `Ctrl-Space $` rename the current session.
+- `Ctrl-Space (` switch to the previous session.
+- `Ctrl-Space )` switch to the next session.
 
 Window bindings:
 
-- `Ctrl-b c` create a new window.
-- `Ctrl-b ,` rename the current window.
-- `Ctrl-b &` kill the current window.
-- `Ctrl-b w` choose a window from a list.
-- `Ctrl-b n` move to the next window.
-- `Ctrl-b p` move to the previous window.
-- `Ctrl-b l` move to the previously selected window.
-- `Ctrl-b 0` through `Ctrl-b 9` select a window by index.
-- `Ctrl-b .` move the current window to another index.
+- `Ctrl-Space c` create a new window in the current pane directory.
+- `Ctrl-Space ,` rename the current window.
+- `Ctrl-Space &` kill the current window.
+- `Ctrl-Space w` choose a window from a list.
+- `Ctrl-Space n` move to the next window.
+- `Ctrl-Space p` move to the previous window.
+- `Ctrl-Space l` move to the previously selected window.
+- `Ctrl-Space 0` through `Ctrl-Space 9` select a window by index.
+- `Ctrl-Space .` move the current window to another index.
 
 Pane bindings:
 
-- `Ctrl-b %` split the current pane left/right.
-- `Ctrl-b "` split the current pane top/bottom.
-- `Ctrl-b x` kill the current pane.
-- `Ctrl-b z` zoom or unzoom the current pane.
-- `Ctrl-b o` move to the next pane.
-- `Ctrl-b ;` move to the previously active pane.
-- `Ctrl-b q` show pane numbers.
-- `Ctrl-b {` move the current pane left.
-- `Ctrl-b }` move the current pane right.
-- `Ctrl-b Space` cycle pane layouts.
-- `Ctrl-b Ctrl-o` rotate panes forward.
-- `Ctrl-b Alt-o` rotate panes backward.
-- `Ctrl-b !` break the current pane into a new window.
+- `Ctrl-Space =` split the current pane left/right in the current pane directory.
+- `Ctrl-Space -` split the current pane top/bottom in the current pane directory.
+- `Ctrl-Space x` kill the current pane.
+- `Ctrl-Space z` zoom or unzoom the current pane.
+- `Ctrl-Space o` move to the next pane.
+- `Ctrl-Space ;` move to the previously active pane.
+- `Ctrl-Space q` show pane numbers.
+- `Ctrl-Space {` move the current pane left.
+- `Ctrl-Space }` move the current pane right.
+- `Ctrl-Space Space` cycle pane layouts.
+- `Ctrl-Space Ctrl-o` rotate panes forward.
+- `Ctrl-Space Alt-o` rotate panes backward.
+- `Ctrl-Space !` break the current pane into a new window.
 
 Copy mode and command bindings:
 
-- `Ctrl-b [` enter copy mode.
-- `Ctrl-b ]` paste the most recent buffer.
-- `Ctrl-b :` open the tmux command prompt.
-- `Ctrl-b ?` list key bindings.
-- `Ctrl-b t` show a clock.
-- `Ctrl-b r` redraw the current client.
+- `Ctrl-Space [` enter copy mode.
+- `Ctrl-Space ]` paste the most recent buffer.
+- `Ctrl-Space :` open the tmux command prompt.
+- `Ctrl-Space ?` list key bindings.
+- `Ctrl-Space t` show a clock.
+- `Ctrl-Space r` reload `~/.tmux.conf`.
 
 ## Maintenance
 

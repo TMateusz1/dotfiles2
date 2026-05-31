@@ -29,18 +29,6 @@ end, {
 	desc = "Close floating windows or clear search highlight",
 })
 
--- Better window navigation
-keymap("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
-keymap("n", "<C-j>", "<C-w>j", { desc = "Move to lower window" })
-keymap("n", "<C-k>", "<C-w>k", { desc = "Move to upper window" })
-keymap("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
-
--- Better window navigation with arrows
-keymap("n", "<C-Left>", "<C-w>h", { desc = "Move to left window" })
-keymap("n", "<C-Down>", "<C-w>j", { desc = "Move to lower window" })
-keymap("n", "<C-Up>", "<C-w>k", { desc = "Move to upper window" })
-keymap("n", "<C-Right>", "<C-w>l", { desc = "Move to right window" })
-
 -- Move selected lines
 keymap("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 keymap("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
