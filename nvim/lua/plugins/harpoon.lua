@@ -31,16 +31,6 @@ local function same_mark(a, b)
 	return a.value == b.value and a_row == b_row
 end
 
-local function clean_label(label)
-	if type(label) ~= "string" then
-		return nil
-	end
-
-	label = vim.trim(label:gsub("[%c]", " "))
-
-	return label ~= "" and label or nil
-end
-
 local function existing_mark(list, item)
 	for index = 1, list:length() do
 		local existing = list:get(index)
@@ -67,12 +57,10 @@ end
 local function current_mark_item(list)
 	local item = list.config.create_list_item(list.config)
 	local row, col = item_position(item)
-	local existing = existing_mark(list, item)
 
 	item.context = item.context or {}
 	item.context.marked_row = row
 	item.context.marked_col = col
-	item.context.label = clean_label(existing and existing.context and existing.context.label)
 
 	return item
 end
@@ -103,7 +91,7 @@ local function mark_newest()
 	notify(("Marked current line as Harpoon %d"):format(list:length()))
 end
 
-local function select_slot(index)
+local function select_slot(index, command)
 	local list = current_list()
 	local item = list:get(index)
 
@@ -111,12 +99,12 @@ local function select_slot(index)
 		return
 	end
 
+	if command then
+		vim.cmd[command]()
+	end
+
 	list:select(index)
 	set_cursor_to_item(item)
-end
-
-local function item_label(item)
-	return clean_label(item and item.context and item.context.label)
 end
 
 local function harpoon_location(item)
@@ -125,22 +113,11 @@ local function harpoon_location(item)
 	return ("%s:%d"):format(item.value, row)
 end
 
-local function harpoon_display(item)
-	local location = harpoon_location(item)
-	local label = item_label(item)
-
-	if label then
-		return ("%s  %s"):format(label, location)
-	end
-
-	return location
-end
-
 local function harpoon_entry(index, item)
 	local row, col = item_position(item)
 
 	return table.concat({
-		("%d  %s"):format(index, harpoon_display(item)),
+		("%d  %s"):format(index, harpoon_location(item)),
 		tostring(index),
 		item.value,
 		tostring(row),
@@ -267,34 +244,6 @@ local function move_harpoon_action(offset)
 	}
 end
 
-local function rename_harpoon_mark(selected)
-	local index = selected_harpoon_index(selected)
-
-	if not index then
-		return
-	end
-
-	local harpoon = require("harpoon")
-	local list = harpoon:list()
-	local item = list:get(index)
-
-	if not item then
-		return
-	end
-
-	local name = require("fzf-lua.utils").input(
-		("Harpoon name (%s): "):format(harpoon_location(item)),
-		item_label(item) or ""
-	)
-
-	if name then
-		name = vim.trim(name:gsub("[%c]", " "))
-		item.context = item.context or {}
-		item.context.label = name ~= "" and name or nil
-		harpoon:sync()
-	end
-end
-
 local function harpoon_preview_command()
 	return table.concat({
 		"line={4};",
@@ -353,6 +302,13 @@ local function open_harpoon_files()
 					select_slot(index)
 				end
 			end,
+			["ctrl-v"] = function(selected)
+				local index = selected_harpoon_index(selected)
+
+				if index then
+					select_slot(index, "vsplit")
+				end
+			end,
 			["ctrl-x"] = {
 				fn = function(selected)
 					local index = selected_harpoon_index(selected)
@@ -368,10 +324,6 @@ local function open_harpoon_files()
 				end,
 				reload = true,
 			},
-			["ctrl-r"] = {
-				fn = rename_harpoon_mark,
-				reload = true,
-			},
 			["ctrl-k"] = move_harpoon_action(-1),
 			["ctrl-up"] = move_harpoon_action(-1),
 			["ctrl-j"] = move_harpoon_action(1),
@@ -380,7 +332,7 @@ local function open_harpoon_files()
 		fzf_opts = {
 			["--delimiter"] = harpoon_entry_separator,
 			["--with-nth"] = "1",
-			["--header"] = "Enter open | Ctrl-r rename | Ctrl-x remove | Ctrl-k/Ctrl-Up move up | Ctrl-j/Ctrl-Down move down",
+			["--header"] = "Enter open | Ctrl-v vertical | Ctrl-x remove | Ctrl-k/Ctrl-Up move up | Ctrl-j/Ctrl-Down move down",
 			["--id-nth"] = "3..4",
 			["--info"] = "inline-right",
 			["--no-sort"] = true,
