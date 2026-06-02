@@ -240,15 +240,39 @@ end
 
 return {
 	{
+		"mikavilpas/yazi.nvim",
+		version = "*",
+		event = "VeryLazy",
+		cmd = {
+			"Yazi",
+		},
+		keys = {
+			{
+				"<leader>e",
+				"<cmd>Yazi<CR>",
+				mode = { "n", "v" },
+				desc = "Yazi file manager",
+			},
+		},
+		dependencies = {
+			{ "nvim-lua/plenary.nvim", lazy = true },
+		},
+		opts = {
+			open_for_directories = false,
+			floating_window_scaling_factor = 0.9,
+			yazi_floating_window_winblend = 0,
+			yazi_floating_window_border = "rounded",
+			keymaps = {
+				show_help = "<f1>",
+				open_file_in_vertical_split = "<c-v>",
+			},
+		},
+	},
+	{
 		"nvim-neo-tree/neo-tree.nvim",
 		branch = "v3.x",
 		cmd = "Neotree",
 		keys = {
-			{
-				"<leader>E",
-				"<cmd>Neotree toggle filesystem reveal left<CR>",
-				desc = "Explorer",
-			},
 			{
 				"<leader>gE",
 				"<cmd>Neotree toggle git_status left<CR>",
@@ -413,9 +437,9 @@ return {
 		"stevearc/oil.nvim",
 		keys = {
 			{
-				"<leader>e",
+				"<leader>E",
 				oil_open_column_mode,
-				desc = "Oil file manager",
+				desc = "Oil multi-file edit",
 			},
 			{
 				"-",

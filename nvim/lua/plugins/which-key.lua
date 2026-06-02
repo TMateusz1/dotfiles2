@@ -42,8 +42,8 @@ return {
 				{ "<leader>u", group = "UI / Toggles" },
 
 				-- Direct leader mappings
-				{ "<leader>e", desc = "Oil file manager" },
-				{ "<leader>E", desc = "Project tree" },
+				{ "<leader>e", desc = "Yazi file manager" },
+				{ "<leader>E", desc = "Oil multi-file edit" },
 				{ "<leader>w", desc = "Save file" },
 				{ "<leader>q", desc = "Smart close" },
 				{ "<leader>Q", desc = "Quit window" },

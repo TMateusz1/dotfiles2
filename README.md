@@ -53,13 +53,14 @@ This setup expects these tools to be available on the machine:
 - `fzf` for tmux selectors and Neovim fuzzy finding.
 - `rg` and `fd` for fast search and file discovery.
 - `lazygit` for the Neovim LazyGit integration.
+- `yazi` for the Neovim and tmux file manager integration.
 - `go` for Go tooling, tests, and helper commands.
 - `kubectl` for generating Kubernetes CRD schemas.
 - `starship` for the prompt.
 - `ghostty` for terminal configuration.
 - A Nerd Font, specifically `FiraCode Nerd Font` in the Ghostty config.
 
-Neovim uses Mason to install many language tools automatically, but system binaries such as `git`, `go`, `kubectl`, `tmux`, `fzf`, `rg`, `fd`, `starship`, and `lazygit` should be installed outside Neovim.
+Neovim uses Mason to install many language tools automatically, but system binaries such as `git`, `go`, `kubectl`, `tmux`, `fzf`, `rg`, `fd`, `starship`, `lazygit`, and `yazi` should be installed outside Neovim.
 
 ## Creating Symlinks
 
@@ -106,7 +107,7 @@ ls -l ~/.config/starship.toml
 - Leader and local leader are both space.
 - Absolute and relative line numbers are enabled.
 - Mouse support is enabled.
-- netrw is disabled because file exploration is handled by Oil and Neo-tree.
+- netrw is disabled because file exploration is handled by Yazi, Oil, and Neo-tree.
 - Clipboard uses `unnamedplus`.
 - Indentation uses spaces with a width of 4.
 - Search uses ignorecase plus smartcase.
@@ -198,9 +199,11 @@ Files and project navigation:
 
 | Key | Action |
 | --- | --- |
-| `<leader>e` | Open Oil column-mode file manager |
+| `<leader>e` | Open Yazi floating file manager |
+| Yazi `<Enter>` | Open selected file in the current Neovim window |
+| Yazi `<C-v>`, `<C-x>`, `<C-t>` | Open in vertical split, horizontal split, or tab |
+| `<leader>E` | Open Oil multi-file edit manager |
 | `-` | Open Oil parent directory in a float |
-| `<leader>E` | Toggle Neo-tree filesystem view |
 | `<leader>gE` | Toggle Neo-tree Git status view |
 | `<leader>bE` | Toggle Neo-tree buffers view |
 | Oil `<CR>`, `l`, `<Right>` | Smart open file or directory |
@@ -531,11 +534,17 @@ File search uses `fd` where available and falls back to `rg --files`. Hidden fil
 
 ### File Explorers
 
-`nvim/lua/plugins/file-explorers.lua` configures two complementary file explorers.
+`nvim/lua/plugins/file-explorers.lua` configures three complementary file tools.
 
-Neo-tree is used as a project tree:
+Yazi is the main file manager:
 
-- `<leader>E` toggles filesystem tree.
+- `<leader>e` opens yazi in a floating Neovim window.
+- `<Enter>` opens the selected file in the current Neovim window.
+- `<C-v>`, `<C-x>`, and `<C-t>` open in vertical split, horizontal split, and tab.
+- Directory auto-hijack is disabled, so `nvim .` does not automatically open yazi.
+
+Neo-tree is used for Git and buffer tree views:
+
 - `<leader>gE` toggles Git status tree.
 - `<leader>bE` toggles buffers tree.
 - Sources are filesystem, buffers, and Git status.
@@ -545,7 +554,7 @@ Neo-tree is used as a project tree:
 
 Oil is used as an editable file manager:
 
-- `<leader>e` opens the custom floating column-mode file manager.
+- `<leader>E` opens the custom floating column-mode file manager.
 - `-` opens Oil at the parent directory.
 - Directory navigation opens additional floating columns up to a depth of 3.
 - Selecting a file opens it in the original editor window and closes the Oil columns.
@@ -1016,6 +1025,11 @@ Pane bindings:
 - `Ctrl-Space Ctrl-o` rotate panes forward.
 - `Ctrl-Space Alt-o` rotate panes backward.
 - `Ctrl-Space !` break the current pane into a new window.
+
+Popup and project helper bindings:
+
+- `Ctrl-Space g` open LazyGit in a popup in the current pane directory.
+- `Ctrl-Space e` open Yazi in a popup in the current pane directory.
 
 Copy mode and command bindings:
 
