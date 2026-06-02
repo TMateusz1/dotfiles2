@@ -47,7 +47,7 @@ This means base editor behavior is configured before Lazy loads plugins.
 
 This setup expects these tools to be available on the machine:
 
-- `nvim` for the editor.
+- `nvim` 0.11 or newer for the editor.
 - `git` for Lazy plugin bootstrap and Git integrations.
 - `tmux` for terminal multiplexing.
 - `fzf` for tmux selectors and Neovim fuzzy finding.

@@ -45,7 +45,9 @@ return {
 				{ "<leader>e", desc = "Oil file manager" },
 				{ "<leader>E", desc = "Project tree" },
 				{ "<leader>w", desc = "Save file" },
-				{ "<leader>q", desc = "Quit" },
+				{ "<leader>q", desc = "Smart close" },
+				{ "<leader>Q", desc = "Quit window" },
+				{ "<leader>C", desc = "Quit all force" },
 
 				-- Buffers
 				{ "[b", desc = "Previous buffer" },
@@ -158,13 +160,9 @@ return {
 				{ "<leader>m1", desc = "Mark Harpoon file 1" },
 				{ "<leader>m2", desc = "Mark Harpoon file 2" },
 				{ "<leader>m3", desc = "Mark Harpoon file 3" },
-				{ "<leader>m4", desc = "Mark Harpoon file 4" },
-				{ "<leader>m5", desc = "Mark Harpoon file 5" },
 				{ "<leader>1", desc = "Go to Harpoon file 1" },
 				{ "<leader>2", desc = "Go to Harpoon file 2" },
 				{ "<leader>3", desc = "Go to Harpoon file 3" },
-				{ "<leader>4", desc = "Go to Harpoon file 4" },
-				{ "<leader>5", desc = "Go to Harpoon file 5" },
 				{ "<A-j>", desc = "Move line down", mode = { "n", "v" } },
 				{ "<A-k>", desc = "Move line up", mode = { "n", "v" } },
 

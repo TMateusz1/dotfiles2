@@ -406,6 +406,7 @@ function M.generate_crd_schemas(opts)
 end
 
 function M.setup()
+	-- Keep CRD cache generation quiet on file open; explicit commands notify.
 	vim.api.nvim_create_autocmd("FileType", {
 		group = vim.api.nvim_create_augroup("user_kubernetes_crds", { clear = true }),
 		pattern = {

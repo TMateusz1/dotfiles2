@@ -54,5 +54,5 @@ keymap("n", "<leader>w", "<cmd>write<CR>", { desc = "Save file" })
 -- leaderq - buffer delete
 -- leaderQ - window Quit
 -- leaderC - close vim
-keymap("n", "<leader>Q", "<cmd>quit<CR>", { desc = "Quit" })
-keymap("n", "<leader>C", "<cmd>quitall!<CR>", { desc = "Quit" })
+keymap("n", "<leader>Q", "<cmd>quit<CR>", { desc = "Quit window" })
+keymap("n", "<leader>C", "<cmd>quitall!<CR>", { desc = "Quit all force" })
