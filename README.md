@@ -77,6 +77,7 @@ Create the symlinks:
 
 ```bash
 ln -s ~/dev/dotfiles2/nvim ~/.config/nvim
+ln -s ~/dev/dotfiles2/yazi ~/.config/yazi
 ln -s ~/dev/dotfiles2/ghostty/config ~/.config/ghostty/config
 ln -s ~/dev/dotfiles2/starship.toml ~/.config/starship.toml
 ln -s ~/dev/dotfiles2/.tmux.conf ~/.tmux.conf
@@ -86,6 +87,7 @@ If a target file already exists, move it out of the way first:
 
 ```bash
 mv ~/.config/nvim ~/.config/nvim.backup
+mv ~/.config/yazi ~/.config/yazi.backup
 mv ~/.config/starship.toml ~/.config/starship.toml.backup
 mv ~/.config/ghostty/config ~/.config/ghostty/config.backup
 ```
@@ -539,9 +541,16 @@ File search uses `fd` where available and falls back to `rg --files`. Hidden fil
 Yazi is the main file manager:
 
 - `<leader>e` opens yazi in a floating Neovim window.
-- `<Enter>` opens the selected file in the current Neovim window.
+- `<Enter>` enters directories and opens files through `smart-enter.yazi`.
+- `<Backspace>` goes back to the previous directory.
 - `<C-v>`, `<C-x>`, and `<C-t>` open in vertical split, horizontal split, and tab.
 - Directory auto-hijack is disabled, so `nvim .` does not automatically open yazi.
+
+Install the managed Yazi plugins after creating the `~/.config/yazi` symlink:
+
+```bash
+ya pkg install
+```
 
 Neo-tree is used for Git and buffer tree views:
 
