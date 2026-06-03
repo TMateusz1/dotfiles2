@@ -488,6 +488,8 @@ Formatters by filetype:
 
 `golines` is configured with `--max-len=120`.
 
+Formatting runs on save. For Go files this also runs `goimports`, so imports are added, removed, and sorted before the file is written.
+
 Mapping:
 
 - `<leader>cl` formats the current file or visual selection.
