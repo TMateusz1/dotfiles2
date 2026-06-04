@@ -133,6 +133,13 @@ return {
 					"hide_documentation",
 				},
 				["<C-e>"] = { "cancel", "fallback" },
+				["<Esc>"] = {
+					function()
+						stop_active_vim_snippet()
+						return false
+					end,
+					"fallback",
+				},
 				["<CR>"] = {
 					function(cmp)
 						if cmp.is_visible() then
