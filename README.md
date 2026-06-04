@@ -201,9 +201,10 @@ Files and project navigation:
 
 | Key | Action |
 | --- | --- |
-| `<leader>e` | Open Mini.files at the current file or cwd |
+| `<leader>e` | Open Mini.files at the Git root and reveal current file, or cwd from an empty buffer |
 | Mini.files `<Enter>`, `l`, `<Right>` | Enter directory or open file |
 | Mini.files `<Backspace>`, `h`, `<Left>` | Go to parent directory |
+| Mini.files `<C-v>`, `<C-s>`, `<C-t>` | Open selected file in vertical split, horizontal split, or tab |
 | Mini.files `q`, `<Esc>` | Close file explorer |
 | `<leader>E` | Open Oil multi-file edit manager |
 | `-` | Open Oil parent directory in a float |
@@ -329,6 +330,15 @@ Lazy settings:
 - Lazy UI uses rounded borders.
 
 The lockfile is `nvim/lazy-lock.json`.
+
+### Message UI
+
+`nvim/lua/plugins/noice.lua` configures `noice.nvim` as an experimental message UI:
+
+- Command-line editing stays in a classic bottom-line view.
+- Regular messages, warnings, errors, and `vim.notify()` output route to Noice's compact `mini` view.
+- Long command output opens in a split.
+- LSP progress, hover, signature help, and popupmenu replacement are disabled while testing.
 
 ## Neovim Plugins
 
@@ -535,10 +545,12 @@ File search uses `fd` where available and falls back to `rg --files`. Hidden fil
 
 Mini.files is the main in-editor file navigator:
 
-- `<leader>e` opens Mini.files at the current buffer's file, or at cwd from an empty buffer.
+- `<leader>e` opens Mini.files at the current file's Git root and reveals the file, or at cwd from an empty buffer.
 - `<Enter>`, `l`, and right arrow enter directories or open files.
 - Opening a file closes Mini.files and uses the original editor window.
 - `<Backspace>`, `h`, and left arrow go to the parent directory.
+- `<C-v>`, `<C-s>`, and `<C-t>` open a selected file in a vertical split, horizontal split, or tab.
+- Right-aligned markers show lightweight Git and diagnostic state: `M`, `A`, `D`, `R`, `?`, `!`, and `E`, `W`, `I`, `H`.
 - `q` and `<Esc>` close Mini.files.
 - `nvim .` sets cwd to that directory and leaves a clean empty buffer instead of opening a directory explorer.
 

@@ -238,6 +238,330 @@ oil_smart_back = function()
 	end)
 end
 
+local minifiles_git_cache = {}
+local minifiles_ns = vim.api.nvim_create_namespace("user_minifiles")
+
+local function path_exists(path)
+	return path ~= nil and vim.uv.fs_stat(path) ~= nil
+end
+
+local function path_type(path)
+	local stat = path and vim.uv.fs_stat(path) or nil
+
+	return stat and stat.type or nil
+end
+
+local function path_dir(path)
+	if path == nil or path == "" then
+		return vim.uv.cwd()
+	end
+
+	path = vim.fs.normalize(path)
+
+	if path_type(path) == "directory" then
+		return path
+	end
+
+	return vim.fs.dirname(path)
+end
+
+local function git_root_for(path)
+	local dir = path_dir(path)
+
+	if not path_exists(dir) then
+		return nil
+	end
+
+	local git_path = vim.fs.find(".git", {
+		path = dir,
+		upward = true,
+	})[1]
+
+	return git_path and vim.fs.dirname(git_path) or nil
+end
+
+local function is_path_inside(root, path)
+	root = vim.fs.normalize(root)
+	path = vim.fs.normalize(path)
+
+	return path == root or vim.startswith(path, root .. "/")
+end
+
+local function branch_from_root(root, target)
+	if root == nil or target == nil or not is_path_inside(root, target) then
+		return nil, nil
+	end
+
+	root = vim.fs.normalize(root)
+	target = vim.fs.normalize(target)
+
+	local target_dir = path_type(target) == "file" and vim.fs.dirname(target) or target
+	local dirs = {}
+	local current = target_dir
+
+	while current ~= nil and current ~= root and is_path_inside(root, current) do
+		table.insert(dirs, 1, current)
+		current = vim.fs.dirname(current)
+	end
+
+	local branch = { root }
+
+	for _, dir in ipairs(dirs) do
+		table.insert(branch, dir)
+	end
+
+	local depth_focus = #branch
+
+	return branch, depth_focus
+end
+
+local function focus_minifiles_path(minifiles, path)
+	local state = minifiles.get_explorer_state()
+
+	if state == nil or path == nil then
+		return
+	end
+
+	path = vim.fs.normalize(path)
+
+	for _, win in ipairs(state.windows) do
+		if vim.api.nvim_win_is_valid(win.win_id) then
+			local buf = vim.api.nvim_win_get_buf(win.win_id)
+			local line_count = vim.api.nvim_buf_line_count(buf)
+
+			for line = 1, line_count do
+				local ok, entry = pcall(minifiles.get_fs_entry, buf, line)
+
+				if ok and entry and vim.fs.normalize(entry.path) == path then
+					vim.api.nvim_set_current_win(win.win_id)
+					vim.api.nvim_win_set_cursor(win.win_id, { line, 0 })
+					return
+				end
+			end
+		end
+	end
+end
+
+local function open_minifiles()
+	local minifiles = require("mini.files")
+	local path = vim.api.nvim_buf_get_name(0)
+
+	if path == "" then
+		minifiles.open(vim.uv.cwd(), false)
+		return
+	end
+
+	path = vim.fs.normalize(path)
+
+	if path_type(path) ~= "file" then
+		minifiles.open(path, false)
+		return
+	end
+
+	local root = git_root_for(path)
+	local branch, depth_focus = branch_from_root(root, path)
+
+	if branch == nil then
+		minifiles.open(path, false)
+		return
+	end
+
+	minifiles.open(root, false)
+	minifiles.set_branch(branch, {
+		depth_focus = depth_focus,
+	})
+	focus_minifiles_path(minifiles, path)
+end
+
+local function set_minifiles_target_split(minifiles, direction)
+	local state = minifiles.get_explorer_state()
+
+	if state == nil or not vim.api.nvim_win_is_valid(state.target_window) then
+		return false
+	end
+
+	local new_target = vim.api.nvim_win_call(state.target_window, function()
+		vim.cmd(direction)
+		return vim.api.nvim_get_current_win()
+	end)
+
+	minifiles.set_target_window(new_target)
+	return true
+end
+
+local function minifiles_open_in_split(minifiles, direction)
+	return function()
+		local entry = minifiles.get_fs_entry()
+
+		if entry == nil or entry.fs_type == "directory" then
+			minifiles.go_in({
+				close_on_file = true,
+			})
+			return
+		end
+
+		if set_minifiles_target_split(minifiles, direction) then
+			minifiles.go_in({
+				close_on_file = true,
+			})
+		end
+	end
+end
+
+local function get_git_status_for_root(root)
+	if root == nil or vim.fn.executable("git") ~= 1 then
+		return {}
+	end
+
+	local now = vim.uv.now()
+	local cached = minifiles_git_cache[root]
+
+	if cached and now - cached.time < 1500 then
+		return cached.status
+	end
+
+	local result = vim.system({
+		"git",
+		"-C",
+		root,
+		"status",
+		"--porcelain=v1",
+		"--ignored=matching",
+	}, {
+		text = true,
+	}):wait()
+
+	local status = {}
+
+	if result.code == 0 then
+		for line in result.stdout:gmatch("[^\r\n]+") do
+			local code = line:sub(1, 2)
+			local relpath = line:sub(4)
+
+			if relpath:find(" %-> ") then
+				relpath = relpath:match(".* %-> (.*)")
+			end
+
+			relpath = relpath:gsub('^"', ""):gsub('"$', "")
+			local marker = code:find("%?") and "?"
+				or code:find("!") and "!"
+				or code:find("D") and "D"
+				or code:find("R") and "R"
+				or code:find("A") and "A"
+				or code:find("M") and "M"
+				or nil
+
+			if marker then
+				status[vim.fs.normalize(root .. "/" .. relpath)] = marker
+			end
+		end
+	end
+
+	minifiles_git_cache[root] = {
+		status = status,
+		time = now,
+	}
+
+	return status
+end
+
+local function get_diagnostic_markers()
+	local markers = {}
+	local severity_marker = {
+		[vim.diagnostic.severity.ERROR] = "E",
+		[vim.diagnostic.severity.WARN] = "W",
+		[vim.diagnostic.severity.INFO] = "I",
+		[vim.diagnostic.severity.HINT] = "H",
+	}
+
+	for _, diagnostic in ipairs(vim.diagnostic.get(nil)) do
+		local name = vim.api.nvim_buf_is_valid(diagnostic.bufnr) and vim.api.nvim_buf_get_name(diagnostic.bufnr) or nil
+
+		if name and name ~= "" then
+			local path = vim.fs.normalize(name)
+			local current = markers[path]
+
+			if current == nil or diagnostic.severity < current.severity then
+				markers[path] = {
+					marker = severity_marker[diagnostic.severity],
+					severity = diagnostic.severity,
+				}
+			end
+		end
+	end
+
+	return markers
+end
+
+local function marker_highlight(marker)
+	if marker == "E" or marker == "D" then
+		return "DiagnosticVirtualTextError"
+	end
+
+	if marker == "W" or marker == "M" then
+		return "DiagnosticVirtualTextWarn"
+	end
+
+	if marker == "?" or marker == "!" then
+		return "DiagnosticVirtualTextHint"
+	end
+
+	return "DiagnosticVirtualTextInfo"
+end
+
+local function update_minifiles_marks(minifiles, buf_id)
+	if not vim.api.nvim_buf_is_valid(buf_id) then
+		return
+	end
+
+	vim.api.nvim_buf_clear_namespace(buf_id, minifiles_ns, 0, -1)
+
+	local line_count = vim.api.nvim_buf_line_count(buf_id)
+	local diagnostics = get_diagnostic_markers()
+	local root
+
+	for line = 1, line_count do
+		local ok, entry = pcall(minifiles.get_fs_entry, buf_id, line)
+
+		if ok and entry and root == nil then
+			root = git_root_for(entry.path)
+			break
+		end
+	end
+
+	local git_status = get_git_status_for_root(root)
+
+	for line = 1, line_count do
+		local ok, entry = pcall(minifiles.get_fs_entry, buf_id, line)
+
+		if ok and entry then
+			local path = vim.fs.normalize(entry.path)
+			local text = {}
+			local git_marker = git_status[path]
+			local diagnostic = diagnostics[path]
+
+			if git_marker then
+				table.insert(text, { " " .. git_marker, marker_highlight(git_marker) })
+			end
+
+			if diagnostic then
+				table.insert(text, { " " .. diagnostic.marker, marker_highlight(diagnostic.marker) })
+			end
+
+			if #text > 0 then
+				vim.api.nvim_buf_set_extmark(buf_id, minifiles_ns, line - 1, 0, {
+					virt_text = text,
+					virt_text_pos = "right_align",
+				})
+			end
+		end
+	end
+end
+
+local function clear_minifiles_git_cache()
+	minifiles_git_cache = {}
+end
+
 return {
 	{
 		"nvim-mini/mini.files",
@@ -245,15 +569,7 @@ return {
 		keys = {
 			{
 				"<leader>e",
-				function()
-					local path = vim.api.nvim_buf_get_name(0)
-
-					if path == "" then
-						path = vim.uv.cwd()
-					end
-
-					require("mini.files").open(path, false)
-				end,
+				open_minifiles,
 				desc = "Mini.files",
 			},
 		},
@@ -317,8 +633,38 @@ return {
 					map("h", minifiles.go_out, "Go to parent directory")
 					map("<Left>", minifiles.go_out, "Go to parent directory")
 
+					map(
+						"<C-v>",
+						minifiles_open_in_split(minifiles, "belowright vertical split"),
+						"Open in vertical split"
+					)
+					map(
+						"<C-s>",
+						minifiles_open_in_split(minifiles, "belowright split"),
+						"Open in horizontal split"
+					)
+					map("<C-t>", minifiles_open_in_split(minifiles, "tab split"), "Open in tab")
+
 					map("<Esc>", minifiles.close, "Close explorer")
 				end,
+			})
+
+			vim.api.nvim_create_autocmd("User", {
+				pattern = "MiniFilesBufferUpdate",
+				callback = function(args)
+					update_minifiles_marks(minifiles, args.data.buf_id)
+				end,
+			})
+
+			vim.api.nvim_create_autocmd("User", {
+				pattern = {
+					"MiniFilesActionCreate",
+					"MiniFilesActionDelete",
+					"MiniFilesActionRename",
+					"MiniFilesActionCopy",
+					"MiniFilesActionMove",
+				},
+				callback = clear_minifiles_git_cache,
 			})
 		end,
 	},

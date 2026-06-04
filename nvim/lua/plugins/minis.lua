@@ -88,6 +88,7 @@ return {
 			end
 		end,
 	},
+
 	{
 		"nvim-mini/mini.bufremove",
 		version = false,

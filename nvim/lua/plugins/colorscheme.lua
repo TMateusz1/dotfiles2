@@ -33,7 +33,7 @@ return {
 				gitsigns = true,
 				mason = true,
 				cmp = true,
-				noice = false,
+				noice = true,
 				notify = false,
 				mini = true,
 			},
