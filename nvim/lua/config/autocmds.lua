@@ -2,6 +2,42 @@ local augroup = vim.api.nvim_create_augroup("user_config", {
 	clear = true,
 })
 
+local function open_startup_directory_picker()
+	if vim.fn.argc() ~= 1 then
+		return
+	end
+
+	local arg = vim.fn.argv(0)
+	local dir = vim.fs.normalize(vim.fn.fnamemodify(arg, ":p"))
+	local stat = vim.uv.fs_stat(dir)
+
+	if not stat or stat.type ~= "directory" then
+		return
+	end
+
+	vim.api.nvim_set_current_dir(dir)
+
+	local current_buf = vim.api.nvim_get_current_buf()
+
+	if vim.api.nvim_buf_is_valid(current_buf) and not vim.bo[current_buf].modified then
+		pcall(vim.api.nvim_buf_delete, current_buf, {
+			force = true,
+		})
+	end
+
+	require("fzf-lua").files({
+		cwd = dir,
+	})
+end
+
+vim.api.nvim_create_autocmd("VimEnter", {
+	group = augroup,
+	callback = function()
+		vim.schedule(open_startup_directory_picker)
+	end,
+	desc = "Open fzf files when Neovim starts with a directory",
+})
+
 -- Highlight text after yank
 vim.api.nvim_create_autocmd("TextYankPost", {
 	group = augroup,
