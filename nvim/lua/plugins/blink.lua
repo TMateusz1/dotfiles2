@@ -94,6 +94,16 @@ local function draw_completion_documentation(opts)
 	end)
 end
 
+local function stop_active_vim_snippet()
+	if not (vim.snippet and vim.snippet.active and vim.snippet.stop) then
+		return
+	end
+
+	if vim.snippet.active() then
+		pcall(vim.snippet.stop)
+	end
+end
+
 return {
 	{
 		"saghen/blink.cmp",
@@ -123,7 +133,17 @@ return {
 					"hide_documentation",
 				},
 				["<C-e>"] = { "cancel", "fallback" },
-				["<CR>"] = { "accept", "fallback" },
+				["<CR>"] = {
+					function(cmp)
+						if cmp.is_visible() then
+							return cmp.accept()
+						end
+
+						stop_active_vim_snippet()
+						return false
+					end,
+					"fallback",
+				},
 
 				["<Tab>"] = {
 					function(cmp)
@@ -154,6 +174,10 @@ return {
 					auto_brackets = {
 						enabled = true,
 					},
+				},
+
+				trigger = {
+					show_in_snippet = false,
 				},
 
 				documentation = {
