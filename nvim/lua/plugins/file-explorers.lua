@@ -240,197 +240,87 @@ end
 
 return {
 	{
-		"mikavilpas/yazi.nvim",
-		version = "*",
-		event = "VeryLazy",
-		cmd = {
-			"Yazi",
-		},
+		"nvim-mini/mini.files",
+		version = false,
 		keys = {
 			{
 				"<leader>e",
-				"<cmd>Yazi<CR>",
-				mode = { "n", "v" },
-				desc = "Yazi file manager",
+				function()
+					local path = vim.api.nvim_buf_get_name(0)
+
+					if path == "" then
+						path = vim.uv.cwd()
+					end
+
+					require("mini.files").open(path, false)
+				end,
+				desc = "Mini.files",
 			},
 		},
 		dependencies = {
-			{ "nvim-lua/plenary.nvim", lazy = true },
-		},
-		opts = {
-			open_for_directories = false,
-			floating_window_scaling_factor = 0.9,
-			yazi_floating_window_winblend = 0,
-			yazi_floating_window_border = "rounded",
-			keymaps = {
-				show_help = "<f1>",
-				open_file_in_vertical_split = "<c-v>",
-			},
-		},
-	},
-	{
-		"nvim-neo-tree/neo-tree.nvim",
-		branch = "v3.x",
-		cmd = "Neotree",
-		keys = {
-			{
-				"<leader>gE",
-				"<cmd>Neotree toggle git_status left<CR>",
-				desc = "Git status tree",
-			},
-			{
-				"<leader>bE",
-				"<cmd>Neotree toggle buffers left<CR>",
-				desc = "Buffers tree",
-			},
-		},
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"MunifTanjim/nui.nvim",
 			"nvim-mini/mini.icons",
 		},
 		opts = {
-			close_if_last_window = false,
-			popup_border_style = "rounded",
-			enable_git_status = true,
-			enable_diagnostics = true,
-
-			sources = {
-				"filesystem",
-				"buffers",
-				"git_status",
+			mappings = {
+				close = "q",
+				go_in = "",
+				go_in_plus = "",
+				go_out = "",
+				go_out_plus = "",
+				reset = "",
+				reveal_cwd = "@",
+				show_help = "g?",
+				synchronize = "=",
+				trim_left = "<",
+				trim_right = ">",
 			},
-
-			source_selector = {
-				winbar = true,
-				statusline = false,
-				sources = {
-					{
-						source = "filesystem",
-						display_name = " 󰉓 Files ",
-					},
-					{
-						source = "buffers",
-						display_name = " 󰈙 Buffers ",
-					},
-					{
-						source = "git_status",
-						display_name = " 󰊢 Git ",
-					},
-				},
+			options = {
+				permanent_delete = false,
+				use_as_default_explorer = false,
 			},
-
-			default_component_configs = {
-				indent = {
-					with_expanders = true,
-					expander_collapsed = "",
-					expander_expanded = "",
-				},
-				icon = {
-					folder_closed = "",
-					folder_open = "",
-					folder_empty = "󰜌",
-					default = "󰈙",
-				},
-				git_status = {
-					symbols = {
-						added = "A",
-						modified = "M",
-						deleted = "D",
-						renamed = "R",
-						untracked = "X",
-						ignored = "I",
-						unstaged = "U",
-						staged = "S",
-						conflict = "C",
-					},
-				},
-			},
-
-			window = {
-				position = "left",
-				width = 35,
-				mappings = {
-					["<space>"] = "none",
-
-					["<CR>"] = "open",
-					["l"] = "open",
-					["h"] = "close_node",
-
-					["o"] = "add",
-					["O"] = "add_directory",
-					["r"] = "rename",
-					["d"] = "delete",
-					["m"] = "move",
-					["c"] = "copy",
-
-					["y"] = "copy_to_clipboard",
-					["x"] = "cut_to_clipboard",
-					["p"] = "paste_from_clipboard",
-
-					["R"] = "refresh",
-					["?"] = "show_help",
-
-					["."] = "toggle_hidden",
-					["g?"] = "show_help",
-				},
-			},
-
-			filesystem = {
-				filtered_items = {
-					visible = false,
-					hide_dotfiles = false,
-					hide_gitignored = false,
-					hide_hidden = false,
-
-					hide_by_name = {
-						".git",
-						".idea",
-						".vscode",
-					},
-
-					never_show = {},
-				},
-
-				follow_current_file = {
-					enabled = true,
-					leave_dirs_open = false,
-				},
-
-				group_empty_dirs = false,
-				hijack_netrw_behavior = "disabled",
-				use_libuv_file_watcher = true,
-
-				window = {
-					mappings = {
-						["."] = "toggle_hidden",
-					},
-				},
-			},
-
-			buffers = {
-				follow_current_file = {
-					enabled = true,
-					leave_dirs_open = false,
-				},
-				group_empty_dirs = true,
-				show_unloaded = true,
-			},
-
-			git_status = {
-				window = {
-					mappings = {
-						["A"] = "git_add_all",
-						["gu"] = "git_unstage_file",
-						["ga"] = "git_add_file",
-						["gr"] = "git_revert_file",
-						["gc"] = "git_commit",
-						["gp"] = "git_push",
-						["gg"] = "git_commit_and_push",
-					},
-				},
+			windows = {
+				max_number = 4,
+				preview = false,
+				width_focus = 44,
+				width_nofocus = 24,
+				width_preview = 44,
 			},
 		},
+		config = function(_, opts)
+			local minifiles = require("mini.files")
+
+			minifiles.setup(opts)
+
+			vim.api.nvim_create_autocmd("User", {
+				pattern = "MiniFilesBufferCreate",
+				callback = function(args)
+					local buf_id = args.data.buf_id
+					local map = function(lhs, rhs, desc)
+						vim.keymap.set("n", lhs, rhs, {
+							buffer = buf_id,
+							desc = desc,
+							silent = true,
+						})
+					end
+
+					local go_in = function()
+						minifiles.go_in({
+							close_on_file = true,
+						})
+					end
+
+					map("<CR>", go_in, "Open entry")
+					map("l", go_in, "Open entry")
+					map("<Right>", go_in, "Open entry")
+
+					map("<BS>", minifiles.go_out, "Go to parent directory")
+					map("h", minifiles.go_out, "Go to parent directory")
+					map("<Left>", minifiles.go_out, "Go to parent directory")
+
+					map("<Esc>", minifiles.close, "Close explorer")
+				end,
+			})
+		end,
 	},
 	-- OIL
 	{

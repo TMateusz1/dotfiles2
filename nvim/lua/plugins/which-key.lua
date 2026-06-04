@@ -42,7 +42,7 @@ return {
 				{ "<leader>u", group = "UI / Toggles" },
 
 				-- Direct leader mappings
-				{ "<leader>e", desc = "Yazi file manager" },
+				{ "<leader>e", desc = "Mini.files" },
 				{ "<leader>E", desc = "Oil multi-file edit" },
 				{ "<leader>w", desc = "Save file" },
 				{ "<leader>q", desc = "Smart close" },
@@ -52,7 +52,6 @@ return {
 				-- Buffers
 				{ "[b", desc = "Previous buffer" },
 				{ "]b", desc = "Next buffer" },
-				{ "<leader>bE", desc = "Buffers tree" },
 				{ "<leader>bx", desc = "Delete buffer" },
 				{ "<leader>bp", desc = "Pick buffer" },
 				{ "<leader>bX", desc = "Delete other buffers" },
@@ -60,7 +59,6 @@ return {
 				{ "<leader>bH", desc = "Delete buffers to the left" },
 
 				-- Git
-				{ "<leader>gE", desc = "Git status tree" },
 				{ "<leader>gg", desc = "LazyGit" },
 				{ "<leader>gG", desc = "LazyGit current file" },
 				{ "<leader>gc", desc = "Git commits" },

@@ -13,7 +13,7 @@ local function is_special_window()
 	local buftype = vim.bo.buftype
 
 	local special_filetypes = {
-		["neo-tree"] = true,
+		["minifiles"] = true,
 		["qf"] = true,
 		["help"] = true,
 		["man"] = true,

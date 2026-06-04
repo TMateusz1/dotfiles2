@@ -13,7 +13,7 @@ opt.relativenumber = true
 -- Mouse
 opt.mouse = "a"
 
--- disable netrw, mini.files is used as default
+-- Disable netrw; file exploration is handled by Mini.files, Oil, and fzf.
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 

@@ -53,7 +53,7 @@ This setup expects these tools to be available on the machine:
 - `fzf` for tmux selectors and Neovim fuzzy finding.
 - `rg` and `fd` for fast search and file discovery.
 - `lazygit` for the Neovim LazyGit integration.
-- `yazi` for the Neovim and tmux file manager integration.
+- `yazi` for the tmux file manager popup.
 - `go` for Go tooling, tests, and helper commands.
 - `kubectl` for generating Kubernetes CRD schemas.
 - `starship` for the prompt.
@@ -109,7 +109,7 @@ ls -l ~/.config/starship.toml
 - Leader and local leader are both space.
 - Absolute and relative line numbers are enabled.
 - Mouse support is enabled.
-- netrw is disabled because file exploration is handled by Yazi, Oil, and Neo-tree.
+- netrw is disabled because file exploration is handled by Mini.files, Oil, and fzf.
 - Clipboard uses `unnamedplus`.
 - Indentation uses spaces with a width of 4.
 - Search uses ignorecase plus smartcase.
@@ -155,7 +155,6 @@ Save, quit, and buffers:
 | `<leader>bp` | Pick buffer from bufferline |
 | `<leader>bX` | Delete all other buffers |
 | `<leader>bH`, `<leader>bL` | Delete buffers to the left/right |
-| `<leader>bE` | Open Neo-tree buffers view |
 
 Completion and snippets:
 
@@ -202,13 +201,12 @@ Files and project navigation:
 
 | Key | Action |
 | --- | --- |
-| `<leader>e` | Open Yazi floating file manager |
-| Yazi `<Enter>` | Open selected file in the current Neovim window |
-| Yazi `<C-v>`, `<C-x>`, `<C-t>` | Open in vertical split, horizontal split, or tab |
+| `<leader>e` | Open Mini.files at the current file or cwd |
+| Mini.files `<Enter>`, `l`, `<Right>` | Enter directory or open file |
+| Mini.files `<Backspace>`, `h`, `<Left>` | Go to parent directory |
+| Mini.files `q`, `<Esc>` | Close file explorer |
 | `<leader>E` | Open Oil multi-file edit manager |
 | `-` | Open Oil parent directory in a float |
-| `<leader>gE` | Toggle Neo-tree Git status view |
-| `<leader>bE` | Toggle Neo-tree buffers view |
 | Oil `<CR>`, `l`, `<Right>` | Smart open file or directory |
 | Oil `h`, `<Left>`, `<BS>` | Smart back |
 | Oil `<C-v>`, `<C-s>`, `<C-t>` | Open in vertical split, split, or tab |
@@ -216,10 +214,6 @@ Files and project navigation:
 | Oil `-`, `_` | Parent directory/current working directory |
 | Oil `` ` ``, `~` | Set cwd/tab cwd to selected directory |
 | Oil `g.`, `R` | Toggle hidden files/refresh |
-| Neo-tree `<CR>`, `l`, `h` | Open item/close node |
-| Neo-tree `o`, `O`, `r`, `d`, `m`, `c` | Add file, add directory, rename, delete, move, copy |
-| Neo-tree `y`, `x`, `p` | Copy, cut, paste through clipboard |
-| Neo-tree `.`, `R`, `?` or `g?` | Toggle hidden, refresh, help |
 
 Code, LSP, diagnostics, and formatting:
 
@@ -259,7 +253,6 @@ Git:
 | `<leader>gG` | Open LazyGit for current file |
 | `<leader>gc`, `<leader>gC` | Git commits/all commits for current buffer |
 | `<leader>gb` | Git branches |
-| `<leader>gE` | Neo-tree Git status view |
 | `]h`, `[h` | Next/previous Git hunk |
 | `<leader>ghp` | Preview hunk |
 | `<leader>ghs`, `<leader>ghr` | Stage/reset hunk or visual selection |
@@ -268,8 +261,6 @@ Git:
 | `<leader>ghl` | Toggle inline blame |
 | `<leader>ghd`, `<leader>ghD` | Diff file against index/previous commit |
 | `<leader>ght`, `<leader>ghw` | Toggle deleted lines/word diff |
-| Neo-tree Git `A`, `ga`, `gu`, `gr` | Add all, add file, unstage file, revert file |
-| Neo-tree Git `gc`, `gp`, `gg` | Commit, push, commit and push |
 
 Tests:
 
@@ -540,30 +531,16 @@ File search uses `fd` where available and falls back to `rg --files`. Hidden fil
 
 ### File Explorers
 
-`nvim/lua/plugins/file-explorers.lua` configures three complementary file tools.
+`nvim/lua/plugins/file-explorers.lua` configures two complementary file tools.
 
-Yazi is the main file manager:
+Mini.files is the main in-editor file navigator:
 
-- `<leader>e` opens yazi in a floating Neovim window.
-- `<Enter>` enters directories and opens files through `smart-enter.yazi`.
-- `<Backspace>` goes back to the previous directory.
-- `<C-v>`, `<C-x>`, and `<C-t>` open in vertical split, horizontal split, and tab.
-- Directory auto-hijack is disabled, so `nvim .` does not automatically open yazi.
-
-Install the managed Yazi plugins after creating the `~/.config/yazi` symlink:
-
-```bash
-ya pkg install
-```
-
-Neo-tree is used for Git and buffer tree views:
-
-- `<leader>gE` toggles Git status tree.
-- `<leader>bE` toggles buffers tree.
-- Sources are filesystem, buffers, and Git status.
-- The tree follows the current file.
-- Hidden files are visible, but `.git`, `.idea`, and `.vscode` are hidden by name.
-- Git status actions are mapped inside the Git status source.
+- `<leader>e` opens Mini.files at the current buffer's file, or at cwd from an empty buffer.
+- `<Enter>`, `l`, and right arrow enter directories or open files.
+- Opening a file closes Mini.files and uses the original editor window.
+- `<Backspace>`, `h`, and left arrow go to the parent directory.
+- `q` and `<Esc>` close Mini.files.
+- `nvim .` sets cwd to that directory and leaves a clean empty buffer instead of opening a directory explorer.
 
 Oil is used as an editable file manager:
 
@@ -581,7 +558,7 @@ Oil is used as an editable file manager:
 
 ### Git
 
-Git support is split between gitsigns, fzf-lua, Neo-tree, and LazyGit.
+Git support is split between gitsigns, fzf-lua, and LazyGit.
 
 `nvim/lua/plugins/gitsigns.lua`:
 
@@ -622,13 +599,13 @@ Mappings:
 - `<leader>bL` close buffers to the right
 - `<leader>bH` close buffers to the left
 
-Diagnostics are shown in the bufferline. Neo-tree gets a left offset labeled `Project`.
+Diagnostics are shown in the bufferline.
 
 `nvim/lua/plugins/lueline.lua` configures the global statusline:
 
 - Shows mode, branch, filename, diagnostics, active LSP clients, diff, filetype, progress, and location.
 - Uses global statusline mode.
-- Disables the statusline for Neo-tree and Oil windows.
+- Disables the statusline for Mini.files and Oil windows.
 
 ### Mini Plugins
 

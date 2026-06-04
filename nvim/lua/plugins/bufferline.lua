@@ -68,15 +68,6 @@ return {
 					return (" %s:%d"):format(icon, count)
 				end,
 
-				offsets = {
-					{
-						filetype = "neo-tree",
-						text = "Project",
-						text_align = "left",
-						separator = true,
-					},
-				},
-
 				color_icons = true,
 				show_buffer_icons = true,
 				show_buffer_close_icons = true,
