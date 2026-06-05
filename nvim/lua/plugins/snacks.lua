@@ -18,6 +18,18 @@ return {
 		quickfile = {
 			enabled = true,
 		},
+		scratch = {
+			enabled = true,
+		},
+		terminal = {
+			enabled = true,
+		},
+		words = {
+			enabled = true,
+		},
+		zen = {
+			enabled = true,
+		},
 		explorer = {
 			enabled = true,
 
@@ -78,6 +90,20 @@ return {
 		},
 	},
 	keys = {
+		{
+			"]r",
+			function()
+				Snacks.words.jump(vim.v.count1, true)
+			end,
+			desc = "Next reference",
+		},
+		{
+			"[r",
+			function()
+				Snacks.words.jump(-vim.v.count1, true)
+			end,
+			desc = "Previous reference",
+		},
 		{
 			"<leader>e",
 			function()
@@ -235,6 +261,27 @@ return {
 			desc = "Location list",
 		},
 		{
+			"<leader>fR",
+			function()
+				Snacks.picker.resume()
+			end,
+			desc = "Resume picker",
+		},
+		{
+			"<leader>fn",
+			function()
+				Snacks.picker.notifications()
+			end,
+			desc = "Notification history",
+		},
+		{
+			"<leader>f.",
+			function()
+				Snacks.scratch.select()
+			end,
+			desc = "Scratch buffers",
+		},
+		{
 			"<leader>gc",
 			function()
 				Snacks.picker.git_log()
@@ -256,6 +303,27 @@ return {
 			desc = "Git buffer commits",
 		},
 		{
+			"<leader>gd",
+			function()
+				Snacks.picker.git_diff()
+			end,
+			desc = "Git diff hunks",
+		},
+		{
+			"<leader>gl",
+			function()
+				Snacks.picker.git_log_line()
+			end,
+			desc = "Git line commits",
+		},
+		{
+			"<leader>gs",
+			function()
+				Snacks.picker.git_stash()
+			end,
+			desc = "Git stash",
+		},
+		{
 			"<leader>gg",
 			function()
 				Snacks.lazygit()
@@ -268,6 +336,52 @@ return {
 				Snacks.lazygit.log_file()
 			end,
 			desc = "LazyGit current file",
+		},
+		{
+			"<leader>.",
+			function()
+				Snacks.scratch()
+			end,
+			desc = "Toggle scratch buffer",
+		},
+		{
+			"<leader>un",
+			function()
+				Snacks.picker.notifications()
+			end,
+			desc = "Notification history",
+		},
+		{
+			"<leader>ut",
+			function()
+				Snacks.terminal(vim.o.shell)
+			end,
+			desc = "Toggle terminal",
+		},
+		{
+			"<leader>uz",
+			function()
+				Snacks.zen()
+			end,
+			desc = "Toggle zen mode",
+		},
+		{
+			"<leader>uZ",
+			function()
+				Snacks.zen.zoom()
+			end,
+			desc = "Toggle zoom",
+		},
+		{
+			"<leader>uw",
+			function()
+				if Snacks.words.is_enabled() then
+					Snacks.words.disable()
+				else
+					Snacks.words.enable()
+				end
+			end,
+			desc = "Toggle word references",
 		},
 	},
 }

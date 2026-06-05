@@ -50,6 +50,7 @@ return {
 				{ "<leader>q", desc = "Smart close" },
 				{ "<leader>Q", desc = "Quit window" },
 				{ "<leader>C", desc = "Quit all force" },
+				{ "<leader>.", desc = "Toggle scratch buffer" },
 
 				-- Buffers
 				{ "[b", desc = "Previous buffer" },
@@ -66,6 +67,9 @@ return {
 				{ "<leader>gc", desc = "Git commits" },
 				{ "<leader>gC", desc = "Git buffer commits" },
 				{ "<leader>gb", desc = "Git branches" },
+				{ "<leader>gd", desc = "Git diff hunks" },
+				{ "<leader>gl", desc = "Git line commits" },
+				{ "<leader>gs", desc = "Git stash" },
 				{ "<leader>gh", group = "Git Hunks" },
 
 				{ "]h", desc = "Next git hunk" },
@@ -107,6 +111,9 @@ return {
 				{ "<leader>fD", desc = "Workspace diagnostics" },
 				{ "<leader>fq", desc = "Quickfix list" },
 				{ "<leader>fl", desc = "Location list" },
+				{ "<leader>fR", desc = "Resume picker" },
+				{ "<leader>fn", desc = "Notification history" },
+				{ "<leader>f.", desc = "Scratch buffers" },
 
 				-- LSP / Code
 				{ "gd", desc = "Go to definition" },
@@ -175,6 +182,8 @@ return {
 				{ "[d", desc = "Previous diagnostic" },
 				{ "]q", desc = "Next quickfix item" },
 				{ "[q", desc = "Previous quickfix item" },
+				{ "]r", desc = "Next reference" },
+				{ "[r", desc = "Previous reference" },
 
 				-- Movement
 				{ "<leader>m1", desc = "Mark Harpoon file 1" },
@@ -188,6 +197,11 @@ return {
 
 				-- UI / toggles
 				{ "<leader>uh", desc = "Toggle inlay hints" },
+				{ "<leader>un", desc = "Notification history" },
+				{ "<leader>ut", desc = "Toggle terminal" },
+				{ "<leader>uz", desc = "Toggle zen mode" },
+				{ "<leader>uZ", desc = "Toggle zoom" },
+				{ "<leader>uw", desc = "Toggle word references" },
 			},
 		},
 	},
