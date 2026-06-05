@@ -6,6 +6,19 @@ return {
 		lazygit = {
 			enabled = true,
 		},
+		explorer = {
+			enabled = true,
+
+			-- Same philosophy as your previous mini.files setup:
+			-- do not replace netrw automatically.
+			replace_netrw = false,
+			trash = true,
+		},
+
+		-- Snacks explorer is picker-backed.
+		picker = {
+			enabled = true,
+		},
 		notifier = {
 			enabled = true,
 			timeout = 3000,
@@ -25,6 +38,20 @@ return {
 		},
 	},
 	keys = {
+		{
+			"<leader>e",
+			function()
+				Snacks.explorer.reveal()
+			end,
+			desc = "Snacks explorer",
+		},
+		{
+			"<leader>se",
+			function()
+				Snacks.explorer()
+			end,
+			desc = "Snacks explorer cwd",
+		},
 		{
 			"<leader>gg",
 			function()
