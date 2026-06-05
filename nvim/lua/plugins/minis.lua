@@ -1,7 +1,3 @@
--- ~/.config/nvim/lua/plugins/minis.lua
-
--- custom funcs, return below
-
 local function is_floating_window()
 	local config = vim.api.nvim_win_get_config(0)
 
@@ -51,7 +47,6 @@ return {
 			n_lines = 500,
 		},
 	},
-
 	{
 		"nvim-mini/mini.surround",
 		version = false,
