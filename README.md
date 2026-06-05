@@ -316,9 +316,9 @@ Markdown:
 
 | Key | Action |
 | --- | --- |
-| `<leader>md` | Toggle rendered Markdown view |
-| `<leader>mD` | Open rendered Markdown preview in a side window |
-| `<leader>me` | Toggle browser Markdown preview |
+| `<leader>Md` | Toggle rendered Markdown view |
+| `<leader>MD` | Open rendered Markdown preview in a side window |
+| `<leader>Me` | Toggle browser Markdown preview |
 
 Surround editing from `mini.surround`:
 
@@ -668,9 +668,9 @@ Surround mappings:
 
 Mappings:
 
-- `<leader>md` toggles rendered Markdown view.
-- `<leader>mD` opens rendered preview in a side window.
-- `<leader>me` toggles browser preview.
+- `<leader>Md` toggles rendered Markdown view.
+- `<leader>MD` opens rendered preview in a side window.
+- `<leader>Me` toggles browser preview.
 
 ### Testing
 

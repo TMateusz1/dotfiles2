@@ -313,7 +313,9 @@ return {
 					end
 
 					-- Navigation
-					map("n", "gd", vim.lsp.buf.definition, "Go to definition")
+					map("n", "gd", function()
+						Snacks.picker.lsp_definitions()
+					end, "Go to definition")
 					map("n", "gD", vim.lsp.buf.declaration, "Go to declaration")
 
 					map("n", "gr", function()
@@ -391,20 +393,6 @@ return {
 					map("n", "[d", function()
 						vim.diagnostic.jump({ count = -1, float = true })
 					end, "Previous diagnostic")
-
-					if vim.bo[bufnr].filetype == "go" then
-						map("n", "<leader>cgm", function()
-							require("config.go").mod_tidy(bufnr)
-						end, "Go mod tidy")
-
-						map("n", "<leader>cgg", function()
-							require("config.go").generate(bufnr)
-						end, "Go generate")
-
-						map("n", "<leader>cgv", function()
-							require("config.go").vulncheck(bufnr)
-						end, "Go vulncheck")
-					end
 
 					-- Inlay hints
 					if client:supports_method("textDocument/inlayHint") then

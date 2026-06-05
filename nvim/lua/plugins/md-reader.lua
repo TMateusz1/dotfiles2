@@ -19,12 +19,12 @@ return {
 		},
 		keys = {
 			{
-				"<leader>md",
+				"<leader>Md",
 				"<cmd>RenderMarkdown toggle<cr>",
 				desc = "Markdown: toggle rendered view",
 			},
 			{
-				"<leader>mD",
+				"<leader>MD",
 				"<cmd>RenderMarkdown preview<cr>",
 				desc = "Markdown: preview in side window",
 			},
@@ -51,7 +51,7 @@ return {
 		end,
 		keys = {
 			{
-				"<leader>me",
+				"<leader>Me",
 				"<cmd>MarkdownPreviewToggle<cr>",
 				ft = "markdown",
 				desc = "Markdown: browser preview",

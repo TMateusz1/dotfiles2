@@ -39,6 +39,8 @@ return {
 				{ "<leader>c", group = "Code" },
 				{ "<leader>cg", group = "Go" },
 				{ "<leader>d", group = "Debug" },
+				{ "<leader>m", group = "Marks (Harpoon)" },
+				{ "<leader>M", group = "Markdown" },
 				{ "<leader>s", group = "Sessions" },
 				{ "<leader>t", group = "Tests" },
 				{ "<leader>u", group = "UI / Toggles" },
@@ -47,6 +49,7 @@ return {
 				{ "<leader>e", desc = "Snacks explorer (reveal current file)" },
 				{ "<leader>E", desc = "Oil multi-file edit" },
 				{ "<leader>w", desc = "Save file" },
+				{ "<leader>W", desc = "Save and close buffer" },
 				{ "<leader>q", desc = "Smart close" },
 				{ "<leader>Q", desc = "Quit window" },
 				{ "<leader>C", desc = "Quit all force" },
@@ -195,13 +198,21 @@ return {
 				{ "]t", desc = "Next todo comment" },
 				{ "[t", desc = "Previous todo comment" },
 
-				-- Movement
-				{ "<leader>m1", desc = "Mark Harpoon file 1" },
-				{ "<leader>m2", desc = "Mark Harpoon file 2" },
-				{ "<leader>m3", desc = "Mark Harpoon file 3" },
-				{ "<leader>1", desc = "Go to Harpoon file 1" },
-				{ "<leader>2", desc = "Go to Harpoon file 2" },
-				{ "<leader>3", desc = "Go to Harpoon file 3" },
+				-- Harpoon marks
+				{ "<leader>mm", desc = "Mark newest Harpoon file" },
+				{ "<leader>m1", desc = "Mark Harpoon slot 1" },
+				{ "<leader>m2", desc = "Mark Harpoon slot 2" },
+				{ "<leader>m3", desc = "Mark Harpoon slot 3" },
+				{ "<leader>1", desc = "Go to Harpoon slot 1" },
+				{ "<leader>2", desc = "Go to Harpoon slot 2" },
+				{ "<leader>3", desc = "Go to Harpoon slot 3" },
+
+				-- Markdown
+				{ "<leader>Md", desc = "Toggle rendered Markdown view" },
+				{ "<leader>MD", desc = "Preview in side window" },
+				{ "<leader>Me", desc = "Browser preview (markdown only)" },
+
+				-- Line movement
 				{ "<A-j>", desc = "Move line down", mode = { "n", "v" } },
 				{ "<A-k>", desc = "Move line up", mode = { "n", "v" } },
 

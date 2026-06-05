@@ -43,7 +43,7 @@ return {
 						desc = "Config",
 						action = ":lua Snacks.picker.files({ cwd = vim.fn.stdpath('config') })",
 					},
-					{ icon = " ", key = "s", desc = "Restore Session", action = ":lua require('persistence').load()" },
+					{ icon = " ", key = "s", desc = "Search Sessions", action = ":lua require('persistence').select()" },
 					{ icon = "󰒲 ", key = "L", desc = "Lazy", action = ":Lazy" },
 					{ icon = " ", key = "q", desc = "Quit", action = ":qa" },
 				},
@@ -96,6 +96,7 @@ return {
 		},
 		explorer = {
 			enabled = true,
+			replace_netrw = false,
 			trash = true,
 		},
 
