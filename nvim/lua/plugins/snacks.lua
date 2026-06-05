@@ -32,10 +32,7 @@ return {
 		},
 		explorer = {
 			enabled = true,
-
-			-- Same philosophy as your previous explorer setup:
-			-- do not replace netrw automatically.
-			replace_netrw = false,
+			replace_netrw = true,
 			trash = true,
 		},
 
