@@ -120,30 +120,43 @@ return {
 				{ "<leader>ft", desc = "Todo comments" },
 				{ "<leader>fT", desc = "Todo/Fix/Fixme only" },
 
-				-- LSP / Code
+				-- LSP / Code — bare keys (fast)
 				{ "gd", desc = "Go to definition" },
 				{ "gD", desc = "Go to declaration" },
 				{ "gi", desc = "Go to implementation" },
 				{ "gr", desc = "Go to references" },
 				{ "gy", desc = "Go to type definition" },
 				{ "K", desc = "Hover documentation" },
-				{ "<leader>ca", desc = "Code action" },
-				{ "<leader>cc", desc = "Run code lens" },
-				{ "<leader>cC", desc = "Refresh code lens" },
-				{ "<leader>cf", desc = "Fix all" },
-				{ "<leader>cF", desc = "LSP finder" },
+
+				-- <leader>c — navigation (all use picker)
+				{ "<leader>cd", desc = "Go to definition" },
+				{ "<leader>cD", desc = "Go to declaration" },
+				{ "<leader>ci", desc = "Go to implementations" },
+				{ "<leader>cy", desc = "Go to type definition" },
+				{ "<leader>cu", desc = "Find usages" },
+				{ "<leader>cs", desc = "Document symbols" },
+				{ "<leader>cS", desc = "Workspace symbols" },
+				{ "<leader>cF", desc = "LSP finder (all)" },
 				{ "<leader>cI", desc = "Incoming calls" },
 				{ "<leader>cO", desc = "Outgoing calls" },
+
+				-- <leader>c — actions
+				{ "<leader>ca", desc = "Code action" },
+				{ "<leader>cr", desc = "References" },
+				{ "<leader>cn", desc = "Rename symbol" },
 				{ "<leader>co", desc = "Organize imports" },
-				{ "<leader>cr", desc = "Rename symbol" },
-				{ "<leader>cu", desc = "Find usages" },
-				{ "<leader>cd", desc = "Line diagnostics" },
-				{ "<leader>ci", desc = "LSP info" },
-				{ "<leader>cq", desc = "Diagnostics quickfix" },
+				{ "<leader>cf", desc = "Fix all" },
 				{ "<leader>cl", desc = "Format file" },
-				{ "<leader>cs", desc = "Document symbols" },
-				{ "<leader>cS", desc = "Live workspace symbols" },
+				{ "<leader>cc", desc = "Run code lens" },
+				{ "<leader>cC", desc = "Refresh code lens" },
+
+				-- <leader>c — diagnostics & LSP management
+				{ "<leader>cx", desc = "Line diagnostics" },
+				{ "<leader>cq", desc = "Diagnostics quickfix" },
+				{ "<leader>cL", desc = "LSP info" },
 				{ "<leader>cR", desc = "Restart LSP" },
+
+				-- <leader>cg — Go tools
 				{ "<leader>cgg", desc = "Go generate" },
 				{ "<leader>cgm", desc = "Go mod tidy" },
 				{ "<leader>cgv", desc = "Go vulncheck" },

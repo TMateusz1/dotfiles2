@@ -212,26 +212,46 @@ Files and project navigation:
 
 Code, LSP, diagnostics, and formatting:
 
+**Quick navigation** (bare keys — fast muscle-memory access):
+
 | Key | Action |
 | --- | --- |
-| `gd`, `gD` | Go to definition/declaration |
-| `gr`, `gi`, `gy` | References, implementations, type definitions through Snacks picker |
+| `gd`, `gD` | Go to definition/declaration (Snacks picker / native) |
+| `gr`, `gi`, `gy` | References, implementations, type definitions — Snacks picker |
 | `K` | Hover documentation |
+
+**Code navigation** (discoverable via `<leader>c`):
+
+| Key | Action |
+| --- | --- |
+| `<leader>cd`, `<leader>cD` | Go to definition/declaration |
+| `<leader>ci`, `<leader>cy` | Go to implementations/type definition |
+| `<leader>cu` | Find usages (references without declaration) |
+| `<leader>cs`, `<leader>cS` | Document/workspace symbols |
+| `<leader>cF` | LSP finder (definitions + references + implementations) |
+| `<leader>cI`, `<leader>cO` | Incoming/outgoing calls |
+
+**Code actions**:
+
+| Key | Action |
+| --- | --- |
 | `<leader>ca` | Code action in normal or visual mode |
-| `<leader>cl` | Format file or visual selection |
-| `<leader>cr` | Rename symbol |
+| `<leader>cr` | References (Snacks picker) |
+| `<leader>cn` | Rename symbol |
 | `<leader>co` | Organize imports |
 | `<leader>cf` | Fix all |
-| `<leader>cF` | LSP finder |
-| `<leader>cu` | Find usages without declaration |
-| `<leader>cI`, `<leader>cO` | Incoming/outgoing calls |
+| `<leader>cl` | Format file or visual selection |
 | `<leader>cc`, `<leader>cC` | Run/refresh code lens when supported |
-| `<leader>cs`, `<leader>cS` | Document/workspace symbols |
-| `<leader>ci`, `<leader>cR` | LSP info/restart LSP |
-| `<leader>cd`, `<leader>cq` | Line diagnostics/diagnostics quickfix |
+
+**Diagnostics & LSP**:
+
+| Key | Action |
+| --- | --- |
+| `<leader>cx`, `<leader>cq` | Line diagnostics / diagnostics quickfix |
 | `]d`, `[d` | Next/previous diagnostic with float |
 | `]r`, `[r` | Next/previous word reference (Snacks words) |
 | `]t`, `[t` | Next/previous todo comment |
+| `<leader>cL`, `<leader>cR` | LSP info / restart LSP |
 | `<leader>uh` | Toggle inlay hints when supported |
 
 Go-specific code mappings:
@@ -434,29 +454,13 @@ LSP behavior:
 
 Common LSP mappings:
 
-- `gd` definition
-- `gD` declaration
-- `gr` references through Snacks picker
-- `gi` implementations through Snacks picker
-- `gy` type definitions through Snacks picker
-- `K` hover documentation
-- `<leader>ca` code action
-- `<leader>cr` rename
-- `<leader>co` organize imports
-- `<leader>cf` fix all
-- `<leader>cF` LSP finder
-- `<leader>cu` usages
-- `<leader>cI` incoming calls
-- `<leader>cO` outgoing calls
-- `<leader>cc` run code lens
-- `<leader>cC` refresh code lens
-- `<leader>cs` document symbols
-- `<leader>cS` workspace symbols
-- `<leader>ci` LSP info
-- `<leader>cR` restart LSP
-- `<leader>cd` line diagnostics
-- `<leader>cq` diagnostics quickfix
-- `]d` and `[d` navigate diagnostics
+- `gd`/`gD` definition/declaration, `gr`/`gi`/`gy` references/implementations/type definitions (all via Snacks picker), `K` hover
+- `<leader>cd`/`<leader>cD` definition/declaration, `<leader>ci`/`<leader>cy` implementations/type definition, `<leader>cu` usages
+- `<leader>cs`/`<leader>cS` document/workspace symbols, `<leader>cF` LSP finder, `<leader>cI`/`<leader>cO` calls
+- `<leader>ca` code action, `<leader>cr` references, `<leader>cn` rename, `<leader>co` organize imports, `<leader>cf` fix all
+- `<leader>cc`/`<leader>cC` run/refresh code lens
+- `<leader>cx` line diagnostics, `<leader>cq` diagnostics quickfix, `]d`/`[d` navigate diagnostics
+- `<leader>cL` LSP info, `<leader>cR` restart LSP
 - `<leader>uh` toggles inlay hints when supported
 
 Go-specific mappings:

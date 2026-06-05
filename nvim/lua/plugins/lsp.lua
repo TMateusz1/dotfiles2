@@ -312,33 +312,26 @@ return {
 						})
 					end
 
-					-- Navigation
-					map("n", "gd", function()
-						Snacks.picker.lsp_definitions()
-					end, "Go to definition")
+					-- Quick navigation (bare keys — fast access)
+					map("n", "gd", function() Snacks.picker.lsp_definitions() end, "Go to definition")
 					map("n", "gD", vim.lsp.buf.declaration, "Go to declaration")
-
-					map("n", "gr", function()
-						Snacks.picker.lsp_references()
-					end, "Go to references")
-
-					map("n", "gi", function()
-						Snacks.picker.lsp_implementations()
-					end, "Go to implementation")
-					map("n", "gy", function()
-						Snacks.picker.lsp_type_definitions()
-					end, "Go to type definition")
+					map("n", "gr", function() Snacks.picker.lsp_references() end, "Go to references")
+					map("n", "gi", function() Snacks.picker.lsp_implementations() end, "Go to implementation")
+					map("n", "gy", function() Snacks.picker.lsp_type_definitions() end, "Go to type definition")
 					map("n", "K", vim.lsp.buf.hover, "Hover documentation")
 
-					-- Code actions
-					map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "Code action")
-					map("n", "<leader>cr", vim.lsp.buf.rename, "Rename symbol")
-					map("n", "<leader>co", function()
-						require("config.go").organize_imports(bufnr)
-					end, "Organize imports")
-					map("n", "<leader>cf", function()
-						require("config.go").fix_all(bufnr)
-					end, "Fix all")
+					-- Navigation (discoverable via <leader>c)
+					map("n", "<leader>cd", function() Snacks.picker.lsp_definitions() end, "Go to definition")
+					map("n", "<leader>cD", vim.lsp.buf.declaration, "Go to declaration")
+					map("n", "<leader>ci", function() Snacks.picker.lsp_implementations() end, "Go to implementations")
+					map("n", "<leader>cy", function() Snacks.picker.lsp_type_definitions() end, "Go to type definition")
+					map("n", "<leader>cu", function()
+						Snacks.picker.lsp_references({ include_declaration = false })
+					end, "Find usages")
+
+					-- Browse / search
+					map("n", "<leader>cs", function() Snacks.picker.lsp_symbols() end, "Document symbols")
+					map("n", "<leader>cS", function() Snacks.picker.lsp_workspace_symbols() end, "Workspace symbols")
 					map("n", "<leader>cF", function()
 						Snacks.picker({
 							title = "LSP finder",
@@ -349,50 +342,40 @@ return {
 								"lsp_type_definitions",
 							},
 						})
-					end, "LSP finder")
-					map("n", "<leader>cu", function()
-						Snacks.picker.lsp_references({
-							include_declaration = false,
-						})
-					end, "Find usages")
-					map("n", "<leader>cI", function()
-						Snacks.picker.lsp_incoming_calls()
-					end, "Incoming calls")
-					map("n", "<leader>cO", function()
-						Snacks.picker.lsp_outgoing_calls()
-					end, "Outgoing calls")
+					end, "LSP finder (all)")
+					map("n", "<leader>cI", function() Snacks.picker.lsp_incoming_calls() end, "Incoming calls")
+					map("n", "<leader>cO", function() Snacks.picker.lsp_outgoing_calls() end, "Outgoing calls")
+
+					-- Actions
+					map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "Code action")
+					map("n", "<leader>cr", function() Snacks.picker.lsp_references() end, "References")
+					map("n", "<leader>cn", vim.lsp.buf.rename, "Rename symbol")
+					map("n", "<leader>co", function() require("config.go").organize_imports(bufnr) end, "Organize imports")
+					map("n", "<leader>cf", function() require("config.go").fix_all(bufnr) end, "Fix all")
 
 					if client:supports_method("textDocument/codeLens") then
 						map("n", "<leader>cc", vim.lsp.codelens.run, "Run code lens")
 						map("n", "<leader>cC", function()
-							pcall(vim.lsp.codelens.enable, true, {
-								bufnr = bufnr,
-							})
+							pcall(vim.lsp.codelens.enable, true, { bufnr = bufnr })
 						end, "Refresh code lens")
 					end
 
-					map("n", "<leader>cs", function()
-						Snacks.picker.lsp_symbols()
-					end, "Document symbols")
+					-- Diagnostics
+					map("n", "<leader>cx", vim.diagnostic.open_float, "Line diagnostics")
+					map("n", "<leader>cq", vim.diagnostic.setqflist, "Diagnostics quickfix")
+					map("n", "]d", function() vim.diagnostic.jump({ count = 1, float = true }) end, "Next diagnostic")
+					map("n", "[d", function() vim.diagnostic.jump({ count = -1, float = true }) end, "Previous diagnostic")
 
-					map("n", "<leader>cS", function()
-						Snacks.picker.lsp_workspace_symbols()
-					end, "Live workspace symbols")
-
-					map("n", "<leader>ci", "<cmd>LspInfo<CR>", "LSP info")
+					-- LSP management
+					map("n", "<leader>cL", "<cmd>LspInfo<CR>", "LSP info")
 					map("n", "<leader>cR", "<cmd>LspRestart<CR>", "Restart LSP")
 
-					-- Diagnostics
-					map("n", "<leader>cd", vim.diagnostic.open_float, "Line diagnostics")
-					map("n", "<leader>cq", vim.diagnostic.setqflist, "Diagnostics quickfix")
-
-					map("n", "]d", function()
-						vim.diagnostic.jump({ count = 1, float = true })
-					end, "Next diagnostic")
-
-					map("n", "[d", function()
-						vim.diagnostic.jump({ count = -1, float = true })
-					end, "Previous diagnostic")
+					-- Go tools (gopls)
+					if client.name == "gopls" then
+						map("n", "<leader>cgm", function() require("config.go").mod_tidy(bufnr) end, "Go mod tidy")
+						map("n", "<leader>cgg", function() require("config.go").generate(bufnr) end, "Go generate")
+						map("n", "<leader>cgv", function() require("config.go").vulncheck(bufnr) end, "Go vulncheck")
+					end
 
 					-- Inlay hints
 					if client:supports_method("textDocument/inlayHint") then
