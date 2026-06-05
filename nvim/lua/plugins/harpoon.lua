@@ -1,5 +1,3 @@
-local harpoon_entry_separator = "\t"
-
 local function current_list()
 	return require("harpoon"):list()
 end
@@ -113,16 +111,16 @@ local function harpoon_location(item)
 	return ("%s:%d"):format(item.value, row)
 end
 
-local function harpoon_entry(index, item)
+local function harpoon_picker_item(index, item)
 	local row, col = item_position(item)
 
-	return table.concat({
-		("%d  %s"):format(index, harpoon_location(item)),
-		tostring(index),
-		item.value,
-		tostring(row),
-		tostring(col),
-	}, harpoon_entry_separator)
+	return {
+		text = harpoon_location(item),
+		label = ("[%d]"):format(index),
+		file = item.value,
+		pos = { row, col },
+		harpoon_index = index,
+	}
 end
 
 local function harpoon_entry_sort_key(record)
@@ -140,7 +138,7 @@ local function harpoon_entry_records()
 			table.insert(records, {
 				index = index,
 				item = item,
-				entry = harpoon_entry(index, item),
+				entry = harpoon_picker_item(index, item),
 			})
 		end
 	end
@@ -159,7 +157,7 @@ local function harpoon_entry_records()
 	return records
 end
 
-local function harpoon_entries()
+local function harpoon_picker_items()
 	local records = harpoon_entry_records()
 	local entries = {}
 
@@ -193,18 +191,6 @@ local function current_buffer_focus_position(list, records)
 	return same_file_position or 1
 end
 
-local function parse_harpoon_entry(line)
-	if not line then
-		return nil
-	end
-
-	return tonumber(line:match("\t(%d+)\t"))
-end
-
-local function selected_harpoon_index(selected)
-	return parse_harpoon_entry(selected and selected[1])
-end
-
 local function reset_list_length(list)
 	local length = 0
 
@@ -216,6 +202,8 @@ local function reset_list_length(list)
 
 	list._length = length
 end
+
+local open_harpoon_files
 
 local function move_harpoon_mark(index, offset)
 	local harpoon = require("harpoon")
@@ -229,37 +217,27 @@ local function move_harpoon_mark(index, offset)
 	list.items[index], list.items[target] = list.items[target], list.items[index]
 	reset_list_length(list)
 	harpoon:sync()
+	return target
 end
 
 local function move_harpoon_action(offset)
-	return {
-		fn = function(selected)
-			local index = selected_harpoon_index(selected)
+	return function(picker, item)
+		local index = item and item.harpoon_index
 
-			if index then
-				move_harpoon_mark(index, offset)
+		if index then
+			local target = move_harpoon_mark(index, offset)
+
+			if target then
+				picker:close()
+				vim.schedule(function()
+					open_harpoon_files(target)
+				end)
 			end
-		end,
-		reload = true,
-	}
+		end
+	end
 end
 
-local function harpoon_preview_command()
-	return table.concat({
-		"line={4};",
-		"if [ -z \"$line\" ]; then line=1; fi;",
-		"if [ \"$line\" -gt 8 ]; then start=$((line - 8)); else start=1; fi;",
-		"end=$((line + 8));",
-		"if [ -f {3} ]; then",
-		"(command -v bat >/dev/null && bat --color=always --style=numbers --line-range=${start}:${end} --highlight-line=${line} {3}) ||",
-		"sed -n \"${start},${end}p\" {3};",
-		"else",
-		"printf '%s\\n' 'File not found: {3}';",
-		"fi",
-	}, " ")
-end
-
-local function open_harpoon_files()
+open_harpoon_files = function(focus_index)
 	local records = harpoon_entry_records()
 
 	if #records == 0 then
@@ -268,76 +246,84 @@ local function open_harpoon_files()
 	end
 
 	local list = current_list()
-	local focus_position = current_buffer_focus_position(list, records)
+	local focus_position = focus_index or current_buffer_focus_position(list, records)
 
-	require("fzf-lua").fzf_exec(function(cb)
-		for _, entry in ipairs(harpoon_entries()) do
-			cb(entry)
-		end
+	focus_position = math.min(math.max(focus_position, 1), #records)
 
-		cb(nil)
-	end, {
+	Snacks.picker({
+		source = "harpoon",
+		title = "Harpoon Files",
 		cwd = list.config.get_root_dir(),
-		prompt = "Harpoon> ",
-		winopts = {
-			title = " Harpoon Files ",
-			height = 0.85,
-			width = 0.85,
-			preview = {
-				layout = "flex",
-				vertical = "down:45%",
-				horizontal = "right:55%",
-			},
+		items = harpoon_picker_items(),
+		format = "file",
+		preview = "file",
+		sort = {
+			fields = { "idx" },
 		},
-		keymap = {
-			fzf = {
-				["start"] = ("pos(%d)"):format(focus_position),
-			},
+		jump = {
+			close = true,
+			reuse_win = true,
 		},
+		on_show = function(picker)
+			picker.list:view(focus_position)
+		end,
 		actions = {
-			["enter"] = function(selected)
-				local index = selected_harpoon_index(selected)
+			confirm = function(picker, item)
+				local index = item and item.harpoon_index
 
 				if index then
+					picker:close()
 					select_slot(index)
 				end
 			end,
-			["ctrl-v"] = function(selected)
-				local index = selected_harpoon_index(selected)
+			harpoon_vsplit = function(picker, item)
+				local index = item and item.harpoon_index
 
 				if index then
+					picker:close()
 					select_slot(index, "vsplit")
 				end
 			end,
-			["ctrl-x"] = {
-				fn = function(selected)
-					local index = selected_harpoon_index(selected)
+			harpoon_remove = function(picker, item)
+				local index = item and item.harpoon_index
 
-					if not index then
-						return
-					end
+				if not index then
+					return
+				end
 
-					local harpoon = require("harpoon")
+				local harpoon = require("harpoon")
 
-					harpoon:list():remove_at(index)
-					harpoon:sync()
-				end,
-				reload = true,
-			},
-			["ctrl-k"] = move_harpoon_action(-1),
-			["ctrl-up"] = move_harpoon_action(-1),
-			["ctrl-j"] = move_harpoon_action(1),
-			["ctrl-down"] = move_harpoon_action(1),
+				harpoon:list():remove_at(index)
+				harpoon:sync()
+				picker:close()
+				vim.schedule(function()
+					open_harpoon_files(index)
+				end)
+			end,
+			harpoon_move_up = move_harpoon_action(-1),
+			harpoon_move_down = move_harpoon_action(1),
 		},
-		fzf_opts = {
-			["--delimiter"] = harpoon_entry_separator,
-			["--with-nth"] = "1",
-			["--header"] = "Enter open | Ctrl-v vertical | Ctrl-x remove | Ctrl-k/Ctrl-Up move up | Ctrl-j/Ctrl-Down move down",
-			["--id-nth"] = "3..4",
-			["--info"] = "inline-right",
-			["--no-sort"] = true,
-			["--preview"] = harpoon_preview_command(),
-			["--track"] = true,
+		win = {
+			input = {
+				keys = {
+					["<c-v>"] = { "harpoon_vsplit", mode = { "n", "i" } },
+					["<c-x>"] = { "harpoon_remove", mode = { "n", "i" } },
+					["<c-k>"] = { "harpoon_move_up", mode = { "n", "i" } },
+					["<c-up>"] = { "harpoon_move_up", mode = { "n", "i" } },
+					["<c-j>"] = { "harpoon_move_down", mode = { "n", "i" } },
+					["<c-down>"] = { "harpoon_move_down", mode = { "n", "i" } },
+				},
+			},
+			list = {
+				keys = {
+					["<c-v>"] = "harpoon_vsplit",
+					["<c-x>"] = "harpoon_remove",
+					["<c-k>"] = "harpoon_move_up",
+					["<c-up>"] = "harpoon_move_up",
+					["<c-j>"] = "harpoon_move_down",
+					["<c-down>"] = "harpoon_move_down",
+				},
+			},
 		},
 	})
 end
@@ -385,6 +371,7 @@ return {
 		"ThePrimeagen/harpoon",
 		branch = "harpoon2",
 		dependencies = {
+			"folke/snacks.nvim",
 			"nvim-lua/plenary.nvim",
 		},
 		keys = keys,

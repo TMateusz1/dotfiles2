@@ -43,8 +43,9 @@ return {
 				{ "<leader>u", group = "UI / Toggles" },
 
 				-- Direct leader mappings
-				{ "<leader>e", desc = "Mini.files" },
+				{ "<leader>e", desc = "Snacks explorer" },
 				{ "<leader>E", desc = "Oil multi-file edit" },
+				{ "<leader>se", desc = "Snacks explorer cwd" },
 				{ "<leader>w", desc = "Save file" },
 				{ "<leader>q", desc = "Smart close" },
 				{ "<leader>Q", desc = "Quit window" },
@@ -85,9 +86,9 @@ return {
 				{ "<leader>ght", desc = "Toggle deleted lines" },
 				{ "<leader>ghw", desc = "Toggle word diff" },
 
-				-- FZF
+				-- Snacks picker
 				{ "<leader>ff", desc = "Find files" },
-				{ "<leader>fe", desc = "File explorer hierarchy" },
+				{ "<leader>fe", desc = "File explorer" },
 				{ "<leader>fG", desc = "Git changed files" },
 				{ "<leader>fg", desc = "Live grep" },
 				{ "<leader>fb", desc = "Find buffers" },

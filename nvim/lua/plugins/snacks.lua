@@ -3,13 +3,25 @@ return {
 	priority = 1000,
 	lazy = false,
 	opts = {
+		bigfile = {
+			enabled = true,
+		},
+		bufdelete = {
+			enabled = true,
+		},
+		input = {
+			enabled = true,
+		},
 		lazygit = {
+			enabled = true,
+		},
+		quickfile = {
 			enabled = true,
 		},
 		explorer = {
 			enabled = true,
 
-			-- Same philosophy as your previous mini.files setup:
+			-- Same philosophy as your previous explorer setup:
 			-- do not replace netrw automatically.
 			replace_netrw = false,
 			trash = true,
@@ -18,6 +30,34 @@ return {
 		-- Snacks explorer is picker-backed.
 		picker = {
 			enabled = true,
+			sources = {
+				files = {
+					hidden = true,
+					follow = true,
+					exclude = {
+						".git",
+						".vscode",
+						"node_modules",
+						"dist",
+						"build",
+						"target",
+						".idea",
+					},
+				},
+				grep = {
+					hidden = true,
+					follow = true,
+					exclude = {
+						".git",
+						".vscode",
+						"node_modules",
+						"dist",
+						"build",
+						"target",
+						".idea",
+					},
+				},
+			},
 		},
 		notifier = {
 			enabled = true,
@@ -51,6 +91,169 @@ return {
 				Snacks.explorer()
 			end,
 			desc = "Snacks explorer cwd",
+		},
+		{
+			"<leader>fe",
+			function()
+				Snacks.explorer()
+			end,
+			desc = "File explorer",
+		},
+		{
+			"<leader>ff",
+			function()
+				Snacks.picker.files({
+					cwd = vim.fn.getcwd(-1, -1),
+				})
+			end,
+			desc = "Find files",
+		},
+		{
+			"<leader>fg",
+			function()
+				Snacks.picker.grep()
+			end,
+			desc = "Live grep",
+		},
+		{
+			"<leader>fG",
+			function()
+				Snacks.picker.git_status()
+			end,
+			desc = "Git changed files",
+		},
+		{
+			"<leader>fb",
+			function()
+				Snacks.picker.buffers()
+			end,
+			desc = "Find buffers",
+		},
+		{
+			"<leader>fr",
+			function()
+				Snacks.picker.recent()
+			end,
+			desc = "Recent files",
+		},
+		{
+			"<leader>fc",
+			function()
+				Snacks.picker.files({
+					cwd = vim.fn.stdpath("config"),
+					title = "Config files",
+				})
+			end,
+			desc = "Find config files",
+		},
+		{
+			"<leader>fw",
+			function()
+				Snacks.picker.grep_word()
+			end,
+			desc = "Grep word under cursor",
+		},
+		{
+			"<leader>fW",
+			function()
+				Snacks.picker.grep({
+					search = vim.fn.expand("<cWORD>"),
+					live = false,
+					regex = false,
+				})
+			end,
+			desc = "Grep WORD under cursor",
+		},
+		{
+			"<leader>fh",
+			function()
+				Snacks.picker.help()
+			end,
+			desc = "Help tags",
+		},
+		{
+			"<leader>fk",
+			function()
+				Snacks.picker.keymaps()
+			end,
+			desc = "Keymaps",
+		},
+		{
+			"<leader>f:",
+			function()
+				Snacks.picker.commands()
+			end,
+			desc = "Commands",
+		},
+		{
+			"<leader>fj",
+			function()
+				Snacks.picker.jumps()
+			end,
+			desc = "Jump list",
+		},
+		{
+			"<leader>f;",
+			function()
+				Snacks.picker.command_history()
+			end,
+			desc = "Command history",
+		},
+		{
+			"<leader>f/",
+			function()
+				Snacks.picker.search_history()
+			end,
+			desc = "Search history",
+		},
+		{
+			"<leader>fd",
+			function()
+				Snacks.picker.diagnostics_buffer()
+			end,
+			desc = "Document diagnostics",
+		},
+		{
+			"<leader>fD",
+			function()
+				Snacks.picker.diagnostics()
+			end,
+			desc = "Workspace diagnostics",
+		},
+		{
+			"<leader>fq",
+			function()
+				Snacks.picker.qflist()
+			end,
+			desc = "Quickfix list",
+		},
+		{
+			"<leader>fl",
+			function()
+				Snacks.picker.loclist()
+			end,
+			desc = "Location list",
+		},
+		{
+			"<leader>gc",
+			function()
+				Snacks.picker.git_log()
+			end,
+			desc = "Git commits",
+		},
+		{
+			"<leader>gb",
+			function()
+				Snacks.picker.git_branches()
+			end,
+			desc = "Git branches",
+		},
+		{
+			"<leader>gC",
+			function()
+				Snacks.picker.git_log_file()
+			end,
+			desc = "Git buffer commits",
 		},
 		{
 			"<leader>gg",

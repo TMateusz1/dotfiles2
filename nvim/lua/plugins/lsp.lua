@@ -317,14 +317,14 @@ return {
 					map("n", "gD", vim.lsp.buf.declaration, "Go to declaration")
 
 					map("n", "gr", function()
-						require("fzf-lua").lsp_references()
+						Snacks.picker.lsp_references()
 					end, "Go to references")
 
 					map("n", "gi", function()
-						require("fzf-lua").lsp_implementations()
+						Snacks.picker.lsp_implementations()
 					end, "Go to implementation")
 					map("n", "gy", function()
-						require("fzf-lua").lsp_typedefs()
+						Snacks.picker.lsp_type_definitions()
 					end, "Go to type definition")
 					map("n", "K", vim.lsp.buf.hover, "Hover documentation")
 
@@ -338,18 +338,26 @@ return {
 						require("config.go").fix_all(bufnr)
 					end, "Fix all")
 					map("n", "<leader>cF", function()
-						require("fzf-lua").lsp_finder()
+						Snacks.picker({
+							title = "LSP finder",
+							multi = {
+								"lsp_definitions",
+								"lsp_references",
+								"lsp_implementations",
+								"lsp_type_definitions",
+							},
+						})
 					end, "LSP finder")
 					map("n", "<leader>cu", function()
-						require("fzf-lua").lsp_references({
-							includeDeclaration = false,
+						Snacks.picker.lsp_references({
+							include_declaration = false,
 						})
 					end, "Find usages")
 					map("n", "<leader>cI", function()
-						require("fzf-lua").lsp_incoming_calls()
+						Snacks.picker.lsp_incoming_calls()
 					end, "Incoming calls")
 					map("n", "<leader>cO", function()
-						require("fzf-lua").lsp_outgoing_calls()
+						Snacks.picker.lsp_outgoing_calls()
 					end, "Outgoing calls")
 
 					if client:supports_method("textDocument/codeLens") then
@@ -362,11 +370,11 @@ return {
 					end
 
 					map("n", "<leader>cs", function()
-						require("fzf-lua").lsp_document_symbols()
+						Snacks.picker.lsp_symbols()
 					end, "Document symbols")
 
 					map("n", "<leader>cS", function()
-						require("fzf-lua").lsp_live_workspace_symbols()
+						Snacks.picker.lsp_workspace_symbols()
 					end, "Live workspace symbols")
 
 					map("n", "<leader>ci", "<cmd>LspInfo<CR>", "LSP info")

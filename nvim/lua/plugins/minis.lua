@@ -36,7 +36,7 @@ local function smart_close()
 		return
 	end
 
-	require("mini.bufremove").delete(0, false)
+	Snacks.bufdelete()
 end
 return {
 	{
@@ -85,8 +85,7 @@ return {
 	},
 
 	{
-		"nvim-mini/mini.bufremove",
-		version = false,
+		"folke/snacks.nvim",
 		keys = {
 			{
 				"<leader>q",
@@ -106,18 +105,17 @@ return {
 						})
 						return
 					end
-					require("mini.bufremove").delete(0, false)
+					Snacks.bufdelete()
 				end,
 				desc = "Save and close buffer",
 			},
 			{
 				"<leader>bx",
 				function()
-					require("mini.bufremove").delete(0, false)
+					Snacks.bufdelete()
 				end,
 				desc = "Delete buffer",
 			},
 		},
-		opts = {},
 	},
 }
