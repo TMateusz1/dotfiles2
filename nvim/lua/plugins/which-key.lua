@@ -39,6 +39,7 @@ return {
 				{ "<leader>c", group = "Code" },
 				{ "<leader>cg", group = "Go" },
 				{ "<leader>d", group = "Debug" },
+				{ "<leader>s", group = "Sessions" },
 				{ "<leader>t", group = "Tests" },
 				{ "<leader>u", group = "UI / Toggles" },
 
@@ -113,6 +114,8 @@ return {
 				{ "<leader>fR", desc = "Resume picker" },
 				{ "<leader>fn", desc = "Notification history" },
 				{ "<leader>f.", desc = "Scratch buffers" },
+				{ "<leader>ft", desc = "Todo comments" },
+				{ "<leader>fT", desc = "Todo/Fix/Fixme only" },
 
 				-- LSP / Code
 				{ "gd", desc = "Go to definition" },
@@ -176,6 +179,12 @@ return {
 				{ "<leader>tw", desc = "Test watch file" },
 				{ "<leader>tx", desc = "Test stop" },
 
+				-- Sessions
+				{ "<leader>ss", desc = "Restore session (cwd)" },
+				{ "<leader>sl", desc = "Restore last session" },
+				{ "<leader>sS", desc = "Select session" },
+				{ "<leader>sd", desc = "Don't save session" },
+
 				-- Diagnostics
 				{ "]d", desc = "Next diagnostic" },
 				{ "[d", desc = "Previous diagnostic" },
@@ -183,6 +192,8 @@ return {
 				{ "[q", desc = "Previous quickfix item" },
 				{ "]r", desc = "Next reference" },
 				{ "[r", desc = "Previous reference" },
+				{ "]t", desc = "Next todo comment" },
+				{ "[t", desc = "Previous todo comment" },
 
 				-- Movement
 				{ "<leader>m1", desc = "Mark Harpoon file 1" },
@@ -195,6 +206,7 @@ return {
 				{ "<A-k>", desc = "Move line up", mode = { "n", "v" } },
 
 				-- UI / toggles
+				{ "<leader>ud", desc = "Toggle code dimming" },
 				{ "<leader>uh", desc = "Toggle inlay hints" },
 				{ "<leader>ut", desc = "Toggle terminal" },
 				{ "<leader>uz", desc = "Toggle zen mode" },

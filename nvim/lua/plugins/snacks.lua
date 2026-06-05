@@ -30,6 +30,34 @@ return {
 		bufdelete = {
 			enabled = true,
 		},
+		dashboard = {
+			enabled = true,
+			preset = {
+				keys = {
+					{ icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.picker.files()" },
+					{ icon = " ", key = "g", desc = "Find Text", action = ":lua Snacks.picker.grep()" },
+					{ icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.picker.recent()" },
+					{
+						icon = " ",
+						key = "c",
+						desc = "Config",
+						action = ":lua Snacks.picker.files({ cwd = vim.fn.stdpath('config') })",
+					},
+					{ icon = " ", key = "s", desc = "Restore Session", action = ":lua require('persistence').load()" },
+					{ icon = "󰒲 ", key = "L", desc = "Lazy", action = ":Lazy" },
+					{ icon = " ", key = "q", desc = "Quit", action = ":qa" },
+				},
+			},
+			sections = {
+				{ section = "header" },
+				{ section = "keys", gap = 1, padding = 1 },
+				{ icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
+				{ section = "startup" },
+			},
+		},
+		dim = {
+			enabled = true,
+		},
 		gitbrowse = {
 			enabled = true,
 		},
@@ -49,6 +77,9 @@ return {
 			enabled = true,
 		},
 		scroll = {
+			enabled = true,
+		},
+		statuscolumn = {
 			enabled = true,
 		},
 		terminal = {
@@ -367,6 +398,13 @@ return {
 				Snacks.scratch()
 			end,
 			desc = "Toggle scratch buffer",
+		},
+		{
+			"<leader>ud",
+			function()
+				Snacks.toggle.dim():toggle()
+			end,
+			desc = "Toggle code dimming",
 		},
 		{
 			"<leader>ut",

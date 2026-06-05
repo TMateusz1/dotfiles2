@@ -192,6 +192,8 @@ Find and search with Snacks picker:
 | `<leader>fR` | Resume last picker |
 | `<leader>fn` | Notification history |
 | `<leader>f.` | Scratch buffers |
+| `<leader>ft` | All todo comments |
+| `<leader>fT` | Todo/Fix/Fixme only |
 
 Files and project navigation:
 
@@ -229,6 +231,7 @@ Code, LSP, diagnostics, and formatting:
 | `<leader>cd`, `<leader>cq` | Line diagnostics/diagnostics quickfix |
 | `]d`, `[d` | Next/previous diagnostic with float |
 | `]r`, `[r` | Next/previous word reference (Snacks words) |
+| `]t`, `[t` | Next/previous todo comment |
 | `<leader>uh` | Toggle inlay hints when supported |
 
 Go-specific code mappings:
@@ -275,6 +278,15 @@ Tests:
 | `<leader>tw` | Watch current file |
 | `<leader>tx` | Stop tests |
 
+Sessions:
+
+| Key | Action |
+| --- | --- |
+| `<leader>ss` | Restore session for current directory |
+| `<leader>sl` | Restore last session |
+| `<leader>sS` | Pick from all saved sessions |
+| `<leader>sd` | Stop saving session (don't persist this session on exit) |
+
 Harpoon:
 
 | Key | Action |
@@ -292,6 +304,8 @@ UI and toggles:
 
 | Key | Action |
 | --- | --- |
+| `<leader>ud` | Toggle code dimming (dims code outside current scope) |
+| `<leader>uh` | Toggle inlay hints |
 | `<leader>ut` | Toggle terminal |
 | `<leader>uz` | Toggle zen mode |
 | `<leader>uZ` | Toggle zoom |
@@ -556,7 +570,7 @@ Two complementary file tools are provided.
 Snacks Explorer (`<leader>e`) is the main in-editor tree navigator:
 
 - `<leader>e` opens the explorer and reveals the current file in the tree.
-- `nvim .` opens a clean empty buffer rather than a directory listing; netrw is disabled.
+- `nvim .` sets cwd to that directory and opens the dashboard rather than a directory listing; netrw is disabled.
 - Deletes go to trash.
 
 Oil is used as an editable file manager:
@@ -679,6 +693,29 @@ Mappings:
 
 The Go adapter uses `gotestsum`. If `gotestsum` is missing, the plugin build step tries to install it with `go install gotest.tools/gotestsum@latest`.
 
+### Sessions
+
+`nvim/lua/plugins/sessions.lua` configures `folke/persistence.nvim`.
+
+Sessions are saved automatically per working directory on exit and can be restored on the next launch. The dashboard `s` key restores the session for the current directory.
+
+- `<leader>ss` restore session for cwd.
+- `<leader>sl` restore the most recent session regardless of directory.
+- `<leader>sS` open a picker to choose from all saved sessions.
+- `<leader>sd` stop auto-saving the current session (useful for throwaway windows).
+
+Sessions are stored under `stdpath("state")/sessions/`.
+
+### Todo Comments
+
+`nvim/lua/plugins/todo.lua` configures `folke/todo-comments.nvim`.
+
+Highlights `TODO`, `FIXME`, `FIX`, `HACK`, `WARN`, `PERF`, `NOTE`, `TEST` keywords in comments with distinct colors. Works in all filetypes.
+
+- `]t` / `[t` jump to the next/previous todo comment in the buffer.
+- `<leader>ft` open a Snacks picker with all todo comments in the project.
+- `<leader>fT` filter to `TODO`, `FIX`, `FIXME` only — the actionable ones.
+
 ### Harpoon
 
 `nvim/lua/plugins/harpoon.lua` configures `ThePrimeagen/harpoon` (harpoon2 branch) with a custom Snacks picker UI.
@@ -697,6 +734,8 @@ Active modules:
 
 - `bigfile` — disables heavy features for large files.
 - `bufdelete` — safe buffer deletion (used by `<leader>q`, `<leader>W`, `<leader>bx`, bufferline close).
+- `dashboard` — startup screen shown when opening Neovim without a file; shows recent files and quick-action keys (find, grep, config, Lazy, quit). When `nvim <dir>` is used, cwd is set first then the dashboard shows in that context.
+- `dim` — dims code outside the active scope; `<leader>ud` toggles. Pairs with `<leader>uz` zen mode.
 - `explorer` — tree file explorer; `<leader>e` reveals the current file.
 - `gitbrowse` — `<leader>gB` opens the current file/line in GitHub or GitLab; works in visual mode to link a range.
 - `indent` — animated indent guides with scope highlighting for the current block.
@@ -707,8 +746,9 @@ Active modules:
 - `quickfile` — fast file rendering on startup.
 - `scratch` — scratch buffers; `<leader>.` toggles, `<leader>f.` lists.
 - `scroll` — smooth animated scrolling for `<C-d>`, `<C-u>`, `<C-f>`, `<C-b>`.
+- `statuscolumn` — unified left-gutter rendering: orders git signs, LSP diagnostic signs, and fold indicators consistently across all buffers.
 - `terminal` — `<leader>ut` toggles a terminal.
-- `toggle` — toggle utilities with visual on/off feedback; used for inlay hints (`<leader>uh`) and word references (`<leader>uw`).
+- `toggle` — toggle utilities with visual on/off feedback; used for dim (`<leader>ud`), inlay hints (`<leader>uh`), and word references (`<leader>uw`).
 - `words` — highlights word references; `]r`/`[r` navigate; `<leader>uw` toggles.
 - `zen` — `<leader>uz` toggles zen mode; `<leader>uZ` toggles zoom.
 
