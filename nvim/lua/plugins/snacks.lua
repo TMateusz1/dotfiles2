@@ -1,3 +1,24 @@
+local function file_preview_without_markdown_render(ctx)
+	local path = Snacks.picker.util.path(ctx.item)
+	local ft = path and vim.filetype.match({ filename = path }) or nil
+
+	if ft ~= "markdown" then
+		return Snacks.picker.preview.file(ctx)
+	end
+
+	local file = ctx.picker.opts.previewers.file
+	local previous_ft = file.ft
+	file.ft = "text"
+	local ok, result = pcall(Snacks.picker.preview.file, ctx)
+	file.ft = previous_ft
+
+	if not ok then
+		error(result)
+	end
+
+	return result
+end
+
 return {
 	"folke/snacks.nvim",
 	priority = 1000,
@@ -43,6 +64,7 @@ return {
 				files = {
 					hidden = true,
 					follow = true,
+					preview = file_preview_without_markdown_render,
 					exclude = {
 						".git",
 						".vscode",

@@ -1,5 +1,9 @@
 -- ~/.config/nvim/lua/plugins/bufferline.lua
 
+local function snack_bufdelete(bufnr)
+	Snacks.bufdelete.delete(bufnr)
+end
+
 return {
 	{
 		"akinsho/bufferline.nvim",
@@ -40,8 +44,8 @@ return {
 
 				numbers = "none",
 
-				close_command = "bdelete! %d",
-				right_mouse_command = "bdelete! %d",
+				close_command = snack_bufdelete,
+				right_mouse_command = snack_bufdelete,
 				left_mouse_command = "buffer %d",
 				middle_mouse_command = nil,
 
