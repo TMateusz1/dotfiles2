@@ -43,9 +43,8 @@ return {
 				{ "<leader>u", group = "UI / Toggles" },
 
 				-- Direct leader mappings
-				{ "<leader>e", desc = "Snacks explorer" },
+				{ "<leader>e", desc = "Snacks explorer (reveal current file)" },
 				{ "<leader>E", desc = "Oil multi-file edit" },
-				{ "<leader>se", desc = "Snacks explorer cwd" },
 				{ "<leader>w", desc = "Save file" },
 				{ "<leader>q", desc = "Smart close" },
 				{ "<leader>Q", desc = "Quit window" },
@@ -62,6 +61,7 @@ return {
 				{ "<leader>bH", desc = "Delete buffers to the left" },
 
 				-- Git
+				{ "<leader>gB", desc = "Git browse (open in browser)", mode = { "n", "v" } },
 				{ "<leader>gg", desc = "LazyGit" },
 				{ "<leader>gG", desc = "LazyGit current file" },
 				{ "<leader>gc", desc = "Git commits" },
@@ -92,7 +92,6 @@ return {
 
 				-- Snacks picker
 				{ "<leader>ff", desc = "Find files" },
-				{ "<leader>fe", desc = "File explorer" },
 				{ "<leader>fG", desc = "Git changed files" },
 				{ "<leader>fg", desc = "Live grep" },
 				{ "<leader>fb", desc = "Find buffers" },
@@ -197,7 +196,6 @@ return {
 
 				-- UI / toggles
 				{ "<leader>uh", desc = "Toggle inlay hints" },
-				{ "<leader>un", desc = "Notification history" },
 				{ "<leader>ut", desc = "Toggle terminal" },
 				{ "<leader>uz", desc = "Toggle zen mode" },
 				{ "<leader>uZ", desc = "Toggle zoom" },

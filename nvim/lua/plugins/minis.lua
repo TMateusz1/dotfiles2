@@ -9,7 +9,6 @@ local function is_special_window()
 	local buftype = vim.bo.buftype
 
 	local special_filetypes = {
-		["minifiles"] = true,
 		["qf"] = true,
 		["help"] = true,
 		["man"] = true,

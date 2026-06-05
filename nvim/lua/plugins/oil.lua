@@ -350,7 +350,7 @@ return {
 				["R"] = "actions.refresh",
 			},
 
-			use_default_keymaps = true,
+			use_default_keymaps = false,
 
 			view_options = {
 				show_hidden = true,

@@ -408,12 +408,7 @@ return {
 
 					-- Inlay hints
 					if client:supports_method("textDocument/inlayHint") then
-						vim.lsp.inlay_hint.enable(false, { bufnr = bufnr })
-
-						map("n", "<leader>uh", function()
-							local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr })
-							vim.lsp.inlay_hint.enable(not enabled, { bufnr = bufnr })
-						end, "Toggle inlay hints")
+						Snacks.toggle.inlay_hints():map("<leader>uh")
 					end
 				end,
 			})

@@ -109,7 +109,7 @@ ls -l ~/.config/starship.toml
 - Leader and local leader are both space.
 - Absolute and relative line numbers are enabled.
 - Mouse support is enabled.
-- netrw is disabled because file exploration is handled by Mini.files, Oil, and fzf.
+- netrw is disabled because file exploration is handled by Snacks Explorer and Oil.
 - Clipboard uses `unnamedplus`.
 - Indentation uses spaces with a width of 4.
 - Search uses ignorecase plus smartcase.
@@ -150,7 +150,6 @@ Save, quit, and buffers:
 | `<leader>Q` | Quit current window |
 | `<leader>C` | Force-quit all Neovim windows |
 | `[b`, `]b` | Previous/next buffer |
-| `[[`, `]]` | Previous/next buffer |
 | `<leader>bx` | Delete current buffer |
 | `<leader>bp` | Pick buffer from bufferline |
 | `<leader>bX` | Delete all other buffers |
@@ -171,12 +170,11 @@ Completion and snippets:
 | Command-line `<Tab>`, `<S-Tab>` | Accept/select command-line completion |
 | Command-line `<Up>`, `<Down>`, `<C-k>`, `<C-j>` | Move through command-line completion items |
 
-Find and search with fzf-lua:
+Find and search with Snacks picker:
 
 | Key | Action |
 | --- | --- |
 | `<leader>ff` | Find files |
-| `<leader>fe` | Hierarchical fzf file explorer |
 | `<leader>fg` | Live grep |
 | `<leader>fG` | Git changed files |
 | `<leader>fb` | Find buffers |
@@ -187,25 +185,19 @@ Find and search with fzf-lua:
 | `<leader>fk` | Keymaps |
 | `<leader>f:` | Commands |
 | `<leader>fj` | Jump list |
-| `<leader>fm` | Marks |
+| `<leader>fm` | Harpoon files |
 | `<leader>f;`, `<leader>f/` | Command/search history |
 | `<leader>fd`, `<leader>fD` | Document/workspace diagnostics |
 | `<leader>fq`, `<leader>fl` | Quickfix/location list |
-| fzf `<Esc>` | Hide picker |
-| fzf `<C-d>`, `<C-u>` | Scroll preview down/up |
-| fzf `<C-q>` | Select all and accept |
-| fzf explorer `<Enter>` | Open file or descend into directory |
-| fzf explorer `<C-o>`, `<C-r>` | Go to parent directory/refresh current directory |
+| `<leader>fR` | Resume last picker |
+| `<leader>fn` | Notification history |
+| `<leader>f.` | Scratch buffers |
 
 Files and project navigation:
 
 | Key | Action |
 | --- | --- |
-| `<leader>e` | Open Mini.files at the Git root and reveal current file, or cwd from an empty buffer |
-| Mini.files `<Enter>`, `l`, `<Right>` | Enter directory or open file |
-| Mini.files `<Backspace>`, `h`, `<Left>` | Go to parent directory |
-| Mini.files `<C-v>`, `<C-s>`, `<C-t>` | Open selected file in vertical split, horizontal split, or tab |
-| Mini.files `q`, `<Esc>` | Close file explorer |
+| `<leader>e` | Open Snacks Explorer and reveal the current file |
 | `<leader>E` | Open Oil multi-file edit manager |
 | `-` | Open Oil parent directory in a float |
 | Oil `<CR>`, `l`, `<Right>` | Smart open file or directory |
@@ -221,7 +213,7 @@ Code, LSP, diagnostics, and formatting:
 | Key | Action |
 | --- | --- |
 | `gd`, `gD` | Go to definition/declaration |
-| `gr`, `gi`, `gy` | References, implementations, type definitions through fzf-lua |
+| `gr`, `gi`, `gy` | References, implementations, type definitions through Snacks picker |
 | `K` | Hover documentation |
 | `<leader>ca` | Code action in normal or visual mode |
 | `<leader>cl` | Format file or visual selection |
@@ -236,6 +228,7 @@ Code, LSP, diagnostics, and formatting:
 | `<leader>ci`, `<leader>cR` | LSP info/restart LSP |
 | `<leader>cd`, `<leader>cq` | Line diagnostics/diagnostics quickfix |
 | `]d`, `[d` | Next/previous diagnostic with float |
+| `]r`, `[r` | Next/previous word reference (Snacks words) |
 | `<leader>uh` | Toggle inlay hints when supported |
 
 Go-specific code mappings:
@@ -252,8 +245,12 @@ Git:
 | --- | --- |
 | `<leader>gg` | Open LazyGit |
 | `<leader>gG` | Open LazyGit for current file |
+| `<leader>gB` | Open current file/line in browser (GitHub/GitLab) |
 | `<leader>gc`, `<leader>gC` | Git commits/all commits for current buffer |
 | `<leader>gb` | Git branches |
+| `<leader>gd` | Git diff hunks |
+| `<leader>gl` | Git line commits |
+| `<leader>gs` | Git stash |
 | `]h`, `[h` | Next/previous Git hunk |
 | `<leader>ghp` | Preview hunk |
 | `<leader>ghs`, `<leader>ghr` | Stage/reset hunk or visual selection |
@@ -277,6 +274,29 @@ Tests:
 | `<leader>tq`, `<leader>tQ` | Next/previous failed test |
 | `<leader>tw` | Watch current file |
 | `<leader>tx` | Stop tests |
+
+Harpoon:
+
+| Key | Action |
+| --- | --- |
+| `<leader>mm` | Mark current file/line as the next Harpoon slot |
+| `<leader>m1`–`<leader>m3` | Mark current file/line into Harpoon slot 1–3 |
+| `<leader>1`–`<leader>3` | Jump to Harpoon slot 1–3 |
+| `<leader>fm` | Open Harpoon file picker |
+| Harpoon picker `<C-v>` | Open selected file in vertical split |
+| Harpoon picker `<C-x>` | Remove selected mark |
+| Harpoon picker `<C-k>`, `<C-up>` | Move mark up |
+| Harpoon picker `<C-j>`, `<C-down>` | Move mark down |
+
+UI and toggles:
+
+| Key | Action |
+| --- | --- |
+| `<leader>ut` | Toggle terminal |
+| `<leader>uz` | Toggle zen mode |
+| `<leader>uZ` | Toggle zoom |
+| `<leader>uw` | Toggle word references highlighting |
+| `<leader>.` | Toggle scratch buffer |
 
 Markdown:
 
@@ -331,15 +351,6 @@ Lazy settings:
 
 The lockfile is `nvim/lazy-lock.json`.
 
-### Message UI
-
-`nvim/lua/plugins/noice.lua` configures `noice.nvim` as an experimental message UI:
-
-- Command-line editing stays in a classic bottom-line view.
-- Regular messages, warnings, errors, and `vim.notify()` output route to Noice's compact `mini` view.
-- Long command output opens in a split.
-- LSP progress, hover, signature help, and popupmenu replacement are disabled while testing.
-
 ## Neovim Plugins
 
 ### Theme
@@ -350,7 +361,7 @@ The lockfile is `nvim/lazy-lock.json`.
 - Terminal colors enabled.
 - Transparent background disabled.
 - Comment text is italic.
-- Integrations are enabled for Treesitter, native LSP, Telescope-compatible surfaces, which-key, gitsigns, Mason, completion, and mini plugins.
+- Integrations are enabled for Treesitter, native LSP, which-key, gitsigns, Mason, completion, and mini plugins.
 
 The same Catppuccin Mocha direction is used by Ghostty and Starship, so the terminal, prompt, and editor share one visual language.
 
@@ -411,9 +422,9 @@ Common LSP mappings:
 
 - `gd` definition
 - `gD` declaration
-- `gr` references through fzf-lua
-- `gi` implementations through fzf-lua
-- `gy` type definitions through fzf-lua
+- `gr` references through Snacks picker
+- `gi` implementations through Snacks picker
+- `gy` type definitions through Snacks picker
 - `K` hover documentation
 - `<leader>ca` code action
 - `<leader>cr` rename
@@ -507,14 +518,15 @@ Installed parsers:
 
 Treesitter highlighting is enabled on filetype events for the supported languages. `jsonc` is registered to use the JSON parser.
 
-### Fuzzy Finding
+### Fuzzy Finding and Picker
 
-`nvim/lua/plugins/fzf.lua` configures `fzf-lua`.
+`nvim/lua/plugins/snacks.lua` configures `snacks.picker` as the unified fuzzy finder.
+
+File search excludes `.git`, `.vscode`, `node_modules`, `dist`, `build`, `target`, and `.idea`. Hidden files and symlinks are followed. Markdown files in the preview window are rendered as plain text to avoid render-markdown interference.
 
 Mappings:
 
 - `<leader>ff` find files
-- `<leader>fe` hierarchical file explorer picker
 - `<leader>fg` live grep
 - `<leader>fG` Git changed files
 - `<leader>fb` buffers
@@ -526,33 +538,26 @@ Mappings:
 - `<leader>fk` keymaps
 - `<leader>f:` commands
 - `<leader>fj` jump list
-- `<leader>fm` marks
+- `<leader>fm` Harpoon files
 - `<leader>f;` command history
 - `<leader>f/` search history
-- `<leader>gc` Git commits
-- `<leader>gb` Git branches
-- `<leader>gC` Git commits for the current buffer
 - `<leader>fd` document diagnostics
 - `<leader>fD` workspace diagnostics
 - `<leader>fq` quickfix list
 - `<leader>fl` location list
-
-File search uses `fd` where available and falls back to `rg --files`. Hidden files and symlinks are included, while noisy directories such as `.git`, `.vscode`, `node_modules`, `dist`, `build`, `target`, and `.idea` are excluded. `<leader>fe` is intentionally different from `<leader>ff`: it behaves like a hierarchy browser, showing one directory level at a time with `../`, directories first, file/directory previews, Enter to descend/open, `<C-o>` to go up, and `<C-r>` to refresh.
+- `<leader>fR` resume last picker
+- `<leader>fn` notification history
+- `<leader>f.` scratch buffers
 
 ### File Explorers
 
-`nvim/lua/plugins/file-explorers.lua` configures two complementary file tools.
+Two complementary file tools are provided.
 
-Mini.files is the main in-editor file navigator:
+Snacks Explorer (`<leader>e`) is the main in-editor tree navigator:
 
-- `<leader>e` opens Mini.files at the current file's Git root and reveals the file, or at cwd from an empty buffer.
-- `<Enter>`, `l`, and right arrow enter directories or open files.
-- Opening a file closes Mini.files and uses the original editor window.
-- `<Backspace>`, `h`, and left arrow go to the parent directory.
-- `<C-v>`, `<C-s>`, and `<C-t>` open a selected file in a vertical split, horizontal split, or tab.
-- Right-aligned markers show lightweight Git and diagnostic state: `M`, `A`, `D`, `R`, `?`, `!`, and `E`, `W`, `I`, `H`.
-- `q` and `<Esc>` close Mini.files.
-- `nvim .` sets cwd to that directory and leaves a clean empty buffer instead of opening a directory explorer.
+- `<leader>e` opens the explorer and reveals the current file in the tree.
+- `nvim .` opens a clean empty buffer rather than a directory listing; netrw is disabled.
+- Deletes go to trash.
 
 Oil is used as an editable file manager:
 
@@ -560,8 +565,7 @@ Oil is used as an editable file manager:
 - `-` opens Oil at the parent directory.
 - Directory navigation opens additional floating columns up to a depth of 3.
 - Selecting a file opens it in the original editor window and closes the Oil columns.
-- `h`, left arrow, and backspace go back.
-- `l`, right arrow, and enter open.
+- `h`, left arrow, and backspace go back; `l`, right arrow, and enter open.
 - `<C-v>`, `<C-s>`, and `<C-t>` open in vertical split, split, and tab.
 - `q` and `<Esc>` close all Oil columns.
 - `g.` toggles hidden files.
@@ -570,7 +574,7 @@ Oil is used as an editable file manager:
 
 ### Git
 
-Git support is split between gitsigns, fzf-lua, and LazyGit.
+Git support is split between gitsigns, snacks.picker, and LazyGit (via snacks.lazygit).
 
 `nvim/lua/plugins/gitsigns.lua`:
 
@@ -595,7 +599,7 @@ Mappings:
 - `<leader>ght` toggle deleted lines
 - `<leader>ghw` toggle word diff
 
-`nvim/lua/plugins/lazygit.lua`:
+`snacks.lazygit` (configured in `nvim/lua/plugins/snacks.lua`):
 
 - `<leader>gg` opens LazyGit.
 - `<leader>gG` opens LazyGit for the current file.
@@ -604,8 +608,8 @@ Mappings:
 
 `nvim/lua/plugins/bufferline.lua` configures buffer tabs:
 
-- `]b`, `[[` next buffer
-- `[b`, `]]` previous buffer
+- `]b` next buffer
+- `[b` previous buffer
 - `<leader>bp` pick buffer
 - `<leader>bX` close other buffers
 - `<leader>bL` close buffers to the right
@@ -617,7 +621,8 @@ Diagnostics are shown in the bufferline.
 
 - Shows mode, branch, filename, diagnostics, active LSP clients, diff, filetype, progress, and location.
 - Uses global statusline mode.
-- Disables the statusline for Mini.files and Oil windows.
+- Disables the statusline for Oil windows.
+- Colors are sourced from the Catppuccin palette API so they follow flavour changes automatically.
 
 ### Mini Plugins
 
@@ -627,7 +632,8 @@ Diagnostics are shown in the bufferline.
 - `mini.surround` for surround operations.
 - `mini.pairs` for autopairs.
 - `mini.icons` for icons and `nvim-web-devicons` compatibility.
-- `mini.bufremove` for buffer deletion without breaking window layout.
+
+Buffer deletion is handled by `snacks.bufdelete`, which is integrated into `<leader>q`, `<leader>W`, `<leader>bx`, and the bufferline close buttons.
 
 Surround mappings:
 
@@ -672,6 +678,39 @@ Mappings:
 - `<leader>tx` stop tests
 
 The Go adapter uses `gotestsum`. If `gotestsum` is missing, the plugin build step tries to install it with `go install gotest.tools/gotestsum@latest`.
+
+### Harpoon
+
+`nvim/lua/plugins/harpoon.lua` configures `ThePrimeagen/harpoon` (harpoon2 branch) with a custom Snacks picker UI.
+
+- Up to 3 named slots, each pinned to a specific file and line.
+- `<leader>mm` marks the current file/line into the next free slot.
+- `<leader>m1`–`<leader>m3` mark into a specific slot.
+- `<leader>1`–`<leader>3` jump directly to a slot.
+- `<leader>fm` opens the Harpoon picker; `<C-v>` opens in vsplit, `<C-x>` removes a mark, `<C-k>`/`<C-j>` reorder marks.
+
+### Snacks
+
+`nvim/lua/plugins/snacks.lua` is the central integration plugin (`folke/snacks.nvim`).
+
+Active modules:
+
+- `bigfile` — disables heavy features for large files.
+- `bufdelete` — safe buffer deletion (used by `<leader>q`, `<leader>W`, `<leader>bx`, bufferline close).
+- `explorer` — tree file explorer; `<leader>e` reveals the current file.
+- `gitbrowse` — `<leader>gB` opens the current file/line in GitHub or GitLab; works in visual mode to link a range.
+- `indent` — animated indent guides with scope highlighting for the current block.
+- `input` — improved `vim.ui.input` UI.
+- `lazygit` — `<leader>gg` and `<leader>gG` open LazyGit.
+- `notifier` — fancy notifications replacing `vim.notify`; `<leader>fn` browses history.
+- `picker` — unified fuzzy finder (see Fuzzy Finding section).
+- `quickfile` — fast file rendering on startup.
+- `scratch` — scratch buffers; `<leader>.` toggles, `<leader>f.` lists.
+- `scroll` — smooth animated scrolling for `<C-d>`, `<C-u>`, `<C-f>`, `<C-b>`.
+- `terminal` — `<leader>ut` toggles a terminal.
+- `toggle` — toggle utilities with visual on/off feedback; used for inlay hints (`<leader>uh`) and word references (`<leader>uw`).
+- `words` — highlights word references; `]r`/`[r` navigate; `<leader>uw` toggles.
+- `zen` — `<leader>uz` toggles zen mode; `<leader>uZ` toggles zoom.
 
 ### which-key
 

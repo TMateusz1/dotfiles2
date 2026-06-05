@@ -17,25 +17,7 @@ local function lsp_clients()
 	return "  " .. table.concat(names, ",")
 end
 
-local palette = {
-	base = "#1e1e2e",
-	mantle = "#181825",
-	crust = "#11111b",
-	surface0 = "#313244",
-	surface1 = "#45475a",
-	text = "#cdd6f4",
-	subtext0 = "#a6adc8",
-	red = "#f38ba8",
-	peach = "#fab387",
-	yellow = "#f9e2af",
-	green = "#a6e3a1",
-	teal = "#94e2d5",
-	sky = "#89dceb",
-	sapphire = "#74c7ec",
-	blue = "#89b4fa",
-	mauve = "#cba6f7",
-	lavender = "#b4befe",
-}
+local palette = require("catppuccin.palettes").get_palette("mocha")
 
 local function mode_theme(color)
 	return {
@@ -82,7 +64,6 @@ return {
 				globalstatus = true,
 				disabled_filetypes = {
 					statusline = {
-						"minifiles",
 						"oil",
 					},
 				},

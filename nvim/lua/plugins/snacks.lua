@@ -30,6 +30,12 @@ return {
 		bufdelete = {
 			enabled = true,
 		},
+		gitbrowse = {
+			enabled = true,
+		},
+		indent = {
+			enabled = true,
+		},
 		input = {
 			enabled = true,
 		},
@@ -42,7 +48,13 @@ return {
 		scratch = {
 			enabled = true,
 		},
+		scroll = {
+			enabled = true,
+		},
 		terminal = {
+			enabled = true,
+		},
+		toggle = {
 			enabled = true,
 		},
 		words = {
@@ -53,7 +65,6 @@ return {
 		},
 		explorer = {
 			enabled = true,
-			replace_netrw = true,
 			trash = true,
 		},
 
@@ -129,20 +140,6 @@ return {
 				Snacks.explorer.reveal()
 			end,
 			desc = "Snacks explorer",
-		},
-		{
-			"<leader>se",
-			function()
-				Snacks.explorer()
-			end,
-			desc = "Snacks explorer cwd",
-		},
-		{
-			"<leader>fe",
-			function()
-				Snacks.explorer()
-			end,
-			desc = "File explorer",
 		},
 		{
 			"<leader>ff",
@@ -343,6 +340,14 @@ return {
 			desc = "Git stash",
 		},
 		{
+			"<leader>gB",
+			function()
+				Snacks.gitbrowse()
+			end,
+			desc = "Git browse (open in browser)",
+			mode = { "n", "v" },
+		},
+		{
 			"<leader>gg",
 			function()
 				Snacks.lazygit()
@@ -362,13 +367,6 @@ return {
 				Snacks.scratch()
 			end,
 			desc = "Toggle scratch buffer",
-		},
-		{
-			"<leader>un",
-			function()
-				Snacks.picker.notifications()
-			end,
-			desc = "Notification history",
 		},
 		{
 			"<leader>ut",
@@ -394,11 +392,7 @@ return {
 		{
 			"<leader>uw",
 			function()
-				if Snacks.words.is_enabled() then
-					Snacks.words.disable()
-				else
-					Snacks.words.enable()
-				end
+				Snacks.toggle.words():toggle()
 			end,
 			desc = "Toggle word references",
 		},

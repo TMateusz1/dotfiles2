@@ -28,13 +28,10 @@ return {
 				native_lsp = {
 					enabled = true,
 				},
-				telescope = true,
 				which_key = true,
 				gitsigns = true,
 				mason = true,
 				cmp = true,
-				noice = true,
-				notify = false,
 				mini = true,
 			},
 		},
