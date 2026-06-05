@@ -153,13 +153,12 @@ return {
 				},
 
 				["<Tab>"] = {
-					function(cmp)
-						return cmp.select_and_accept()
-					end,
+					"select_next",
 					"snippet_forward",
 					"fallback",
 				},
 				["<S-Tab>"] = {
+					"select_prev",
 					"snippet_backward",
 					"fallback",
 				},
@@ -298,7 +297,7 @@ return {
 					["<C-k>"] = { "select_prev", "fallback" },
 					["<C-j>"] = { "select_next", "fallback" },
 
-					["<Tab>"] = { "select_and_accept", "fallback" },
+					["<Tab>"] = { "select_next", "fallback" },
 					["<S-Tab>"] = { "select_prev", "fallback" },
 
 					["<CR>"] = { "accept_and_enter", "fallback" },

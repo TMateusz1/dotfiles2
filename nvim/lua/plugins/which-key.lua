@@ -38,6 +38,7 @@ return {
 				{ "<leader>g", group = "Git" },
 				{ "<leader>c", group = "Code" },
 				{ "<leader>cg", group = "Go" },
+				{ "<leader>d", group = "Debug" },
 				{ "<leader>t", group = "Tests" },
 				{ "<leader>u", group = "UI / Toggles" },
 
@@ -133,6 +134,26 @@ return {
 				{ "<leader>cgg", desc = "Go generate" },
 				{ "<leader>cgm", desc = "Go mod tidy" },
 				{ "<leader>cgv", desc = "Go vulncheck" },
+
+				-- Debug
+				{ "<leader>db", desc = "Debug toggle breakpoint" },
+				{ "<leader>dB", desc = "Debug conditional breakpoint" },
+				{ "<leader>dp", desc = "Debug log point" },
+				{ "<leader>dc", desc = "Debug continue" },
+				{ "<leader>dC", desc = "Debug run to cursor" },
+				{ "<leader>di", desc = "Debug step into" },
+				{ "<leader>do", desc = "Debug step over" },
+				{ "<leader>dO", desc = "Debug step out" },
+				{ "<leader>dr", desc = "Debug restart" },
+				{ "<leader>dl", desc = "Debug run last" },
+				{ "<leader>dt", desc = "Debug terminate" },
+				{ "<leader>du", desc = "Debug UI" },
+				{ "<leader>de", desc = "Debug eval", mode = { "n", "v" } },
+				{ "<leader>df", desc = "Debug frames" },
+				{ "<leader>ds", desc = "Debug scopes" },
+				{ "<leader>dS", desc = "Debug scopes wide" },
+				{ "<leader>dg", desc = "Debug Go test" },
+				{ "<leader>dG", desc = "Debug last Go test" },
 
 				-- Tests
 				{ "<leader>tf", desc = "Test current function" },
