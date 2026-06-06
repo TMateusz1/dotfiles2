@@ -341,7 +341,6 @@ return {
 					-- Navigation (discoverable via <leader>c)
 					map("n", "<leader>cd", function() Snacks.picker.lsp_definitions() end, "Go to definition")
 					map("n", "<leader>cD", vim.lsp.buf.declaration, "Go to declaration")
-					map("n", "<leader>ci", function() Snacks.picker.lsp_implementations() end, "Go to implementations")
 					map("n", "<leader>cy", function() Snacks.picker.lsp_type_definitions() end, "Go to type definition")
 					map("n", "<leader>cu", function()
 						Snacks.picker.lsp_references({ include_declaration = false })
@@ -401,6 +400,12 @@ return {
 						map("n", "<leader>cgm", function() require("config.go").mod_tidy(bufnr) end, "Go mod tidy")
 						map("n", "<leader>cgg", function() require("config.go").generate(bufnr) end, "Go generate")
 						map("n", "<leader>cgv", function() require("config.go").vulncheck(bufnr) end, "Go vulncheck")
+
+						-- Code generation (gomodifytags / gotests / impl)
+						map("n", "<leader>cgt", function() require("config.go").add_tags(bufnr) end, "Add struct tags (json+yaml)")
+						map("n", "<leader>cgT", function() require("config.go").remove_tags(bufnr) end, "Remove struct tags")
+						map("n", "<leader>cgu", function() require("config.go").generate_tests(bufnr) end, "Generate unit tests")
+						map("n", "<leader>ci", function() require("config.go").implement_interface(bufnr) end, "Implement interface")
 					end
 
 					-- Inlay hints

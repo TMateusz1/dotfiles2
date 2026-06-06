@@ -78,7 +78,9 @@ return {
 			enabled = true,
 		},
 		words = {
-			enabled = true,
+			-- Off by default: no auto-highlighting of every reference/usage of
+			-- the symbol under the cursor. Toggle on demand with <leader>uw.
+			enabled = false,
 		},
 		zen = {
 			enabled = true,
@@ -97,6 +99,17 @@ return {
 					hidden = true,
 					ignored = false,
 					exclude = explorer_noise,
+					-- Sidebar on the right side of the editor.
+					layout = {
+						layout = {
+							position = "right",
+						},
+					},
+					-- Close the explorer after opening a file (directories still
+					-- just expand/collapse in place).
+					jump = {
+						close = true,
+					},
 					actions = {
 						toggle_explorer_noise = function(picker)
 							picker.opts.show_explorer_noise = not picker.opts.show_explorer_noise
@@ -109,6 +122,8 @@ return {
 							keys = {
 								["H"] = "toggle_explorer_noise",
 								["I"] = "toggle_ignored",
+								-- Don't open files in the system default app.
+								["o"] = false,
 							},
 						},
 					},
@@ -190,9 +205,16 @@ return {
 		{
 			"<leader>e",
 			function()
-				Snacks.explorer.reveal()
+				-- Toggle: close if open, otherwise open and reveal the current file.
+				local explorer = Snacks.picker.get({ source = "explorer" })[1]
+
+				if explorer then
+					explorer:close()
+				else
+					Snacks.explorer.reveal()
+				end
 			end,
-			desc = "Snacks explorer",
+			desc = "Snacks explorer (toggle)",
 		},
 		{
 			"<leader>ff",

@@ -1,6 +1,7 @@
 local M = {}
 local generation_running = false
 local dynamic_schema_file_patterns = {}
+local processed_local_roots = {}
 
 local static_kubernetes_file_patterns = {
 	"k8s/**/*.yaml",
@@ -219,6 +220,58 @@ local function openshift_schema_path(group, kind, version)
 	return vim.fs.joinpath(group_dir, ("%s_%s_%s.json"):format(kind:lower(), group:lower(), version:lower()))
 end
 
+-- Write one schema file per served CRD version. Shared by the cluster and the
+-- local (config/crd/bases) generators. Returns how many versions were written.
+local function write_crd_schemas(items)
+	local count = 0
+
+	for _, crd in ipairs(items or {}) do
+		if vim.tbl_get(crd, "kind") == "CustomResourceDefinition" then
+			local group = vim.tbl_get(crd, "spec", "group")
+			local kind = vim.tbl_get(crd, "spec", "names", "kind")
+
+			for _, version in ipairs(vim.tbl_get(crd, "spec", "versions") or {}) do
+				if version.served ~= false then
+					local schema = schema_for_crd(crd, version)
+
+					if schema and group and kind and version.name then
+						local encoded = vim.json.encode(schema)
+						vim.fn.writefile({ encoded }, crd_schema_path(group, kind, version.name))
+
+						if group:lower():find("openshift.io", 1, true) then
+							vim.fn.writefile({ encoded }, openshift_schema_path(group, kind, version.name))
+						end
+
+						count = count + 1
+					end
+				end
+			end
+		end
+	end
+
+	return count
+end
+
+local function project_root_for(bufnr)
+	local file = vim.api.nvim_buf_get_name(bufnr or 0)
+	local root = file ~= "" and vim.fs.root(file, { "PROJECT", "go.mod", "go.work", ".git" }) or nil
+
+	return root or vim.uv.cwd()
+end
+
+local function local_crd_files(root)
+	local files = {}
+
+	for _, glob in ipairs({
+		"/config/crd/bases/*.yaml",
+		"/config/crd/bases/*.yml",
+	}) do
+		vim.list_extend(files, vim.fn.glob(root .. glob, true, true))
+	end
+
+	return files
+end
+
 function M.crd_catalog_dir()
 	return vim.fs.joinpath(vim.fn.stdpath("state"), "kubernetes", "crd-catalog")
 end
@@ -365,32 +418,9 @@ function M.generate_crd_schemas(opts)
 				return
 			end
 
-			local count = 0
+			local count = write_crd_schemas(crds.items or {})
 
-			for _, crd in ipairs(crds.items or {}) do
-				local group = vim.tbl_get(crd, "spec", "group")
-				local kind = vim.tbl_get(crd, "spec", "names", "kind")
-
-				for _, version in ipairs(vim.tbl_get(crd, "spec", "versions") or {}) do
-					if version.served ~= false then
-						local schema = schema_for_crd(crd, version)
-
-						if schema and group and kind and version.name then
-							local encoded = vim.json.encode(schema)
-							local path = crd_schema_path(group, kind, version.name)
-							vim.fn.writefile({ encoded }, path)
-
-							if group:lower():find("openshift.io", 1, true) then
-								vim.fn.writefile({ encoded }, openshift_schema_path(group, kind, version.name))
-							end
-
-							count = count + 1
-						end
-					end
-				end
-			end
-
-			if count == 0 then
+				if count == 0 then
 				if not opts.quiet then
 					notify("No CRDs found in the current kubectl context", vim.log.levels.WARN)
 				end
@@ -405,6 +435,76 @@ function M.generate_crd_schemas(opts)
 	end)
 end
 
+-- Build CRD schemas from the operator's own config/crd/bases/*.yaml without a
+-- live cluster, so sample CRs validate before the CRD is ever applied. kubectl
+-- client-side dry-run is used purely as an offline YAML-to-JSON converter.
+function M.generate_local_crd_schemas(opts)
+	opts = opts or {}
+
+	local root = opts.root or project_root_for(opts.bufnr)
+	local files = local_crd_files(root)
+
+	if #files == 0 then
+		if not opts.quiet then
+			notify("No local CRDs found under config/crd/bases", vim.log.levels.WARN)
+		end
+		return
+	end
+
+	if vim.fn.executable("kubectl") ~= 1 then
+		if not opts.quiet then
+			notify("kubectl is required to read local CRD files", vim.log.levels.ERROR)
+		end
+		return
+	end
+
+	local pending = #files
+	local total = 0
+
+	for _, file in ipairs(files) do
+		vim.system({
+			"kubectl",
+			"create",
+			"--dry-run=client",
+			"--validate=false",
+			"-o",
+			"json",
+			"-f",
+			file,
+		}, {
+			text = true,
+		}, function(result)
+			vim.schedule(function()
+				if result.code == 0 and result.stdout and result.stdout ~= "" then
+					local ok, decoded = pcall(vim.json.decode, result.stdout)
+
+					if ok and type(decoded) == "table" then
+						local items = decoded.kind == "List" and (decoded.items or {}) or { decoded }
+						total = total + write_crd_schemas(items)
+					end
+				end
+
+				pending = pending - 1
+
+				if pending > 0 then
+					return
+				end
+
+				if total > 0 then
+					M.update_yamlls()
+					pcall(vim.cmd, "LspRestart yamlls")
+
+					if not opts.quiet then
+						notify(("Loaded %d local CRD schema(s) from %s"):format(total, root))
+					end
+				elseif not opts.quiet then
+					notify("No CRD schemas were produced from local files", vim.log.levels.WARN)
+				end
+			end)
+		end)
+	end
+end
+
 function M.setup()
 	-- Keep CRD cache generation quiet on file open; explicit commands notify.
 	vim.api.nvim_create_autocmd("FileType", {
@@ -414,10 +514,22 @@ function M.setup()
 			"helm",
 			"yaml.helm-values",
 		},
-		callback = function()
+		callback = function(event)
 			if not is_non_empty_dir(M.crd_catalog_dir()) then
 				M.generate_crd_schemas({
 					quiet = true,
+				})
+			end
+
+			-- Ingest the operator's own CRDs (config/crd/bases) once per project,
+			-- so its sample CRs validate without applying anything to a cluster.
+			local root = project_root_for(event.buf)
+
+			if not processed_local_roots[root] and #local_crd_files(root) > 0 then
+				processed_local_roots[root] = true
+				M.generate_local_crd_schemas({
+					quiet = true,
+					root = root,
 				})
 			end
 		end,
@@ -441,6 +553,13 @@ function M.setup()
 			end, 200)
 		end,
 		desc = "Attach Kubernetes schema to YAML files with apiVersion and kind",
+	})
+
+	vim.api.nvim_create_user_command("KubeCrdSchemasLocal", function()
+		processed_local_roots = {}
+		M.generate_local_crd_schemas()
+	end, {
+		desc = "Generate yamlls CRD schemas from local config/crd/bases files",
 	})
 
 	vim.api.nvim_create_user_command("KubeCrdSchemas", function()

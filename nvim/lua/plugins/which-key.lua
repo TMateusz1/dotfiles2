@@ -131,7 +131,7 @@ return {
 				-- <leader>c — navigation (all use picker)
 				{ "<leader>cd", desc = "Go to definition" },
 				{ "<leader>cD", desc = "Go to declaration" },
-				{ "<leader>ci", desc = "Go to implementations" },
+				{ "<leader>ci", desc = "Implement interface (Go)" },
 				{ "<leader>cy", desc = "Go to type definition" },
 				{ "<leader>cu", desc = "Find usages" },
 				{ "<leader>cs", desc = "Document symbols" },
@@ -160,6 +160,9 @@ return {
 				{ "<leader>cgg", desc = "Go generate" },
 				{ "<leader>cgm", desc = "Go mod tidy" },
 				{ "<leader>cgv", desc = "Go vulncheck" },
+				{ "<leader>cgt", desc = "Add struct tags (json+yaml)" },
+				{ "<leader>cgT", desc = "Remove struct tags" },
+				{ "<leader>cgu", desc = "Generate unit tests" },
 
 				-- Debug
 				{ "<leader>db", desc = "Debug toggle breakpoint" },

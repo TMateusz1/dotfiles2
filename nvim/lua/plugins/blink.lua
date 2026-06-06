@@ -152,14 +152,40 @@ return {
 					"fallback",
 				},
 
+				-- Smart Tab: default to jumping snippet placeholders, but once
+				-- the completion menu is actually being navigated (an item is
+				-- highlighted) keep cycling it instead. Outside a snippet, Tab
+				-- drives the menu. <CR> accepts; <C-j>/<C-k> also cycle.
 				["<Tab>"] = {
-					"select_next",
-					"snippet_forward",
+					function(cmp)
+						if cmp.is_menu_visible() and cmp.get_selected_item() then
+							return cmp.select_next()
+						end
+
+						if cmp.snippet_active({ direction = 1 }) then
+							return cmp.snippet_forward()
+						end
+
+						if cmp.is_menu_visible() then
+							return cmp.select_next()
+						end
+					end,
 					"fallback",
 				},
 				["<S-Tab>"] = {
-					"select_prev",
-					"snippet_backward",
+					function(cmp)
+						if cmp.is_menu_visible() and cmp.get_selected_item() then
+							return cmp.select_prev()
+						end
+
+						if cmp.snippet_active({ direction = -1 }) then
+							return cmp.snippet_backward()
+						end
+
+						if cmp.is_menu_visible() then
+							return cmp.select_prev()
+						end
+					end,
 					"fallback",
 				},
 
@@ -179,11 +205,20 @@ return {
 				accept = {
 					auto_brackets = {
 						enabled = true,
+						-- Only decide brackets from the completion item kind
+						-- (Function/Method). The semantic-token fallback misfires
+						-- inside snippet placeholders and turns a struct like
+						-- `Config` into `Config()`.
+						semantic_token_resolution = {
+							enabled = false,
+						},
 					},
 				},
 
 				trigger = {
-					show_in_snippet = false,
+					-- Show completion inside snippet placeholders (e.g. the
+					-- receiver-type field of a `meth` snippet).
+					show_in_snippet = true,
 				},
 
 				documentation = {

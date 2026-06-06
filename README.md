@@ -225,7 +225,7 @@ Code, LSP, diagnostics, and formatting:
 | Key | Action |
 | --- | --- |
 | `<leader>cd`, `<leader>cD` | Go to definition/declaration |
-| `<leader>ci`, `<leader>cy` | Go to implementations/type definition |
+| `<leader>cy` | Go to type definition |
 | `<leader>cu` | Find usages (references without declaration) |
 | `<leader>cs`, `<leader>cS` | Document/workspace symbols |
 | `<leader>cF` | LSP finder (definitions + references + implementations) |
@@ -259,13 +259,19 @@ Code, LSP, diagnostics, and formatting:
 
 Folds are provided by the language server (`vim.lsp.foldexpr`) on servers that support folding ranges, but nothing is collapsed by default — `foldlevel` is set to `99` on attach so every function starts open. The fold keys above are only needed when you want to fold manually.
 
-Go-specific code mappings:
+Go-specific code mappings (only active in Go buffers):
 
 | Key | Action |
 | --- | --- |
+| `<leader>ci` | Implement interface: put the cursor in a struct, then pick the interface from a live picker (type `fmt.Str` → `fmt.Stringer`); `impl` stubs are inserted after the struct |
 | `<leader>cgm` | Run `go mod tidy` |
 | `<leader>cgg` | Run `go generate ./...` |
 | `<leader>cgv` | Run `govulncheck ./...` |
+| `<leader>cgt` | Add `json`+`yaml` struct tags (camelCase, `omitempty`) to the struct under the cursor (`gomodifytags`) |
+| `<leader>cgT` | Remove all tags from the struct under the cursor (`gomodifytags`) |
+| `<leader>cgu` | Scaffold table tests for the function under the cursor (`gotests`) |
+
+`<leader>ci` replaces the old "go to implementations" leader mapping — use the bare `gi` for navigation to implementations. `<leader>ci`, `<leader>cg{t,T,u}` are wired only when `gopls` is attached.
 
 Git:
 
@@ -463,7 +469,7 @@ LSP behavior:
 Common LSP mappings:
 
 - `gd`/`gD` definition/declaration, `gr`/`gi`/`gy` references/implementations/type definitions (all via Snacks picker), `K` hover
-- `<leader>cd`/`<leader>cD` definition/declaration, `<leader>ci`/`<leader>cy` implementations/type definition, `<leader>cu` usages
+- `<leader>cd`/`<leader>cD` definition/declaration, `<leader>cy` type definition, `<leader>cu` usages (use bare `gi` for implementations; `<leader>ci` is repurposed to implement-interface in Go buffers)
 - `<leader>cs`/`<leader>cS` document/workspace symbols, `<leader>cF` LSP finder, `<leader>cI`/`<leader>cO` calls
 - `<leader>ca` code action, `<leader>cr` references, `<leader>cn` rename, `<leader>co` organize imports, `<leader>cf` fix all
 - `<leader>cc`/`<leader>cC` run/refresh code lens
@@ -471,20 +477,26 @@ Common LSP mappings:
 - `<leader>cL` LSP info, `<leader>cR` restart LSP
 - `<leader>uh` toggles inlay hints when supported, `<leader>uv` toggles virtual-line diagnostics
 
-Go-specific mappings:
+Go-specific mappings (active only while `gopls` is attached):
 
 - `<leader>cgm` runs `go mod tidy`.
 - `<leader>cgg` runs `go generate ./...`.
 - `<leader>cgv` runs `govulncheck ./...`; if `govulncheck` is not installed, it falls back to `go run golang.org/x/vuln/cmd/govulncheck@latest ./...`.
+- `<leader>cgt` / `<leader>cgT` add / clear struct tags via `gomodifytags`.
+- `<leader>cgu` scaffolds tests for the function under the cursor via `gotests`.
+- `<leader>ci` implements an interface on a chosen struct via `impl`.
 
 ### Go Helpers
 
-`nvim/lua/config/go.lua` centralizes project-root detection and Go command execution:
+`nvim/lua/config/go.lua` centralizes project-root detection, Go command execution, and code-generation helpers:
 
 - Project root is detected from `go.work`, `go.mod`, or `.git`.
-- Go commands run from the project root.
-- Failed command output is written to the quickfix list.
+- Go commands run from the project root; failed command output is written to the quickfix list.
 - Helper functions expose organize imports, fix all, `go mod tidy`, `go generate ./...`, and vulnerability checks.
+- Code-generation helpers use Treesitter to find the struct/function under the cursor and drive the Mason-installed tools:
+  - `add_tags` / `remove_tags` → `gomodifytags` (json+yaml, camelCase, `omitempty`).
+  - `generate_tests` → `gotests` (table tests, parallel subtests, written to the `_test.go` file).
+  - `implement_interface` → takes the struct **under the cursor**, then opens a live gopls workspace-symbol picker filtered to interfaces. As you type (e.g. `fmt.Str`) gopls returns matching interfaces (`fmt.Stringer`); on selection the symbol's import path is resolved with `go list` so it works for stdlib, dependency, and workspace interfaces, and `impl`'s generated method stubs are inserted right after the struct. The receiver name is derived from the struct name (e.g. `Widget` → `w *Widget`). If the picker is unavailable it falls back to a manual interface prompt.
 
 ### Kubernetes and YAML
 
@@ -496,12 +508,14 @@ Go-specific mappings:
 - Detects YAML buffers that contain both `apiVersion:` and `kind:`.
 - Avoids treating Helm template files containing `{{` as plain Kubernetes manifests.
 - Dynamically attaches the Kubernetes schema to individual YAML files that look like manifests.
-- Generates a local CRD schema catalog from the current `kubectl` context.
+- Generates a CRD schema catalog from the current `kubectl` context.
+- Also ingests the operator's own CRDs from `config/crd/bases/*.yaml` (the kubebuilder/operator-sdk layout) so its sample custom resources validate and complete **before** the CRD is ever applied to a cluster. This runs automatically once per project (when a `config/crd/bases` directory exists) and converts the local YAML to JSON with an offline `kubectl create --dry-run=client` call — no cluster contact.
 - Adds an OpenShift-specific cache path for OpenShift CRDs.
 
 User commands:
 
 - `:KubeCrdSchemas` generates CRD schemas from the current cluster.
+- `:KubeCrdSchemasLocal` generates CRD schemas from the project's local `config/crd/bases/*.yaml` files (no cluster needed).
 - `:KubeCrdSchemasPath` prints the local CRD schema cache path.
 - `:KubeSchemaAttach` attaches the Kubernetes schema to the current YAML buffer if it looks like a manifest.
 
@@ -533,6 +547,15 @@ Formatting runs on save. For Go files this also runs `goimports`, so imports are
 Mapping:
 
 - `<leader>cl` formats the current file or visual selection.
+
+### Linting
+
+`nvim/lua/plugins/lint.lua` wires `mfussenegger/nvim-lint` so the Mason-installed linters actually produce diagnostics (formatting and LSP do not cover these):
+
+- `yamllint` runs on `yaml`, `yaml.docker-compose`, and `yaml.helm-values` buffers. It is invoked with `-d relaxed` so the noisy stylistic warnings (line length, comment spacing, document-start) are dropped and only real problems — duplicate keys, bad indentation, syntax errors — surface. Helm templates are filetype `helm`, so `{{ }}` files are never linted as YAML.
+- `hadolint` runs on `dockerfile` buffers.
+
+Linters run on read, write, and leaving insert mode. Diagnostics appear through the normal diagnostic UI (`<leader>cx`, `]d`/`[d`, `<leader>fd`).
 
 ### Treesitter
 
