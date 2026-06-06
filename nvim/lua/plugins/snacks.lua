@@ -324,6 +324,13 @@ return {
 			desc = "Search history",
 		},
 		{
+			"<leader>fs",
+			function()
+				Snacks.picker.lsp_symbols()
+			end,
+			desc = "Document symbols",
+		},
+		{
 			"<leader>fd",
 			function()
 				Snacks.picker.diagnostics_buffer()

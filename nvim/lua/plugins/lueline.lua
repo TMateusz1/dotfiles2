@@ -4,7 +4,7 @@ local function lsp_clients()
 	})
 
 	if #clients == 0 then
-		return "  No LSP"
+		return "  No LSP"
 	end
 
 	local names = {}
@@ -14,7 +14,7 @@ local function lsp_clients()
 	end
 
 	table.sort(names)
-	return "  " .. table.concat(names, ",")
+	return "  " .. table.concat(names, ",")
 end
 
 local palette = require("catppuccin.palettes").get_palette("mocha")
@@ -59,21 +59,35 @@ return {
 			options = {
 				theme = theme,
 				icons_enabled = true,
-				component_separators = { left = " ", right = " " },
-				section_separators = { left = "", right = "" },
+				-- Rounded caps to match the rounded window borders elsewhere
+				component_separators = "",
+				section_separators = { left = "", right = "" },
 				globalstatus = true,
 				disabled_filetypes = {
 					statusline = {
 						"oil",
+						"snacks_dashboard",
 					},
 				},
 			},
 			sections = {
-				lualine_a = { "mode" },
+				lualine_a = {
+					{ "mode", icon = "" },
+				},
+				-- Git context grouped together
 				lualine_b = {
 					{
 						"branch",
-						icon = "",
+						icon = "",
+					},
+					{
+						"diff",
+						symbols = {
+							added = " ",
+							modified = " ",
+							removed = " ",
+						},
+						colored = true,
 					},
 				},
 				lualine_c = {
@@ -92,29 +106,30 @@ return {
 						sources = { "nvim_diagnostic" },
 						sections = { "error", "warn", "info", "hint" },
 						symbols = {
-							error = " ",
-							warn = " ",
-							info = " ",
+							error = " ",
+							warn = " ",
+							info = " ",
 							hint = "󰌵 ",
 						},
 						colored = true,
 						update_in_insert = false,
 					},
 				},
-
+				-- Transient / contextual info on the right
 				lualine_x = {
+					{
+						"searchcount",
+						icon = "",
+						color = { fg = palette.peach, gui = "bold" },
+					},
+					{
+						"selectioncount",
+						icon = "󰒅",
+						color = { fg = palette.mauve, gui = "bold" },
+					},
 					{
 						lsp_clients,
 						color = { fg = palette.sky, gui = "bold" },
-					},
-					{
-						"diff",
-						symbols = {
-							added = " ",
-							modified = " ",
-							removed = " ",
-						},
-						colored = true,
 					},
 				},
 				lualine_y = {
@@ -123,17 +138,25 @@ return {
 						colored = true,
 						icon_only = false,
 					},
-					"progress",
 				},
 				lualine_z = {
-					{
-						"location",
-						icon = "",
-					},
+					{ "progress", icon = "" },
+					{ "location", icon = "" },
 				},
 			},
 			inactive_sections = {
-				lualine_a = { "filename" },
+				lualine_a = {
+					{
+						"filename",
+						path = 1,
+						symbols = {
+							modified = " ●",
+							readonly = " 󰌾",
+							unnamed = "[No Name]",
+							newfile = "[New]",
+						},
+					},
+				},
 				lualine_b = {},
 				lualine_c = {},
 				lualine_x = {},

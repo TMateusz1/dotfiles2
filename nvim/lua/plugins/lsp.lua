@@ -346,8 +346,7 @@ return {
 					end, "Find usages")
 
 					-- Browse / search
-					map("n", "<leader>cs", function() Snacks.picker.lsp_symbols() end, "Document symbols")
-					map("n", "<leader>cS", function() Snacks.picker.lsp_workspace_symbols() end, "Workspace symbols")
+					map("n", "<leader>fS", function() Snacks.picker.lsp_workspace_symbols() end, "Workspace symbols")
 					map("n", "<leader>cF", function()
 						Snacks.picker({
 							title = "LSP finder",
