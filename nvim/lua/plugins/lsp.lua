@@ -305,6 +305,21 @@ return {
 						return
 					end
 
+					-- Remove Neovim 0.12 default LSP maps that shadow our snappy `gr`.
+					-- `gr` is a prefix of grr/gri/grn/gra/grt/grx, so without this it
+					-- waits timeoutlen before firing. These are global; deleting once
+					-- is enough and pcall guards repeated LspAttach events.
+					for _, lhs in ipairs({ "grn", "gra", "grx", "grr", "gri", "grt", "gO" }) do
+						pcall(vim.keymap.del, "n", lhs)
+					end
+
+					-- LSP-based folding (Neovim 0.11+).
+					if client:supports_method("textDocument/foldingRange") then
+						local win = vim.api.nvim_get_current_win()
+						vim.wo[win][0].foldmethod = "expr"
+						vim.wo[win][0].foldexpr = "v:lua.vim.lsp.foldexpr()"
+					end
+
 					local function map(mode, lhs, rhs, desc)
 						vim.keymap.set(mode, lhs, rhs, {
 							buffer = bufnr,
@@ -365,6 +380,14 @@ return {
 					map("n", "<leader>cq", vim.diagnostic.setqflist, "Diagnostics quickfix")
 					map("n", "]d", function() vim.diagnostic.jump({ count = 1, float = true }) end, "Next diagnostic")
 					map("n", "[d", function() vim.diagnostic.jump({ count = -1, float = true }) end, "Previous diagnostic")
+					map("n", "<leader>uv", function()
+						-- Toggle rich multi-line diagnostics on the cursor line (0.11+).
+						if vim.diagnostic.config().virtual_lines then
+							vim.diagnostic.config({ virtual_lines = false, virtual_text = false })
+						else
+							vim.diagnostic.config({ virtual_lines = { current_line = true }, virtual_text = false })
+						end
+					end, "Toggle virtual-line diagnostics")
 
 					-- LSP management
 					map("n", "<leader>cL", "<cmd>LspInfo<CR>", "LSP info")

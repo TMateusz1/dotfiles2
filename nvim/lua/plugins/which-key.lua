@@ -232,6 +232,7 @@ return {
 				-- UI / toggles
 				{ "<leader>ud", desc = "Toggle code dimming" },
 				{ "<leader>uh", desc = "Toggle inlay hints" },
+				{ "<leader>uv", desc = "Toggle virtual-line diagnostics" },
 				{ "<leader>ut", desc = "Toggle terminal" },
 				{ "<leader>uz", desc = "Toggle zen mode" },
 				{ "<leader>uZ", desc = "Toggle zoom" },
