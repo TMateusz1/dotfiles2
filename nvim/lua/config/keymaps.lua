@@ -42,8 +42,19 @@ keymap("n", "<C-d>", "<C-d>zz", { desc = "Half page down and center" })
 keymap("n", "<C-u>", "<C-u>zz", { desc = "Half page up and center" })
 keymap("n", "n", "nzzzv", { desc = "Next search result and center" })
 keymap("n", "N", "Nzzzv", { desc = "Previous search result and center" })
-keymap("n", "]q", "<cmd>cnext<CR>zz", { desc = "Next quickfix item" })
-keymap("n", "[q", "<cmd>cprev<CR>zz", { desc = "Previous quickfix item" })
+keymap("n", "]q", function()
+	if not pcall(vim.cmd, "cnext") then
+		pcall(vim.cmd, "cfirst")
+	end
+	vim.cmd("normal! zz")
+end, { desc = "Next quickfix item" })
+keymap("n", "[q", function()
+	if not pcall(vim.cmd, "cprev") then
+		pcall(vim.cmd, "clast")
+	end
+	vim.cmd("normal! zz")
+end, { desc = "Previous quickfix item" })
+-- <leader>xq / <leader>xl toggle the quickfix / location list (see plugins/quicker.lua)
 
 -- Save
 -- leaderW is mapped in minis.bufremove as save + buffer delete, same as leaderw + leaderq

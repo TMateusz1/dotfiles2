@@ -23,6 +23,12 @@ return {
 				properties = {},
 				types = {},
 			},
+			custom_highlights = function(colors)
+				return {
+					-- Thick, solid window separators (chars set via fillchars in options.lua)
+					WinSeparator = { fg = colors.lavender, bg = "NONE", bold = true },
+				}
+			end,
 			integrations = {
 				treesitter = true,
 				native_lsp = {

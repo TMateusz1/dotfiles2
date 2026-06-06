@@ -52,6 +52,9 @@ opt.splitkeep = "screen"
 opt.splitright = true
 opt.splitbelow = true
 
+-- Quickfix: reuse an open window for the target buffer, otherwise the last window
+opt.switchbuf = "useopen,uselast"
+
 -- Files
 opt.swapfile = false
 opt.backup = false
@@ -107,17 +110,15 @@ if vim.env.SSH_TTY or vim.env.SSH_CONNECTION then
 	end
 end
 
+-- Heavy box-drawing chars for thick, solid window separators.
+-- Color is set via WinSeparator in plugins/colorscheme.lua so it survives
+-- the colorscheme load (which would otherwise reset the highlight).
 vim.opt.fillchars = {
-	vert = "│",
-	horiz = "─",
-	horizup = "┴",
-	horizdown = "┬",
-	vertleft = "┤",
-	vertright = "├",
-	verthoriz = "┼",
+	vert = "┃",
+	horiz = "━",
+	horizup = "┻",
+	horizdown = "┳",
+	vertleft = "┫",
+	vertright = "┣",
+	verthoriz = "╋",
 }
-
-vim.api.nvim_set_hl(0, "WinSeparator", {
-	fg = "#7c7c7c",
-	bg = "NONE",
-})

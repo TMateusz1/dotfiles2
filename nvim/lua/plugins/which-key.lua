@@ -44,6 +44,7 @@ return {
 				{ "<leader>s", group = "Sessions" },
 				{ "<leader>t", group = "Tests" },
 				{ "<leader>u", group = "UI / Toggles" },
+				{ "<leader>x", group = "Lists (quickfix)" },
 
 				-- Direct leader mappings
 				{ "<leader>e", desc = "Snacks explorer (toggle / reveal current file)" },
@@ -211,6 +212,8 @@ return {
 				{ "[d", desc = "Previous diagnostic" },
 				{ "]q", desc = "Next quickfix item" },
 				{ "[q", desc = "Previous quickfix item" },
+				{ "<leader>xq", desc = "Toggle quickfix window" },
+				{ "<leader>xl", desc = "Toggle location list" },
 				{ "]r", desc = "Next reference" },
 				{ "[r", desc = "Previous reference" },
 				{ "]t", desc = "Next todo comment" },
