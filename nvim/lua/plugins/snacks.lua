@@ -1,24 +1,3 @@
-local function file_preview_without_markdown_render(ctx)
-	local path = Snacks.picker.util.path(ctx.item)
-	local ft = path and vim.filetype.match({ filename = path }) or nil
-
-	if ft ~= "markdown" then
-		return Snacks.picker.preview.file(ctx)
-	end
-
-	local file = ctx.picker.opts.previewers.file
-	local previous_ft = file.ft
-	file.ft = "text"
-	local ok, result = pcall(Snacks.picker.preview.file, ctx)
-	file.ft = previous_ft
-
-	if not ok then
-		error(result)
-	end
-
-	return result
-end
-
 local explorer_noise = {
 	".git",
 	".vscode",
@@ -137,7 +116,6 @@ return {
 				files = {
 					hidden = true,
 					follow = true,
-					preview = file_preview_without_markdown_render,
 					exclude = {
 						".git",
 						".vscode",
@@ -181,6 +159,19 @@ return {
 			},
 		},
 	},
+	config = function(_, opts)
+		require("snacks").setup(opts)
+
+		-- Picker markdown previews: syntax-highlight only, never run Snacks'
+		-- heavy markdown pass (image scanning via Snacks.image.doc.attach +
+		-- a full synchronous render-markdown decoration). That pass froze the
+		-- preview on large .md files. Treesitter highlighting is kept.
+		require("snacks.picker.util.markdown").render = function(buf)
+			if not pcall(vim.treesitter.start, buf, "markdown") then
+				vim.bo[buf].syntax = "markdown"
+			end
+		end
+	end,
 	keys = {
 		{
 			"]r",

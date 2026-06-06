@@ -314,10 +314,13 @@ return {
 					end
 
 					-- LSP-based folding (Neovim 0.11+).
+					-- Folds are available for manual use (zc/zM) but nothing is
+					-- collapsed by default: foldlevel 99 keeps every function open.
 					if client:supports_method("textDocument/foldingRange") then
 						local win = vim.api.nvim_get_current_win()
 						vim.wo[win][0].foldmethod = "expr"
 						vim.wo[win][0].foldexpr = "v:lua.vim.lsp.foldexpr()"
+						vim.wo[win][0].foldlevel = 99
 					end
 
 					local function map(mode, lhs, rhs, desc)
