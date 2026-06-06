@@ -105,8 +105,16 @@ function M.generate(bufnr)
 	})
 end
 
+function M.lint(bufnr)
+	M.run({ "run", "./..." }, {
+		bufnr = bufnr,
+		cmd = "golangci-lint",
+		label = "golangci-lint run ./...",
+	})
+end
+
 -- ----------------------------------------------------------------------------
--- Code generation helpers (gomodifytags / gotests / impl)
+-- Code generation helpers (gomodifytags / impl)
 -- ----------------------------------------------------------------------------
 
 local function tool_path(name)
@@ -211,112 +219,77 @@ local function reload_buffer(bufnr)
 	end)
 end
 
--- Add json+yaml tags (camelCase, omitempty) to the struct under the cursor.
-function M.add_tags(bufnr)
+local function modify_tags(bufnr, tag, action, opts)
 	bufnr = bufnr or 0
+	opts = opts or {}
 
 	local name = enclosing_name(bufnr, { type_spec = true })
 
 	if not name then
-		notify("Place the cursor inside a struct to add tags", vim.log.levels.WARN)
+		notify(("Place the cursor inside a struct to %s %s tags"):format(action, tag), vim.log.levels.WARN)
 		return
 	end
 
 	local file = current_file(bufnr)
 	save_if_modified(bufnr)
+
+	local args = {
+		"-file",
+		file,
+		"-struct",
+		name,
+		action == "add" and "-add-tags" or "-remove-tags",
+		tag,
+	}
+
+	if action == "add" then
+		if opts.options then
+			vim.list_extend(args, { "-add-options", tag .. "=" .. opts.options })
+		end
+
+		vim.list_extend(args, { "-transform", opts.transform or "camelcase" })
+	end
+
+	vim.list_extend(args, { "-quiet", "-w" })
 
 	run_tool({
 		cmd = tool_path("gomodifytags"),
 		cwd = vim.fs.dirname(file),
-		args = {
-			"-file",
-			file,
-			"-struct",
-			name,
-			"-add-tags",
-			"json,yaml",
-			"-add-options",
-			"json=omitempty",
-			"-transform",
-			"camelcase",
-			"-quiet",
-			"-w",
-		},
-		label = "gomodifytags add",
+		args = args,
+		label = ("gomodifytags %s %s"):format(action, tag),
 		on_success = function()
 			reload_buffer(bufnr)
-			notify("Added json+yaml tags to " .. name)
+			notify(("%s %s tags on %s"):format(action == "add" and "Added" or "Removed", tag, name))
 		end,
 	})
 end
 
--- Remove all field tags from the struct under the cursor.
-function M.remove_tags(bufnr)
-	bufnr = bufnr or 0
-
-	local name = enclosing_name(bufnr, { type_spec = true })
-
-	if not name then
-		notify("Place the cursor inside a struct to remove tags", vim.log.levels.WARN)
-		return
-	end
-
-	local file = current_file(bufnr)
-	save_if_modified(bufnr)
-
-	run_tool({
-		cmd = tool_path("gomodifytags"),
-		cwd = vim.fs.dirname(file),
-		args = {
-			"-file",
-			file,
-			"-struct",
-			name,
-			"-clear-tags",
-			"-quiet",
-			"-w",
-		},
-		label = "gomodifytags clear",
-		on_success = function()
-			reload_buffer(bufnr)
-			notify("Removed tags from " .. name)
-		end,
+function M.add_json_tags(bufnr)
+	modify_tags(bufnr, "json", "add", {
+		options = "omitempty",
 	})
 end
 
--- Scaffold table tests for the function/method under the cursor (gotests).
-function M.generate_tests(bufnr)
-	bufnr = bufnr or 0
+function M.remove_json_tags(bufnr)
+	modify_tags(bufnr, "json", "remove")
+end
 
-	local name = enclosing_name(bufnr, {
-		function_declaration = true,
-		method_declaration = true,
+function M.add_yaml_tags(bufnr)
+	modify_tags(bufnr, "yaml", "add")
+end
+
+function M.remove_yaml_tags(bufnr)
+	modify_tags(bufnr, "yaml", "remove")
+end
+
+function M.add_env_tags(bufnr)
+	modify_tags(bufnr, "env", "add", {
+		transform = "snakecase",
 	})
+end
 
-	if not name then
-		notify("Place the cursor inside a function or method", vim.log.levels.WARN)
-		return
-	end
-
-	local file = current_file(bufnr)
-	save_if_modified(bufnr)
-
-	run_tool({
-		cmd = tool_path("gotests"),
-		cwd = vim.fs.dirname(file),
-		args = {
-			"-only",
-			"^" .. name .. "$",
-			"-parallel",
-			"-w",
-			file,
-		},
-		label = "gotests",
-		on_success = function()
-			reload_buffer(bufnr)
-			notify("Generated tests for " .. name)
-		end,
-	})
+function M.remove_env_tags(bufnr)
+	modify_tags(bufnr, "env", "remove")
 end
 
 -- Implement an interface on the struct under the cursor. The interface is
@@ -426,26 +399,6 @@ function M.implement_interface(bufnr)
 			run_impl(vim.trim(iface), vim.trim(iface))
 		end
 	end)
-end
-
-function M.vulncheck(bufnr)
-	if vim.fn.executable("govulncheck") == 1 then
-		M.run({ "./..." }, {
-			bufnr = bufnr,
-			cmd = "govulncheck",
-			label = "govulncheck ./...",
-		})
-		return
-	end
-
-	M.run({
-		"run",
-		"golang.org/x/vuln/cmd/govulncheck@latest",
-		"./...",
-	}, {
-		bufnr = bufnr,
-		label = "go run govulncheck ./...",
-	})
 end
 
 return M

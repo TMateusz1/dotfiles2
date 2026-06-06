@@ -159,10 +159,13 @@ return {
 				-- <leader>cg — Go tools
 				{ "<leader>cgg", desc = "Go generate" },
 				{ "<leader>cgm", desc = "Go mod tidy" },
-				{ "<leader>cgv", desc = "Go vulncheck" },
-				{ "<leader>cgt", desc = "Add struct tags (json+yaml)" },
-				{ "<leader>cgT", desc = "Remove struct tags" },
-				{ "<leader>cgu", desc = "Generate unit tests" },
+				{ "<leader>cgl", desc = "Go lint" },
+				{ "<leader>cgj", desc = "Add json tags" },
+				{ "<leader>cgJ", desc = "Remove json tags" },
+				{ "<leader>cgy", desc = "Add yaml tags" },
+				{ "<leader>cgY", desc = "Remove yaml tags" },
+				{ "<leader>cge", desc = "Add env tags" },
+				{ "<leader>cgE", desc = "Remove env tags" },
 
 				-- Debug
 				{ "<leader>db", desc = "Debug toggle breakpoint" },
@@ -193,8 +196,7 @@ return {
 				{ "<leader>ts", desc = "Test summary" },
 				{ "<leader>to", desc = "Test output" },
 				{ "<leader>tO", desc = "Test output panel" },
-				{ "<leader>tq", desc = "Next failed test" },
-				{ "<leader>tQ", desc = "Previous failed test" },
+				{ "<leader>tq", desc = "Test failures quickfix" },
 				{ "<leader>tw", desc = "Test watch file" },
 				{ "<leader>tx", desc = "Test stop" },
 

@@ -266,12 +266,12 @@ Go-specific code mappings (only active in Go buffers):
 | `<leader>ci` | Implement interface: put the cursor in a struct, then pick the interface from a live picker (type `fmt.Str` → `fmt.Stringer`); `impl` stubs are inserted after the struct |
 | `<leader>cgm` | Run `go mod tidy` |
 | `<leader>cgg` | Run `go generate ./...` |
-| `<leader>cgv` | Run `govulncheck ./...` |
-| `<leader>cgt` | Add `json`+`yaml` struct tags (camelCase, `omitempty`) to the struct under the cursor (`gomodifytags`) |
-| `<leader>cgT` | Remove all tags from the struct under the cursor (`gomodifytags`) |
-| `<leader>cgu` | Scaffold table tests for the function under the cursor (`gotests`) |
+| `<leader>cgl` | Run `golangci-lint run ./...` |
+| `<leader>cgj` / `<leader>cgJ` | Add / remove `json` struct tags on the struct under the cursor (`gomodifytags`) |
+| `<leader>cgy` / `<leader>cgY` | Add / remove `yaml` struct tags on the struct under the cursor (`gomodifytags`) |
+| `<leader>cge` / `<leader>cgE` | Add / remove `env` struct tags for `caarlos0/env/v11` on the struct under the cursor (`gomodifytags`) |
 
-`<leader>ci` replaces the old "go to implementations" leader mapping — use the bare `gi` for navigation to implementations. `<leader>ci`, `<leader>cg{t,T,u}` are wired only when `gopls` is attached.
+`<leader>ci` replaces the old "go to implementations" leader mapping — use the bare `gi` for navigation to implementations. `<leader>ci` and `<leader>cg` mappings are wired only when `gopls` is attached.
 
 Git:
 
@@ -305,7 +305,7 @@ Tests:
 | `<leader>tr` | Rerun last test |
 | `<leader>ts` | Toggle test summary |
 | `<leader>to`, `<leader>tO` | Open test output/toggle output panel |
-| `<leader>tq`, `<leader>tQ` | Next/previous failed test |
+| `<leader>tq` | Open failed-test quickfix list; navigate with `]q` / `[q` |
 | `<leader>tw` | Watch current file |
 | `<leader>tx` | Stop tests |
 
@@ -453,7 +453,7 @@ Installed LSP servers:
 
 Mason-managed tools:
 
-- Go: `goimports`, `gofumpt`, `golines`, `delve`, `staticcheck`, `gotestsum`, `gomodifytags`, `impl`, `gotests`
+- Go: `goimports`, `gofumpt`, `golines`, `delve`, `staticcheck`, `gotestsum`, `gomodifytags`, `impl`, `golangci-lint`
 - General: `stylua`, `shfmt`, `prettier`, `yamlfmt`, `yamllint`, `hadolint`
 
 LSP behavior:
@@ -482,9 +482,10 @@ Go-specific mappings (active only while `gopls` is attached):
 
 - `<leader>cgm` runs `go mod tidy`.
 - `<leader>cgg` runs `go generate ./...`.
-- `<leader>cgv` runs `govulncheck ./...`; if `govulncheck` is not installed, it falls back to `go run golang.org/x/vuln/cmd/govulncheck@latest ./...`.
-- `<leader>cgt` / `<leader>cgT` add / clear struct tags via `gomodifytags`.
-- `<leader>cgu` scaffolds tests for the function under the cursor via `gotests`.
+- `<leader>cgl` runs `golangci-lint run ./...`.
+- `<leader>cgj` / `<leader>cgJ` add / remove json struct tags via `gomodifytags`.
+- `<leader>cgy` / `<leader>cgY` add / remove yaml struct tags via `gomodifytags`.
+- `<leader>cge` / `<leader>cgE` add / remove env struct tags for `caarlos0/env/v11` via `gomodifytags`.
 - `<leader>ci` implements an interface on a chosen struct via `impl`.
 
 ### Go Helpers
@@ -493,10 +494,9 @@ Go-specific mappings (active only while `gopls` is attached):
 
 - Project root is detected from `go.work`, `go.mod`, or `.git`.
 - Go commands run from the project root; failed command output is written to the quickfix list.
-- Helper functions expose organize imports, fix all, `go mod tidy`, `go generate ./...`, and vulnerability checks.
-- Code-generation helpers use Treesitter to find the struct/function under the cursor and drive the Mason-installed tools:
-  - `add_tags` / `remove_tags` → `gomodifytags` (json+yaml, camelCase, `omitempty`).
-  - `generate_tests` → `gotests` (table tests, parallel subtests, written to the `_test.go` file).
+- Helper functions expose organize imports, fix all, `go mod tidy`, `go generate ./...`, and `golangci-lint run ./...`.
+- Code-generation helpers use Treesitter to find the struct under the cursor and drive the Mason-installed tools:
+  - Per-tag add/remove helpers → `gomodifytags` (`json`, `yaml`, and `env`).
   - `implement_interface` → takes the struct **under the cursor**, then opens a live gopls workspace-symbol picker filtered to interfaces. As you type (e.g. `fmt.Str`) gopls returns matching interfaces (`fmt.Stringer`); on selection the symbol's import path is resolved with `go list` so it works for stdlib, dependency, and workspace interfaces, and `impl`'s generated method stubs are inserted right after the struct. The receiver name is derived from the struct name (e.g. `Widget` → `w *Widget`). If the picker is unavailable it falls back to a manual interface prompt.
 
 ### Kubernetes and YAML
@@ -724,8 +724,7 @@ Mappings:
 - `<leader>ts` toggle test summary
 - `<leader>to` open test output
 - `<leader>tO` toggle output panel
-- `<leader>tq` next failed test
-- `<leader>tQ` previous failed test
+- `<leader>tq` open the failed-test quickfix list; use `]q` / `[q` to navigate across files
 - `<leader>tw` watch current file
 - `<leader>tx` stop tests
 

@@ -56,7 +56,7 @@ return {
 				"gotestsum",
 				"gomodifytags",
 				"impl",
-				"gotests",
+				"golangci-lint",
 
 				-- Docker yaml helm
 				"stylua",
@@ -126,7 +126,6 @@ return {
 							generate = true,
 							gc_details = true,
 							regenerate_cgo = true,
-							run_govulncheck = true,
 							test = true,
 							tidy = true,
 							upgrade_dependency = true,
@@ -399,12 +398,15 @@ return {
 					if client.name == "gopls" then
 						map("n", "<leader>cgm", function() require("config.go").mod_tidy(bufnr) end, "Go mod tidy")
 						map("n", "<leader>cgg", function() require("config.go").generate(bufnr) end, "Go generate")
-						map("n", "<leader>cgv", function() require("config.go").vulncheck(bufnr) end, "Go vulncheck")
+						map("n", "<leader>cgl", function() require("config.go").lint(bufnr) end, "Go lint")
 
-						-- Code generation (gomodifytags / gotests / impl)
-						map("n", "<leader>cgt", function() require("config.go").add_tags(bufnr) end, "Add struct tags (json+yaml)")
-						map("n", "<leader>cgT", function() require("config.go").remove_tags(bufnr) end, "Remove struct tags")
-						map("n", "<leader>cgu", function() require("config.go").generate_tests(bufnr) end, "Generate unit tests")
+						-- Code generation (gomodifytags / impl)
+						map("n", "<leader>cgj", function() require("config.go").add_json_tags(bufnr) end, "Add json tags")
+						map("n", "<leader>cgJ", function() require("config.go").remove_json_tags(bufnr) end, "Remove json tags")
+						map("n", "<leader>cgy", function() require("config.go").add_yaml_tags(bufnr) end, "Add yaml tags")
+						map("n", "<leader>cgY", function() require("config.go").remove_yaml_tags(bufnr) end, "Remove yaml tags")
+						map("n", "<leader>cge", function() require("config.go").add_env_tags(bufnr) end, "Add env tags")
+						map("n", "<leader>cgE", function() require("config.go").remove_env_tags(bufnr) end, "Remove env tags")
 						map("n", "<leader>ci", function() require("config.go").implement_interface(bufnr) end, "Implement interface")
 					end
 
