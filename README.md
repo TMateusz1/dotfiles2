@@ -253,6 +253,11 @@ Code, LSP, diagnostics, and formatting:
 | `]t`, `[t` | Next/previous todo comment |
 | `<leader>cL`, `<leader>cR` | LSP info / restart LSP |
 | `<leader>uh` | Toggle inlay hints when supported |
+| `<leader>uv` | Toggle rich virtual-line diagnostics on the cursor line |
+| `zc`, `zo`, `za` | Close / open / toggle fold under cursor (LSP-computed folds) |
+| `zM`, `zR` | Close all / open all folds |
+
+Folds are provided by the language server (`vim.lsp.foldexpr`) on servers that support folding ranges, but nothing is collapsed by default — `foldlevel` is set to `99` on attach so every function starts open. The fold keys above are only needed when you want to fold manually.
 
 Go-specific code mappings:
 
@@ -326,6 +331,7 @@ UI and toggles:
 | --- | --- |
 | `<leader>ud` | Toggle code dimming (dims code outside current scope) |
 | `<leader>uh` | Toggle inlay hints |
+| `<leader>uv` | Toggle rich virtual-line diagnostics on the cursor line |
 | `<leader>ut` | Toggle terminal |
 | `<leader>uz` | Toggle zen mode |
 | `<leader>uZ` | Toggle zoom |
@@ -445,8 +451,10 @@ Mason-managed tools:
 
 LSP behavior:
 
-- Diagnostics use signs and underlines, with virtual text disabled.
+- Diagnostics use signs and underlines, with virtual text disabled by default; `<leader>uv` toggles rich `virtual_lines` diagnostics on the cursor line.
 - Floating diagnostic windows use rounded borders and show sources.
+- On attach, the default Neovim 0.11+ LSP maps that shadow the bare `gr` (`grr`, `gri`, `grn`, `gra`, `grt`, `grx`, `gO`) are deleted so the picker-backed `gr` fires instantly with no `timeoutlen` delay.
+- LSP folding (`vim.lsp.foldexpr`) is enabled for servers that support folding ranges, with `foldlevel = 99` so nothing is collapsed on open; `zM`/`zc` fold manually.
 - `gopls` enables gofumpt, unimported package completions, staticcheck, semantic tokens, selected analyses, code lenses, and inlay hints support.
 - `lua_ls` is configured for Neovim Lua, LuaJIT, `vim` globals, local config workspace, and disabled telemetry.
 - `yamlls` validates YAML, uses schemastore data, supports Kubernetes schemas, and reads the local CRD schema cache.
@@ -461,7 +469,7 @@ Common LSP mappings:
 - `<leader>cc`/`<leader>cC` run/refresh code lens
 - `<leader>cx` line diagnostics, `<leader>cq` diagnostics quickfix, `]d`/`[d` navigate diagnostics
 - `<leader>cL` LSP info, `<leader>cR` restart LSP
-- `<leader>uh` toggles inlay hints when supported
+- `<leader>uh` toggles inlay hints when supported, `<leader>uv` toggles virtual-line diagnostics
 
 Go-specific mappings:
 
@@ -540,7 +548,7 @@ Treesitter highlighting is enabled on filetype events for the supported language
 
 `nvim/lua/plugins/snacks.lua` configures `snacks.picker` as the unified fuzzy finder.
 
-File search excludes `.git`, `.vscode`, `node_modules`, `dist`, `build`, `target`, and `.idea`. Hidden files and symlinks are followed. Markdown files in the preview window are rendered as plain text to avoid render-markdown interference.
+File search excludes `.git`, `.vscode`, `node_modules`, `dist`, `build`, `target`, and `.idea`. Hidden files and symlinks are followed. Markdown files in the picker preview are syntax-highlighted with Treesitter only: Snacks' heavier markdown pass (inline image scanning via `Snacks.image` and a synchronous `render-markdown` decoration) is disabled in previews so scrolling large `.md` files stays fast. This is done by overriding `snacks.picker.util.markdown.render` in the plugin `config` function.
 
 Mappings:
 
@@ -697,6 +705,28 @@ Mappings:
 
 The Go adapter uses `gotestsum`. If `gotestsum` is missing, the plugin build step tries to install it with `go install gotest.tools/gotestsum@latest`.
 
+### Debugging
+
+`nvim/lua/plugins/dap.lua` configures `nvim-dap` with `nvim-dap-ui`, `nvim-dap-virtual-text`, and `nvim-dap-go`. Delve is resolved from the Mason install first, falling back to `dlv` on `PATH`. The UI opens automatically when a session launches/attaches and closes when it terminates. Breakpoint, condition, log-point, and stopped signs use the diagnostic highlight groups.
+
+Mappings (all under the `<leader>d` group):
+
+| Key | Action |
+| --- | --- |
+| `<leader>db` | Toggle breakpoint |
+| `<leader>dB` | Conditional breakpoint (prompts for condition) |
+| `<leader>dp` | Log point (prompts for message) |
+| `<leader>dc` | Continue / start |
+| `<leader>dC` | Run to cursor |
+| `<leader>di`, `<leader>do`, `<leader>dO` | Step into / over / out |
+| `<leader>dr` | Restart |
+| `<leader>dl` | Run last |
+| `<leader>dt` | Terminate |
+| `<leader>du` | Toggle debug UI |
+| `<leader>de` | Evaluate expression (normal or visual) |
+| `<leader>df`, `<leader>ds`, `<leader>dS` | Float frames / scopes / wide scopes |
+| `<leader>dg`, `<leader>dG` | Debug current / last Go test |
+
 ### Sessions
 
 `nvim/lua/plugins/sessions.lua` configures `folke/persistence.nvim`.
@@ -765,10 +795,17 @@ Top-level groups:
 - `<leader>b` buffers
 - `<leader>f` find
 - `<leader>g` Git
+- `<leader>gh` Git hunks
 - `<leader>c` code
 - `<leader>cg` Go
+- `<leader>d` debug
+- `<leader>m` marks (Harpoon)
+- `<leader>M` Markdown
+- `<leader>s` sessions
 - `<leader>t` tests
 - `<leader>u` UI/toggles
+
+Every leader mapping in the config carries a `desc`, and the spec also documents the bare-key and bracket-pair mappings (`gd`/`gr`/`gi`, `]h`/`[h`, `]d`/`[d`, `]t`/`[t`, `]r`/`[r`, `]b`/`[b`), so `which-key` and `<leader>fk` stay an accurate map of the whole keyboard layout.
 
 The UI uses the modern preset, rounded borders, compact key labels, and a shorter delay for leader-triggered mappings.
 
