@@ -19,6 +19,16 @@ local function file_preview_without_markdown_render(ctx)
 	return result
 end
 
+local explorer_noise = {
+	".git",
+	".vscode",
+	"node_modules",
+	"dist",
+	"build",
+	"target",
+	".idea",
+}
+
 return {
 	"folke/snacks.nvim",
 	priority = 1000,
@@ -104,6 +114,26 @@ return {
 		picker = {
 			enabled = true,
 			sources = {
+				explorer = {
+					hidden = true,
+					ignored = false,
+					exclude = explorer_noise,
+					actions = {
+						toggle_explorer_noise = function(picker)
+							picker.opts.show_explorer_noise = not picker.opts.show_explorer_noise
+							picker.opts.exclude = picker.opts.show_explorer_noise and {} or vim.deepcopy(explorer_noise)
+							picker:refresh()
+						end,
+					},
+					win = {
+						list = {
+							keys = {
+								["H"] = "toggle_explorer_noise",
+								["I"] = "toggle_ignored",
+							},
+						},
+					},
+				},
 				files = {
 					hidden = true,
 					follow = true,

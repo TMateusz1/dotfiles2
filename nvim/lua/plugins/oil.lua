@@ -152,14 +152,18 @@ local function track_oil_column(win)
 	resize_oil_columns()
 end
 
+local function open_oil_column(dir)
+	require("oil").open_float(dir, nil, function()
+		track_oil_column(vim.api.nvim_get_current_win())
+	end)
+end
+
 local function oil_open_column_mode()
 	local current_win = vim.api.nvim_get_current_win()
 
 	vim.t.oil_origin_win = is_oil_win(current_win) and find_main_win() or current_win
 	close_oil_windows()
-	require("oil").open_float(nil, nil, function()
-		track_oil_column(vim.api.nvim_get_current_win())
-	end)
+	open_oil_column()
 end
 
 local oil_smart_back
@@ -188,9 +192,7 @@ local function oil_smart_select()
 					return
 				end
 
-				oil.open_float(dir, nil, function()
-					track_oil_column(vim.api.nvim_get_current_win())
-				end)
+				open_oil_column(dir)
 			end,
 		})
 		return
@@ -233,9 +235,19 @@ oil_smart_back = function()
 		return
 	end
 
-	require("oil").open(nil, nil, function()
-		track_oil_column(vim.api.nvim_get_current_win())
-	end)
+	local oil = require("oil")
+	local parent_url = oil.get_url_for_path(nil)
+	local current_win = vim.api.nvim_get_current_win()
+	local origin_win = find_main_win()
+
+	vim.t.oil_column_wins = {}
+	pcall(vim.api.nvim_win_close, current_win, true)
+
+	if origin_win and vim.api.nvim_win_is_valid(origin_win) then
+		vim.api.nvim_set_current_win(origin_win)
+	end
+
+	open_oil_column(parent_url)
 end
 
 return {
@@ -254,9 +266,7 @@ return {
 
 					vim.t.oil_origin_win = is_oil_win(current_win) and find_main_win() or current_win
 					close_oil_windows()
-					require("oil").open_float(nil, nil, function()
-						track_oil_column(vim.api.nvim_get_current_win())
-					end)
+					open_oil_column()
 				end,
 				desc = "Oil parent directory",
 			},
@@ -340,7 +350,10 @@ return {
 					desc = "Close all Oil columns",
 				},
 
-				["-"] = "actions.parent",
+				["-"] = {
+					callback = oil_smart_back,
+					desc = "Smart back",
+				},
 				["_"] = "actions.open_cwd",
 
 				["`"] = "actions.cd",
