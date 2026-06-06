@@ -160,8 +160,8 @@ Completion and snippets:
 | Key | Action |
 | --- | --- |
 | `<C-space>` | Show LSP completion; include Go struct tags in Go buffers; also attach Kubernetes schemas in YAML buffers |
-| `<Tab>` | Accept selected completion or jump forward in a snippet |
-| `<S-Tab>` | Jump backward in a snippet |
+| `<Tab>` | Smart: cycle the menu if you're navigating it (an item is highlighted), else jump to the next snippet placeholder, else select the next completion item |
+| `<S-Tab>` | Smart: same as `<Tab>` in reverse (previous placeholder / previous item) |
 | `<Esc>` in a snippet | Stop the active snippet and leave insert/select mode |
 | `<C-j>`, `<C-k>` | Select next/previous completion item |
 | `<C-d>`, `<C-u>` in completion docs | Scroll documentation down/up |
@@ -341,7 +341,7 @@ UI and toggles:
 | `<leader>ut` | Toggle terminal |
 | `<leader>uz` | Toggle zen mode |
 | `<leader>uZ` | Toggle zoom |
-| `<leader>uw` | Toggle word references highlighting |
+| `<leader>uw` | Toggle highlighting of references/usages of the symbol under the cursor (off by default) |
 | `<leader>.` | Toggle scratch buffer |
 
 Markdown:
@@ -423,10 +423,11 @@ The same Catppuccin Mocha direction is used by Ghostty and Starship, so the term
 - Go completions that come from unimported packages use a `go doc` fallback when `gopls` does not return full completion documentation.
 - Go struct fields get tag completions for `json`, `yaml`, `bson`, `xml`, `toml`, `mapstructure`, `db`, `env`, `validate`, and common HTTP binding tags.
 - Ghost text and signature help are enabled.
-- `<Tab>` accepts the selected completion or jumps through snippets.
-- `<S-Tab>` jumps backward through snippets.
+- Completion is shown inside snippet placeholders (`completion.trigger.show_in_snippet = true`), so e.g. the receiver-type field of a `meth` snippet gets type suggestions.
+- Auto-brackets are decided only from the completion item kind (Function/Method); the semantic-token fallback is disabled so struct/type completions are not turned into a call (no more `Config()` when you mean the type `Config`).
+- `<Tab>`/`<S-Tab>` are "smart": if the completion menu is open and an item is highlighted they cycle the menu; otherwise, inside a snippet they jump to the next/previous placeholder; otherwise they select the next/previous menu item. So at a snippet placeholder Tab jumps by default, but once you start navigating the menu (e.g. with `<C-j>`) Tab keeps cycling it — accept with `<CR>`.
 - `<Esc>` stops the active snippet before leaving insert/select mode.
-- `<C-j>` and `<C-k>` move through completion items.
+- `<C-j>` and `<C-k>` move through completion items, `<CR>` accepts.
 - `<C-space>` shows LSP completions, includes Go struct-tag completions in Go buffers, and tries to attach Kubernetes schemas to suitable YAML buffers.
 - Command-line completion is enabled for `:` commands.
 
@@ -604,8 +605,10 @@ Two complementary file tools are provided.
 
 Snacks Explorer (`<leader>e`) is the main in-editor tree navigator:
 
-- `<leader>e` opens the explorer and reveals the current file in the tree.
+- `<leader>e` toggles the explorer: it opens as a right-side sidebar and reveals the current file in the tree, and closes it if already open.
+- Opening a file closes the explorer; opening a directory just expands/collapses it in place.
 - `nvim .` sets cwd to that directory and opens the dashboard rather than a directory listing; netrw is disabled.
+- The `o` key (open in the system default app) is disabled.
 - Deletes go to trash.
 
 Oil is used as an editable file manager:
@@ -806,7 +809,7 @@ Active modules:
 - `statuscolumn` — unified left-gutter rendering: orders git signs, LSP diagnostic signs, and fold indicators consistently across all buffers.
 - `terminal` — `<leader>ut` toggles a terminal.
 - `toggle` — toggle utilities with visual on/off feedback; used for dim (`<leader>ud`), inlay hints (`<leader>uh`), and word references (`<leader>uw`).
-- `words` — highlights word references; `]r`/`[r` navigate; `<leader>uw` toggles.
+- `words` — highlights every reference/usage of the symbol under the cursor. **Off by default**; toggle per session with `<leader>uw`. While enabled, `]r`/`[r` navigate references.
 - `zen` — `<leader>uz` toggles zen mode; `<leader>uZ` toggles zoom.
 
 ### which-key

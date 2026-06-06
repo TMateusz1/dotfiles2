@@ -46,7 +46,7 @@ return {
 				{ "<leader>u", group = "UI / Toggles" },
 
 				-- Direct leader mappings
-				{ "<leader>e", desc = "Snacks explorer (reveal current file)" },
+				{ "<leader>e", desc = "Snacks explorer (toggle / reveal current file)" },
 				{ "<leader>E", desc = "Oil multi-file edit" },
 				{ "<leader>w", desc = "Save file" },
 				{ "<leader>W", desc = "Save and close buffer" },
