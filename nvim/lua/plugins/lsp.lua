@@ -398,6 +398,7 @@ return {
 						map("n", "<leader>cgm", function() require("config.go").mod_tidy(bufnr) end, "Go mod tidy")
 						map("n", "<leader>cgg", function() require("config.go").generate(bufnr) end, "Go generate")
 						map("n", "<leader>cgl", function() require("config.go").lint(bufnr) end, "Go lint")
+						map("n", "<leader>cgd", function() require("config.go").doc(bufnr) end, "Go doc")
 
 						-- Code generation (gomodifytags / impl)
 						map("n", "<leader>cgj", function() require("config.go").add_json_tags(bufnr) end, "Add json tags")

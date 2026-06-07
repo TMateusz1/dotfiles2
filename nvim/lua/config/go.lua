@@ -292,6 +292,91 @@ function M.remove_env_tags(bufnr)
 	modify_tags(bufnr, "env", "remove")
 end
 
+-- Render `go doc` output in a scrollable, syntax-highlighted floating window.
+local function open_doc_window(title, lines)
+	local buf = vim.api.nvim_create_buf(false, true)
+
+	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+	vim.bo[buf].modifiable = false
+	vim.bo[buf].bufhidden = "wipe"
+
+	local width = math.min(90, math.max(40, math.floor(vim.o.columns * 0.8)))
+	local height = math.min(math.max(#lines, 3), math.floor(vim.o.lines * 0.7))
+
+	local win = vim.api.nvim_open_win(buf, true, {
+		relative = "editor",
+		width = width,
+		height = height,
+		row = math.floor((vim.o.lines - height) / 2),
+		col = math.floor((vim.o.columns - width) / 2),
+		style = "minimal",
+		border = "rounded",
+		title = " go doc: " .. title .. " ",
+		title_pos = "center",
+	})
+
+	vim.wo[win].wrap = true
+	vim.wo[win].linebreak = true
+	vim.wo[win].cursorline = true
+
+	for _, key in ipairs({ "q", "<Esc>" }) do
+		vim.keymap.set("n", key, "<cmd>close<CR>", {
+			buffer = buf,
+			silent = true,
+			desc = "Close go doc",
+		})
+	end
+
+	pcall(vim.treesitter.start, buf, "go")
+end
+
+-- Show `go doc` for the symbol under the cursor. Uses <cexpr> so selectors
+-- like `strings.Split` or `http.Client` resolve, and runs in the file's
+-- package directory so bare local symbols resolve against the package too.
+function M.doc(bufnr)
+	bufnr = bufnr or 0
+
+	if vim.fn.executable("go") ~= 1 then
+		notify("go executable not found", vim.log.levels.ERROR)
+		return
+	end
+
+	local query = vim.fn.expand("<cexpr>")
+
+	if query == "" then
+		query = vim.fn.expand("<cword>")
+	end
+
+	if query == "" then
+		notify("No symbol under the cursor", vim.log.levels.WARN)
+		return
+	end
+
+	notify("go doc " .. query)
+
+	vim.system({ "go", "doc", query }, {
+		cwd = vim.fs.dirname(current_file(bufnr)),
+		text = true,
+	}, function(result)
+		vim.schedule(function()
+			if result.code ~= 0 then
+				local err = vim.trim((result.stderr or "") .. "\n" .. (result.stdout or ""))
+				notify("go doc failed: " .. (err ~= "" and err or query), vim.log.levels.ERROR)
+				return
+			end
+
+			local output = vim.trim(result.stdout or "")
+
+			if output == "" then
+				notify("No documentation for " .. query, vim.log.levels.WARN)
+				return
+			end
+
+			open_doc_window(query, vim.split(output, "\n", { plain = true }))
+		end)
+	end)
+end
+
 -- Implement an interface on the struct under the cursor. The interface is
 -- chosen from a live gopls workspace-symbol picker (type e.g. "fmt.Str" to
 -- find fmt.Stringer); impl's generated stubs are inserted after the struct.

@@ -161,6 +161,7 @@ return {
 				{ "<leader>cgg", desc = "Go generate" },
 				{ "<leader>cgm", desc = "Go mod tidy" },
 				{ "<leader>cgl", desc = "Go lint" },
+				{ "<leader>cgd", desc = "Go doc" },
 				{ "<leader>cgj", desc = "Add json tags" },
 				{ "<leader>cgJ", desc = "Remove json tags" },
 				{ "<leader>cgy", desc = "Add yaml tags" },
