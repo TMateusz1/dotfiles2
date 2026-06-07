@@ -47,7 +47,7 @@ return {
 				{ "<leader>x", group = "Lists (quickfix)" },
 
 				-- Direct leader mappings
-				{ "<leader>e", desc = "Snacks explorer (toggle / reveal current file)" },
+				{ "<leader>e", desc = "File explorer (mini.files toggle)" },
 				{ "<leader>E", desc = "Oil multi-file edit" },
 				{ "<leader>w", desc = "Save file" },
 				{ "<leader>W", desc = "Save and close buffer" },

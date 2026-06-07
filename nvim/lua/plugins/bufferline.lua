@@ -1,7 +1,7 @@
 -- ~/.config/nvim/lua/plugins/bufferline.lua
 
-local function snack_bufdelete(bufnr)
-	Snacks.bufdelete.delete(bufnr)
+local function bufremove(bufnr)
+	require("mini.bufremove").delete(bufnr)
 end
 
 return {
@@ -11,6 +11,7 @@ return {
 		event = "VeryLazy",
 		dependencies = {
 			"nvim-mini/mini.icons",
+			"nvim-mini/mini.bufremove",
 		},
 		keys = {
 			{ "]b", "<cmd>BufferLineCycleNext<CR>", desc = "Next buffer" },
@@ -42,8 +43,8 @@ return {
 
 				numbers = "none",
 
-				close_command = snack_bufdelete,
-				right_mouse_command = snack_bufdelete,
+				close_command = bufremove,
+				right_mouse_command = bufremove,
 				left_mouse_command = "buffer %d",
 				middle_mouse_command = nil,
 

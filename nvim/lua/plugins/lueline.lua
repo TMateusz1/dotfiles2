@@ -66,7 +66,7 @@ return {
 				disabled_filetypes = {
 					statusline = {
 						"oil",
-						"snacks_dashboard",
+						"ministarter",
 					},
 				},
 			},
