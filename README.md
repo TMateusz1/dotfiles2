@@ -545,9 +545,13 @@ Formatters by filetype:
 
 Formatting runs on save. For Go files this also runs `goimports`, so imports are added, removed, and sorted before the file is written.
 
-Mapping:
+Formatting runs on save by default, but can be toggled:
 
-- `<leader>cl` formats the current file or visual selection.
+- `<leader>cl` formats the current file or visual selection on demand.
+- `<leader>uf` toggles format-on-save globally (with a notification).
+- `:FormatDisable` disables format-on-save globally; `:FormatDisable!` disables it for the current buffer only; `:FormatEnable` re-enables it.
+
+The `format_on_save` hook checks `vim.g.disable_autoformat` / `vim.b.disable_autoformat`, so the toggle takes effect on the next save. Manual `<leader>cl` always formats regardless of the toggle.
 
 ### Linting
 

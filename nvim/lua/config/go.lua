@@ -434,7 +434,10 @@ function M.implement_interface(bufnr)
 	-- Resolve the chosen symbol's fully-qualified import path so impl can find
 	-- it whether it lives in the stdlib, a dependency, or the workspace.
 	local function implement_symbol(item)
-		local name = item.name
+		-- gopls may return the symbol bare ("Writer") or package-qualified
+		-- ("io.Writer"); take the final component so combining it with the import
+		-- path below never doubles the package prefix (e.g. "io.io.Writer").
+		local name = item.name:match("[^.]+$") or item.name
 		local iface_dir = item.file and vim.fs.dirname(item.file) or struct_dir
 
 		vim.system({
@@ -473,6 +476,19 @@ function M.implement_interface(bufnr)
 			filter = {
 				["go"] = { "Interface" },
 			},
+			-- gopls returns bare names ("Writer"); append the package (held in
+			-- containerName) so e.g. io.Writer vs bufio.Writer are distinguishable.
+			format = function(item, picker)
+				local ret = require("snacks.picker.format").lsp_symbol(item, picker)
+				local container = item.item and item.item.containerName
+
+				if container and container ~= "" then
+					ret[#ret + 1] = { "  " }
+					ret[#ret + 1] = { container, "SnacksPickerComment" }
+				end
+
+				return ret
+			end,
 			confirm = function(picker, item)
 				picker:close()
 
