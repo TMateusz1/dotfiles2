@@ -109,7 +109,7 @@ ls -l ~/.config/starship.toml
 - Leader and local leader are both space.
 - Absolute and relative line numbers are enabled.
 - Mouse support is enabled.
-- netrw is disabled because file exploration is handled by Snacks Explorer and Oil.
+- netrw is disabled because file exploration is handled by mini.files and Oil.
 - Clipboard uses `unnamedplus`.
 - Indentation uses spaces with a width of 4.
 - Search uses ignorecase plus smartcase.
@@ -117,7 +117,7 @@ ls -l ~/.config/starship.toml
 - Split defaults are `splitright` and `splitbelow`.
 - Swap and backup files are disabled; persistent undo is enabled.
 - Completion uses `menu`, `menuone`, and `noselect`.
-- Invisible characters are displayed for tabs, trailing spaces, and non-breaking spaces.
+- Invisible characters are shown for trailing spaces and non-breaking spaces; tabs render as blank so only the Snacks indent guides mark indentation.
 - OSC52 clipboard integration is enabled automatically over SSH when available.
 
 The config also customizes separator fill characters and highlights `WinSeparator`.
@@ -145,10 +145,11 @@ Save, quit, and buffers:
 | Key | Action |
 | --- | --- |
 | `<leader>w` | Save file |
-| `<leader>q` | Smart close: close special/floating window or delete current buffer |
+| `<leader>k` | Close window, keep the buffer open |
+| `<leader>q` | Smart close: close special/floating window or delete current buffer (keeps window) |
 | `<leader>W` | Save and delete current buffer |
-| `<leader>Q` | Quit current window |
-| `<leader>C` | Force-quit all Neovim windows |
+| `<leader>Q` | Close window and delete the buffer it showed (special/floating windows just close) |
+| `<leader>C` | Quit all windows, prompting to save unsaved buffers |
 | `[b`, `]b` | Previous/next buffer |
 | `<leader>bx` | Delete current buffer |
 | `<leader>bp` | Pick buffer from bufferline |
@@ -199,7 +200,7 @@ Files and project navigation:
 
 | Key | Action |
 | --- | --- |
-| `<leader>e` | Open Snacks Explorer and reveal the current file |
+| `<leader>e` | Toggle mini.files, focused on the current file |
 | `<leader>E` | Open Oil multi-file edit manager |
 | `-` | Open Oil parent directory in a float |
 | Oil `<CR>`, `l`, `<Right>` | Smart open file or directory |
@@ -249,7 +250,6 @@ Code, LSP, diagnostics, and formatting:
 | --- | --- |
 | `<leader>cx`, `<leader>cq` | Line diagnostics / diagnostics quickfix |
 | `]d`, `[d` | Next/previous diagnostic with float |
-| `]r`, `[r` | Next/previous word reference (Snacks words) |
 | `]t`, `[t` | Next/previous todo comment |
 | `<leader>cL`, `<leader>cR` | LSP info / restart LSP |
 | `<leader>uh` | Toggle inlay hints when supported |
@@ -285,7 +285,7 @@ Git:
 | `<leader>gd` | Git diff hunks |
 | `<leader>gl` | Git line commits |
 | `<leader>gs` | Git stash |
-| `]h`, `[h` | Next/previous Git hunk |
+| `]h`, `[h` | Next/previous Git hunk (staged and unstaged, matching the sign column) |
 | `<leader>ghp` | Preview hunk |
 | `<leader>ghs`, `<leader>ghr` | Stage/reset hunk or visual selection |
 | `<leader>ghu` | Undo staged hunk |
@@ -313,10 +313,11 @@ Sessions:
 
 | Key | Action |
 | --- | --- |
-| `<leader>ss` | Restore session for current directory |
+| `<leader>ss` | Pick from all saved sessions |
+| `<leader>sc` | Restore the session for the current project (git root) |
 | `<leader>sl` | Restore last session |
-| `<leader>sS` | Pick from all saved sessions |
-| `<leader>sd` | Stop saving session (don't persist this session on exit) |
+| `<leader>sd` | Delete a saved session (pick one to remove) |
+| `<leader>sx` | Stop saving the current session on exit |
 
 Harpoon:
 
@@ -341,7 +342,6 @@ UI and toggles:
 | `<leader>ut` | Toggle terminal |
 | `<leader>uz` | Toggle zen mode |
 | `<leader>uZ` | Toggle zoom |
-| `<leader>uw` | Toggle highlighting of references/usages of the symbol under the cursor (off by default) |
 | `<leader>.` | Toggle scratch buffer |
 
 Markdown:
@@ -603,13 +603,14 @@ Mappings:
 
 Two complementary file tools are provided.
 
-Snacks Explorer (`<leader>e`) is the main in-editor tree navigator:
+mini.files (`<leader>e`) is the main in-editor file explorer (configured in `nvim/lua/plugins/minis.lua`):
 
-- `<leader>e` toggles the explorer: it opens as a right-side sidebar and reveals the current file in the tree, and closes it if already open.
-- Opening a file closes the explorer; opening a directory just expands/collapses it in place.
-- `nvim .` sets cwd to that directory and opens the dashboard rather than a directory listing; netrw is disabled.
-- The `o` key (open in the system default app) is disabled.
-- Deletes go to trash.
+- `<leader>e` toggles the explorer focused on the current file (falls back to the cwd for unnamed buffers).
+- `<CR>` enters a directory, or opens a file in the current window and closes the explorer.
+- `<C-v>` / `<C-s>` open the file in a vertical / horizontal split; on a directory they just enter it.
+- Arrows: up/down move the cursor, `<Right>` goes in (`l`), `<Left>` and `<BS>` go out (`h`).
+- `=` and `<leader>w` synchronize edits back to disk — rename, move, create, or delete files by editing the listing, then write.
+- Preview is disabled, and it is the default directory handler (`nvim .` opens mini.files); netrw is off.
 
 Oil is used as an editable file manager:
 
@@ -637,8 +638,7 @@ Git support is split between gitsigns, snacks.picker, and LazyGit (via snacks.la
 
 Mappings:
 
-- `]h` next hunk
-- `[h` previous hunk
+- `]h` / `[h` next/previous hunk — navigates both staged and unstaged hunks so it matches the sign column and the `<leader>gd` diff list
 - `<leader>ghp` preview hunk
 - `<leader>ghs` stage hunk
 - `<leader>ghr` reset hunk
@@ -673,19 +673,22 @@ Diagnostics are shown in the bufferline.
 
 - Shows mode, branch, filename, diagnostics, active LSP clients, diff, filetype, progress, and location.
 - Uses global statusline mode.
-- Disables the statusline for Oil windows.
+- Disables the statusline for Oil and the mini.starter start screen.
 - Colors are sourced from the Catppuccin palette API so they follow flavour changes automatically.
 
 ### Mini Plugins
 
-`nvim/lua/plugins/minis.lua` uses:
+`nvim/lua/plugins/minis.lua` uses the mini.nvim suite for several core behaviors:
 
-- `mini.ai` for better text objects.
-- `mini.surround` for surround operations.
-- `mini.pairs` for autopairs.
-- `mini.icons` for icons and `nvim-web-devicons` compatibility.
-
-Buffer deletion is handled by `snacks.bufdelete`, which is integrated into `<leader>q`, `<leader>W`, `<leader>bx`, and the bufferline close buttons.
+- `mini.ai` — better text objects.
+- `mini.surround` — surround operations (mappings below).
+- `mini.pairs` — autopairs.
+- `mini.icons` — icons plus `nvim-web-devicons` compatibility.
+- `mini.files` — the main file explorer (`<leader>e`); see the File Explorers section.
+- `mini.bufremove` — layout-preserving buffer deletion, wired into `<leader>q`, `<leader>Q`, `<leader>W`, `<leader>bx`, and the bufferline close buttons.
+- `mini.notify` — notifications; replaces `vim.notify` and backs `<leader>fn` (history).
+- `mini.starter` — the start screen shown when Neovim opens with no file (find/grep/recent/config/sessions/Lazy/quit, plus recent files).
+- `mini.animate` — smooth scrolling only (cursor/resize/window animations are disabled). Small scrolls of ≤ 6 lines (short `<C-d>`/`<C-u>`/`n`/`N`) jump instantly; larger scrolls animate at a steady per-step rate.
 
 Surround mappings:
 
@@ -754,16 +757,17 @@ Mappings (all under the `<leader>d` group):
 
 ### Sessions
 
-`nvim/lua/plugins/sessions.lua` configures `folke/persistence.nvim`.
+`nvim/lua/plugins/sessions.lua` configures `folke/persistence.nvim` with two customizations: sessions are keyed to the **git root** of the project (by overriding `persistence.current`), and **branches are not** part of the session name. So opening Neovim from any subdirectory of a project, on any branch, restores the same session.
 
-Sessions are saved automatically per working directory on exit and can be restored on the next launch. The dashboard `s` key restores the session for the current directory.
+A session is auto-saved on exit when at least one real file buffer is open. Persistence loads lazily on the first file read, so just browsing a directory and quitting saves nothing. Restoring is always manual.
 
-- `<leader>ss` restore session for cwd.
-- `<leader>sl` restore the most recent session regardless of directory.
-- `<leader>sS` open a picker to choose from all saved sessions.
-- `<leader>sd` stop auto-saving the current session (useful for throwaway windows).
+- `<leader>ss` pick from all saved sessions (loads on choice).
+- `<leader>sc` restore the session for the current project (git root).
+- `<leader>sl` restore the most recent session regardless of project.
+- `<leader>sd` pick a saved session and delete its file.
+- `<leader>sx` stop auto-saving the current session (useful for throwaway windows).
 
-Sessions are stored under `stdpath("state")/sessions/`.
+Sessions are stored under `stdpath("state")/sessions/`. The mini.starter start screen also exposes a "Sessions" entry that opens the same picker.
 
 ### Todo Comments
 
@@ -792,24 +796,19 @@ Highlights `TODO`, `FIXME`, `FIX`, `HACK`, `WARN`, `PERF`, `NOTE`, `TEST` keywor
 Active modules:
 
 - `bigfile` — disables heavy features for large files.
-- `bufdelete` — safe buffer deletion (used by `<leader>q`, `<leader>W`, `<leader>bx`, bufferline close).
-- `dashboard` — startup screen shown when opening Neovim without a file; shows recent files and quick-action keys (find, grep, config, Lazy, quit). When `nvim <dir>` is used, cwd is set first then the dashboard shows in that context.
 - `dim` — dims code outside the active scope; `<leader>ud` toggles. Pairs with `<leader>uz` zen mode.
-- `explorer` — tree file explorer; `<leader>e` reveals the current file.
 - `gitbrowse` — `<leader>gB` opens the current file/line in GitHub or GitLab; works in visual mode to link a range.
 - `indent` — animated indent guides with scope highlighting for the current block.
 - `input` — improved `vim.ui.input` UI.
 - `lazygit` — `<leader>gg` and `<leader>gG` open LazyGit.
-- `notifier` — fancy notifications replacing `vim.notify`; `<leader>fn` browses history.
 - `picker` — unified fuzzy finder (see Fuzzy Finding section).
 - `quickfile` — fast file rendering on startup.
 - `scratch` — scratch buffers; `<leader>.` toggles, `<leader>f.` lists.
-- `scroll` — smooth animated scrolling for `<C-d>`, `<C-u>`, `<C-f>`, `<C-b>`.
-- `statuscolumn` — unified left-gutter rendering: orders git signs, LSP diagnostic signs, and fold indicators consistently across all buffers.
 - `terminal` — `<leader>ut` toggles a terminal.
-- `toggle` — toggle utilities with visual on/off feedback; used for dim (`<leader>ud`), inlay hints (`<leader>uh`), and word references (`<leader>uw`).
-- `words` — highlights every reference/usage of the symbol under the cursor. **Off by default**; toggle per session with `<leader>uw`. While enabled, `]r`/`[r` navigate references.
+- `toggle` — toggle utilities with visual on/off feedback; used for dim (`<leader>ud`) and inlay hints (`<leader>uh`).
 - `zen` — `<leader>uz` toggles zen mode; `<leader>uZ` toggles zoom.
+
+Buffer deletion, notifications, the start screen, and smooth scrolling were migrated to mini.nvim (`mini.bufremove`, `mini.notify`, `mini.starter`, `mini.animate`), and the file explorer is `mini.files`. See the Mini Plugins section.
 
 ### which-key
 
@@ -830,7 +829,7 @@ Top-level groups:
 - `<leader>t` tests
 - `<leader>u` UI/toggles
 
-Every leader mapping in the config carries a `desc`, and the spec also documents the bare-key and bracket-pair mappings (`gd`/`gr`/`gi`, `]h`/`[h`, `]d`/`[d`, `]t`/`[t`, `]r`/`[r`, `]b`/`[b`), so `which-key` and `<leader>fk` stay an accurate map of the whole keyboard layout.
+Every leader mapping in the config carries a `desc`, and the spec also documents the bare-key and bracket-pair mappings (`gd`/`gr`/`gi`, `]h`/`[h`, `]d`/`[d`, `]t`/`[t`, `]q`/`[q`, `]b`/`[b`), so `which-key` and `<leader>fk` stay an accurate map of the whole keyboard layout.
 
 The UI uses the modern preset, rounded borders, compact key labels, and a shorter delay for leader-triggered mappings.
 

@@ -130,6 +130,38 @@ return {
 						MiniFiles.go_in({ close_on_file = true })
 					end, "Open file / enter dir")
 
+					-- C-v / C-s: open the file in a vertical / horizontal split
+					-- (matching the snacks pickers). On a directory, just enter it.
+					local function map_split(lhs, command, desc)
+						map(lhs, function()
+							local entry = MiniFiles.get_fs_entry()
+							if entry == nil then
+								return
+							end
+							if entry.fs_type == "directory" then
+								MiniFiles.go_in()
+								return
+							end
+
+							local target = MiniFiles.get_explorer_state().target_window
+							if target == nil then
+								return
+							end
+
+							local new_target
+							vim.api.nvim_win_call(target, function()
+								vim.cmd("belowright " .. command)
+								new_target = vim.api.nvim_get_current_win()
+							end)
+
+							MiniFiles.set_target_window(new_target)
+							MiniFiles.go_in({ close_on_file = true })
+						end, desc)
+					end
+
+					map_split("<C-v>", "vsplit", "Open in vertical split")
+					map_split("<C-s>", "split", "Open in horizontal split")
+
 					-- Synchronize with <leader>w too, mirroring the global save map.
 					map("<leader>w", MiniFiles.synchronize, "Synchronize (save changes)")
 				end,
@@ -260,7 +292,20 @@ return {
 			-- cursor/window animations off to match the previous behaviour.
 			animate.setup({
 				scroll = {
-					timing = animate.gen_timing.linear({ duration = 150, unit = "total" }),
+					-- Fixed per-step delay keeps the perceived frame rate constant
+					-- regardless of scroll distance (unlike "total", which spreads
+					-- a short scroll over only a couple of choppy frames).
+					timing = animate.gen_timing.linear({ duration = 12, unit = "step" }),
+					subscroll = animate.gen_subscroll.equal({
+						-- Don't animate small scrolls (e.g. short C-d/C-u or n/N
+						-- jumps of a few lines) — those are the ones that looked
+						-- like the screen was freezing. Cap steps so huge jumps
+						-- stay snappy too.
+						predicate = function(total_scroll)
+							return total_scroll > 6
+						end,
+						max_output_steps = 60,
+					}),
 				},
 				cursor = { enable = false },
 				resize = { enable = false },

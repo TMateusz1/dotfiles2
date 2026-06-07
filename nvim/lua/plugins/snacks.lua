@@ -33,11 +33,6 @@ return {
 		toggle = {
 			enabled = true,
 		},
-		words = {
-			-- Off by default: no auto-highlighting of every reference/usage of
-			-- the symbol under the cursor. Toggle on demand with <leader>uw.
-			enabled = false,
-		},
 		zen = {
 			enabled = true,
 		},
@@ -88,20 +83,6 @@ return {
 		end
 	end,
 	keys = {
-		{
-			"]r",
-			function()
-				Snacks.words.jump(vim.v.count1, true)
-			end,
-			desc = "Next reference",
-		},
-		{
-			"[r",
-			function()
-				Snacks.words.jump(-vim.v.count1, true)
-			end,
-			desc = "Previous reference",
-		},
 		{
 			"<leader>ff",
 			function()
@@ -254,7 +235,7 @@ return {
 		{
 			"<leader>fn",
 			function()
-				Snacks.picker.notifications()
+				require("mini.notify").show_history()
 			end,
 			desc = "Notification history",
 		},
@@ -363,13 +344,6 @@ return {
 				Snacks.zen.zoom()
 			end,
 			desc = "Toggle zoom",
-		},
-		{
-			"<leader>uw",
-			function()
-				Snacks.toggle.words():toggle()
-			end,
-			desc = "Toggle word references",
 		},
 	},
 }

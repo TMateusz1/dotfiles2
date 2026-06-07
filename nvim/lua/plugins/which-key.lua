@@ -51,9 +51,10 @@ return {
 				{ "<leader>E", desc = "Oil multi-file edit" },
 				{ "<leader>w", desc = "Save file" },
 				{ "<leader>W", desc = "Save and close buffer" },
+				{ "<leader>k", desc = "Close window (keep buffer)" },
 				{ "<leader>q", desc = "Smart close" },
-				{ "<leader>Q", desc = "Quit window" },
-				{ "<leader>C", desc = "Quit all force" },
+				{ "<leader>Q", desc = "Quit window + delete buffer" },
+				{ "<leader>C", desc = "Quit all (confirm save)" },
 				{ "<leader>.", desc = "Toggle scratch buffer" },
 
 				-- Buffers
@@ -203,10 +204,11 @@ return {
 				{ "<leader>tx", desc = "Test stop" },
 
 				-- Sessions
-				{ "<leader>ss", desc = "Restore session (cwd)" },
+				{ "<leader>ss", desc = "Select session" },
+				{ "<leader>sc", desc = "Restore session (project root)" },
 				{ "<leader>sl", desc = "Restore last session" },
-				{ "<leader>sS", desc = "Select session" },
-				{ "<leader>sd", desc = "Don't save session" },
+				{ "<leader>sd", desc = "Delete session" },
+				{ "<leader>sx", desc = "Don't save session" },
 
 				-- Diagnostics
 				{ "]d", desc = "Next diagnostic" },
@@ -215,8 +217,6 @@ return {
 				{ "[q", desc = "Previous quickfix item" },
 				{ "<leader>xq", desc = "Toggle quickfix window" },
 				{ "<leader>xl", desc = "Toggle location list" },
-				{ "]r", desc = "Next reference" },
-				{ "[r", desc = "Previous reference" },
 				{ "]t", desc = "Next todo comment" },
 				{ "[t", desc = "Previous todo comment" },
 
@@ -245,7 +245,6 @@ return {
 				{ "<leader>ut", desc = "Toggle terminal" },
 				{ "<leader>uz", desc = "Toggle zen mode" },
 				{ "<leader>uZ", desc = "Toggle zoom" },
-				{ "<leader>uw", desc = "Toggle word references" },
 			},
 		},
 	},

@@ -62,8 +62,30 @@ keymap("n", "<leader>w", "<cmd>write<CR>", { desc = "Save file" })
 -- Quit
 -- Leader<q> is mapped in minis.bufremove as buffer delete
 -- this mean:
--- leaderq - buffer delete
--- leaderQ - window Quit
--- leaderC - close vim
-keymap("n", "<leader>Q", "<cmd>quit<CR>", { desc = "Quit window" })
-keymap("n", "<leader>C", "<cmd>quitall!<CR>", { desc = "Quit all force" })
+-- leaderk - close window only (keep the buffer open)
+-- leaderq - buffer delete (keep the window)
+-- leaderQ - close window + delete the buffer that window was showing
+-- leaderC - quit all (prompts to save unsaved buffers)
+keymap("n", "<leader>k", "<cmd>close<CR>", { desc = "Close window (keep buffer)" })
+keymap("n", "<leader>Q", function()
+	-- Special / floating windows (quickfix, help, terminal, neotest, ...) have
+	-- no real file buffer to delete - just close the window.
+	local floating = vim.api.nvim_win_get_config(0).relative ~= ""
+	if floating or vim.bo.buftype ~= "" then
+		pcall(vim.cmd, "close")
+		return
+	end
+
+	local buf = vim.api.nvim_get_current_buf()
+
+	-- Close the window first; abort if it refuses (e.g. unsaved changes).
+	if not pcall(vim.cmd, "quit") then
+		return
+	end
+
+	-- Then remove the buffer that window was displaying.
+	if vim.api.nvim_buf_is_valid(buf) then
+		require("mini.bufremove").delete(buf)
+	end
+end, { desc = "Quit window + delete buffer" })
+keymap("n", "<leader>C", "<cmd>confirm qall<CR>", { desc = "Quit all (confirm save)" })

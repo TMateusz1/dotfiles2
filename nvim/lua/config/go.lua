@@ -72,6 +72,15 @@ function M.run(args, opts)
 			}, "\n"))
 
 			if result.code == 0 then
+				-- Clean run: if the quickfix list still shows this command's
+				-- previous (failing) output, clear it and close the window so
+				-- stale errors don't linger. Match on title to avoid clobbering
+				-- an unrelated quickfix list.
+				if vim.fn.getqflist({ title = 0 }).title == label then
+					vim.fn.setqflist({}, "r", { title = label, items = {} })
+					vim.cmd("cclose")
+				end
+
 				notify(label .. " finished")
 				return
 			end

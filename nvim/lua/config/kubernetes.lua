@@ -420,7 +420,7 @@ function M.generate_crd_schemas(opts)
 
 			local count = write_crd_schemas(crds.items or {})
 
-				if count == 0 then
+			if count == 0 then
 				if not opts.quiet then
 					notify("No CRDs found in the current kubectl context", vim.log.levels.WARN)
 				end
