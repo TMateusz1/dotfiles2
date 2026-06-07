@@ -377,7 +377,18 @@ return {
 
 					-- Diagnostics
 					map("n", "<leader>cx", vim.diagnostic.open_float, "Line diagnostics")
-					map("n", "<leader>cq", vim.diagnostic.setqflist, "Diagnostics quickfix")
+					map("n", "<leader>cq", function()
+						-- Populate without auto-opening. With no diagnostics, close any
+						-- stale quickfix instead of showing an empty one; otherwise open
+						-- via quicker so the window fits the list (matching <leader>xq).
+						vim.diagnostic.setqflist({ open = false, title = "Diagnostics" })
+						if vim.tbl_isempty(vim.fn.getqflist()) then
+							vim.cmd("cclose")
+							vim.notify("No diagnostics", vim.log.levels.INFO, { title = "Diagnostics" })
+							return
+						end
+						require("quicker").open()
+					end, "Diagnostics quickfix")
 					map("n", "]d", function() vim.diagnostic.jump({ count = 1, float = true }) end, "Next diagnostic")
 					map("n", "[d", function() vim.diagnostic.jump({ count = -1, float = true }) end, "Previous diagnostic")
 					map("n", "<leader>uv", function()

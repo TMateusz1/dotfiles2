@@ -92,7 +92,9 @@ function M.run(args, opts)
 						plain = true,
 					}),
 				})
-				vim.cmd("cwindow")
+				-- Open via quicker so the window fits the list (matching
+				-- <leader>xq) instead of the fixed-height native :cwindow.
+				require("quicker").open()
 			end
 
 			notify(label .. " failed", vim.log.levels.ERROR)
