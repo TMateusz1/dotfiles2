@@ -1,30 +1,8 @@
 {
-  "for range": {
-    "prefix": "forr",
-    "description": "for range loop",
-    "body": [
-      "for ${1:i}, ${2:v} := range ${3:items} {",
-      "\t${0}",
-      "}"
-    ]
-  },
-  "for index": {
-    "prefix": "fori",
-    "description": "indexed for loop",
-    "body": [
-      "for ${1:i} := 0; ${1:i} < ${2:count}; ${1:i}++ {",
-      "\t${0}",
-      "}"
-    ]
-  },
   "if err": {
     "prefix": "iferr",
     "description": "if err != nil",
-    "body": [
-      "if err != nil {",
-      "\t${0:return err}",
-      "}"
-    ]
+    "body": ["if err != nil {", "\t${0:return err}", "}"]
   },
   "return wrapped error": {
     "prefix": "errw",
@@ -56,20 +34,12 @@
   "test function": {
     "prefix": "test",
     "description": "testing function",
-    "body": [
-      "func Test${1:Name}(t *testing.T) {",
-      "\t${0}",
-      "}"
-    ]
+    "body": ["func Test${1:Name}(t *testing.T) {", "\t${0}", "}"]
   },
   "subtest": {
     "prefix": "tRun",
     "description": "t.Run subtest",
-    "body": [
-      "t.Run(\"${1:name}\", func(t *testing.T) {",
-      "\t${0}",
-      "})"
-    ]
+    "body": ["t.Run(\"${1:name}\", func(t *testing.T) {", "\t${0}", "})"]
   },
   "table test": {
     "prefix": "tt",
@@ -94,28 +64,8 @@
       "}"
     ]
   },
-  "benchmark": {
-    "prefix": "bench",
-    "description": "benchmark function",
-    "body": [
-      "func Benchmark${1:Name}(b *testing.B) {",
-      "\tfor i := 0; i < b.N; i++ {",
-      "\t\t${0}",
-      "\t}",
-      "}"
-    ]
-  },
-  "goroutine": {
-    "prefix": "go",
-    "description": "anonymous goroutine",
-    "body": [
-      "go func() {",
-      "\t${0}",
-      "}()"
-    ]
-  },
-  "select": {
-    "prefix": "select",
+  "select with ctx": {
+    "prefix": "selectctx",
     "description": "select statement",
     "body": [
       "select {",
