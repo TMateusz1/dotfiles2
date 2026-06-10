@@ -56,6 +56,7 @@ return {
 				{ "<leader>Q", desc = "Quit window + delete buffer" },
 				{ "<leader>C", desc = "Quit all (confirm save)" },
 				{ "<leader>.", desc = "Toggle scratch buffer" },
+				{ "<leader>/", desc = "Search buffer lines" },
 
 				-- Buffers
 				{ "[b", desc = "Previous buffer" },
@@ -119,6 +120,7 @@ return {
 				{ "<leader>fq", desc = "Quickfix list" },
 				{ "<leader>fl", desc = "Location list" },
 				{ "<leader>fR", desc = "Resume picker" },
+				{ "<leader>fu", desc = "Undo history" },
 				{ "<leader>fn", desc = "Notification history" },
 				{ "<leader>f.", desc = "Scratch buffers" },
 				{ "<leader>ft", desc = "Todo comments" },

@@ -36,6 +36,47 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 	desc = "Return to last edit position",
 })
 
+-- Reload files changed outside Neovim (lazygit, go generate, branch switches)
+vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
+	group = augroup,
+	callback = function()
+		if vim.bo.buftype == "" then
+			vim.cmd("checktime")
+		end
+	end,
+	desc = "Reload files changed on disk",
+})
+
+-- Keep splits balanced when the terminal (tmux pane) is resized
+vim.api.nvim_create_autocmd("VimResized", {
+	group = augroup,
+	callback = function()
+		local current_tab = vim.fn.tabpagenr()
+		vim.cmd("tabdo wincmd =")
+		vim.cmd("tabnext " .. current_tab)
+	end,
+	desc = "Equalize splits on resize",
+})
+
+-- Cursorline only in the focused window
+vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter" }, {
+	group = augroup,
+	callback = function()
+		if vim.bo.buftype == "" or vim.bo.filetype == "qf" then
+			vim.wo.cursorline = true
+		end
+	end,
+	desc = "Show cursorline in the active window",
+})
+
+vim.api.nvim_create_autocmd("WinLeave", {
+	group = augroup,
+	callback = function()
+		vim.wo.cursorline = false
+	end,
+	desc = "Hide cursorline in inactive windows",
+})
+
 -- Disable auto comment on new line
 vim.api.nvim_create_autocmd("FileType", {
 	group = augroup,

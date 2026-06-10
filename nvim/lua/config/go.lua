@@ -476,18 +476,29 @@ function M.implement_interface(bufnr)
 			filter = {
 				["go"] = { "Interface" },
 			},
-			-- gopls returns bare names ("Writer"); append the package (held in
-			-- containerName) so e.g. io.Writer vs bufio.Writer are distinguishable.
-			format = function(item, picker)
-				local ret = require("snacks.picker.format").lsp_symbol(item, picker)
+			-- gopls returns bare names ("Writer") for unqualified queries; rewrite
+			-- every item to "package.Name" ("io.Writer") before display and
+			-- matching, so the list always shows which package an interface comes
+			-- from. containerName holds the full import path — reduce it to the
+			-- short package name (last segment, skipping "/v2"-style suffixes).
+			transform = function(item)
 				local container = item.item and item.item.containerName
+				local name = item.name or ""
 
-				if container and container ~= "" then
-					ret[#ret + 1] = { "  " }
-					ret[#ret + 1] = { container, "SnacksPickerComment" }
+				if not container or container == "" then
+					return
 				end
 
-				return ret
+				local pkg = container:match("([^/]+)$") or container
+
+				if pkg:match("^v%d+$") then
+					pkg = container:match("([^/]+)/[^/]+$") or pkg
+				end
+
+				local bare = name:match("[^.]+$") or name
+
+				item.name = pkg .. "." .. bare
+				item.text = table.concat({ item.kind or "Interface", item.name, item.file or "" }, " ")
 			end,
 			confirm = function(picker, item)
 				picker:close()

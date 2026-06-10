@@ -118,7 +118,12 @@ ls -l ~/.config/starship.toml
 - netrw is disabled because file exploration is handled by mini.files and Oil.
 - Clipboard uses `unnamedplus`.
 - Indentation uses spaces with a width of 4.
-- Search uses ignorecase plus smartcase.
+- Search uses ignorecase plus smartcase; `:substitute` shows a live preview with off-screen matches in a split (`inccommand=split`).
+- `confirm` prompts to save instead of failing `:q` on unsaved changes.
+- Visual block mode can extend past line ends (`virtualedit=block`).
+- The jumplist behaves like a stack (`jumpoptions=stack`).
+- The terminal/tmux window title shows the current file (`title`).
+- Folded lines keep their syntax highlighting (`foldtext=""`).
 - UI defaults include true color, cursorline, signcolumn, no wrapping, global statusline, rounded window borders, and clean command/status display.
 - Split defaults are `splitright` and `splitbelow`.
 - Swap and backup files are disabled; persistent undo is enabled.
@@ -141,6 +146,8 @@ Core editing and window movement:
 | `<C-Left>`, `<C-Down>`, `<C-Up>`, `<C-Right>` | Same Neovim window or tmux pane movement with arrow keys |
 | `<A-j>`, `<A-k>` | Move the current line or visual selection down/up |
 | Visual `J`, Visual `K` | Move the selected lines down/up |
+| Visual `<`, `>` | Indent and keep the selection |
+| Terminal `<Esc><Esc>` | Leave terminal mode (works in neotest/dap consoles too) |
 | `<C-d>`, `<C-u>` | Half-page down/up and keep the cursor centered |
 | `n`, `N` | Next/previous search result and keep the cursor centered |
 | `]q`, `[q` | Next/previous quickfix item |
@@ -184,6 +191,8 @@ Find and search with Snacks picker:
 | --- | --- |
 | `<leader>ff` | Find files |
 | `<leader>fg` | Live grep |
+| `<leader>/` | Fuzzy search lines in the current buffer |
+| `<leader>fu` | Undo history (preview and restore any undo state) |
 | `<leader>fG` | Git changed files |
 | `<leader>fb` | Find buffers |
 | `<leader>fr` | Recent files |
@@ -380,6 +389,9 @@ Surround editing from `mini.surround`:
 - When Neovim starts with a directory argument (`nvim .`), switch to that directory and open an empty buffer instead of a directory listing (`nvim/lua/config/startup.lua`).
 - Highlight yanked text for 150 ms.
 - Restore the cursor to the last edit position when reopening a file.
+- Reload files changed on disk on focus gain or after a terminal command (lazygit, `go generate`, branch switches).
+- Equalize splits when the terminal or tmux pane is resized.
+- Show the cursorline only in the focused window.
 - Disable automatic comment continuation on new lines.
 - Let temporary windows such as quickfix, help, man, notify, and neotest windows close with `q` or `<Esc>`.
 
@@ -428,7 +440,7 @@ The same Catppuccin Mocha direction is used by Ghostty and Starship, so the term
 - Loads on `InsertEnter`.
 - Completion sources are LSP, path, snippets, buffer, and Go struct tags.
 - Snippets use friendly-snippets plus local snippets from `nvim/snippets/`.
-- Kubernetes snippets from friendly-snippets are filtered out so the local Kubernetes snippets take precedence.
+- Kubernetes snippets from friendly-snippets are filtered out so the local Kubernetes snippets take precedence. friendly-snippets' Go set stays enabled: it provides the general-purpose snippets (`tys`, `for`, `forr`, `meth`, `tdt`, ...) while the local `go.json` adds specialized ones under non-colliding prefixes.
 - Documentation and completion windows use rounded borders.
 - Go completions that come from unimported packages use a `go doc` fallback when `gopls` does not return full completion documentation.
 - Go struct fields get tag completions for `json`, `yaml`, `bson`, `xml`, `toml`, `mapstructure`, `db`, `env`, `validate`, and common HTTP binding tags.
@@ -508,7 +520,7 @@ Go-specific mappings (active only while `gopls` is attached):
 - Helper functions expose organize imports, fix all, `go mod tidy`, `go generate ./...`, and `golangci-lint run ./...`.
 - Code-generation helpers use Treesitter to find the struct under the cursor and drive the Mason-installed tools:
   - Per-tag add/remove helpers → `gomodifytags` (`json`, `yaml`, and `env`).
-  - `implement_interface` → takes the struct **under the cursor**, then opens a live gopls workspace-symbol picker filtered to interfaces. As you type (e.g. `fmt.Str`) gopls returns matching interfaces (`fmt.Stringer`); on selection the symbol's import path is resolved with `go list` so it works for stdlib, dependency, and workspace interfaces, and `impl`'s generated method stubs are inserted right after the struct. The receiver name is derived from the struct name (e.g. `Widget` → `w *Widget`). If the picker is unavailable it falls back to a manual interface prompt.
+  - `implement_interface` → takes the struct **under the cursor**, then opens a live gopls workspace-symbol picker filtered to interfaces. Results are always displayed as `package.Name` using the short package name (searching `Stringer` shows `fmt.Stringer`; an interface from `sigs.k8s.io/controller-runtime/pkg/client` shows as `client.Object`, not the full import path), so same-named interfaces from different packages are distinguishable without the noise. On selection the symbol's import path is resolved with `go list` so it works for stdlib, dependency, and workspace interfaces, and `impl`'s generated method stubs are inserted right after the struct. The receiver name is derived from the struct name (e.g. `Widget` → `w *Widget`). If the picker is unavailable it falls back to a manual interface prompt.
 
 ### Kubernetes and YAML
 
@@ -593,6 +605,8 @@ Mappings:
 
 - `<leader>ff` find files
 - `<leader>fg` live grep
+- `<leader>/` fuzzy search lines in the current buffer
+- `<leader>fu` undo history
 - `<leader>fG` Git changed files
 - `<leader>fb` buffers
 - `<leader>fr` recent files
@@ -689,6 +703,7 @@ Diagnostics are shown in the bufferline.
 `nvim/lua/plugins/lueline.lua` configures the global statusline:
 
 - Shows mode, branch, filename, diagnostics, active LSP clients, diff, filetype, progress, and location.
+- Shows a red `@register` indicator while a macro is recording (refreshed via `RecordingEnter`/`RecordingLeave`).
 - Uses global statusline mode.
 - Disables the statusline for Oil and the mini.starter start screen.
 - Colors are sourced from the Catppuccin palette API so they follow flavour changes automatically.
@@ -872,14 +887,12 @@ Local snippets live in `nvim/snippets/`.
 - YAML
 - Helm
 
-`go.json` includes snippets for:
+For Go, general-purpose snippets (structs `tys`, interfaces `tyi`, `for`/`fori`/`forr` loops, methods `meth`/`fum`, goroutines `go`/`gf`, benchmarks `bf`, table tests `tdt`, ...) come from friendly-snippets. The local `go.json` adds specialized snippets under prefixes that do not collide with friendly-snippets:
 
-- `for` loops and `for range` (`for`, `forr`)
-- methods with a pointer receiver (`meth`)
 - `if err != nil` and wrapped errors (`iferr`, `errw`)
 - HTTP handlers (`httphandler`, `httphandlerm`)
-- tests, subtests, table tests, benchmarks (`test`, `tRun`, `tt`, `bench`)
-- goroutines and `select` with context (`gofunc`, `selectctx`)
+- tests, subtests, table tests (`test`, `tRun`, `tt`)
+- `select` with context (`selectctx`)
 - controller-runtime reconciliation helpers (`reconcile`, `kget`, `ownerref`)
 
 `kubernetes.json` includes snippets for:

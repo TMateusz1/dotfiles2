@@ -35,6 +35,10 @@ opt.smartcase = true
 opt.hlsearch = true
 opt.incsearch = true
 
+-- Live preview for :substitute (and :normal etc.), including a split window
+-- showing off-screen matches.
+opt.inccommand = "split"
+
 -- UI
 opt.termguicolors = true
 opt.signcolumn = "yes"
@@ -54,6 +58,21 @@ opt.splitbelow = true
 
 -- Quickfix: reuse an open window for the target buffer, otherwise the last window
 opt.switchbuf = "useopen,uselast"
+
+-- Prompt to save instead of failing :q / :e on unsaved changes
+opt.confirm = true
+
+-- Allow the cursor past line ends in visual block mode (clean column edits)
+opt.virtualedit = "block"
+
+-- Jumplist behaves like a stack: jumping after <C-o> discards the forward list
+opt.jumpoptions = "stack"
+
+-- Show the current file in the terminal / tmux window title
+opt.title = true
+
+-- Folded lines keep their normal syntax highlighting (first line of the fold)
+opt.foldtext = ""
 
 -- Files
 opt.swapfile = false
@@ -123,4 +142,6 @@ vim.opt.fillchars = {
 	vertleft = "┫",
 	vertright = "┣",
 	verthoriz = "╋",
+	-- No trailing dashes after folded lines (pairs with foldtext = "")
+	fold = " ",
 }

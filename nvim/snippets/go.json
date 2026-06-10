@@ -1,39 +1,4 @@
 {
-  "for loop": {
-    "prefix": "for",
-    "description": "for i loop",
-    "body": ["for ${1:i} := 0; ${1:i} < ${2:n}; ${1:i}++ {", "\t${0}", "}"]
-  },
-  "for range": {
-    "prefix": "forr",
-    "description": "for range loop",
-    "body": ["for ${1:_}, ${2:v} := range ${3:items} {", "\t${0}", "}"]
-  },
-  "method": {
-    "prefix": "meth",
-    "description": "method with pointer receiver",
-    "body": [
-      "func (${1:r} *${2:Receiver}) ${3:Name}(${4}) ${5:error} {",
-      "\t${0}",
-      "}"
-    ]
-  },
-  "goroutine": {
-    "prefix": "gofunc",
-    "description": "anonymous goroutine",
-    "body": ["go func() {", "\t${0}", "}()"]
-  },
-  "benchmark": {
-    "prefix": "bench",
-    "description": "benchmark function",
-    "body": [
-      "func Benchmark${1:Name}(b *testing.B) {",
-      "\tfor b.Loop() {",
-      "\t\t${0}",
-      "\t}",
-      "}"
-    ]
-  },
   "if err": {
     "prefix": "iferr",
     "description": "if err != nil",

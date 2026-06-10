@@ -285,6 +285,11 @@ return {
 					snippets = {
 						opts = {
 							friendly_snippets = true,
+							-- Only Kubernetes is filtered (local snippets take
+							-- precedence there). friendly-snippets' Go set stays:
+							-- it provides the general-purpose snippets (tys, for,
+							-- forr, meth, ...) while local go.json adds the
+							-- specialized ones with non-colliding prefixes.
 							filter_snippets = function(_, file)
 								return not file:match("friendly%-snippets.*/snippets/kubernetes%.json$")
 							end,

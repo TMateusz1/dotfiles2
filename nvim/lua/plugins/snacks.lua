@@ -95,6 +95,20 @@ return {
 			desc = "Live grep",
 		},
 		{
+			"<leader>/",
+			function()
+				Snacks.picker.lines()
+			end,
+			desc = "Search buffer lines",
+		},
+		{
+			"<leader>fu",
+			function()
+				Snacks.picker.undo()
+			end,
+			desc = "Undo history",
+		},
+		{
 			"<leader>fG",
 			function()
 				Snacks.picker.git_status()

@@ -1,3 +1,13 @@
+local function macro_recording()
+	local register = vim.fn.reg_recording()
+
+	if register == "" then
+		return ""
+	end
+
+	return "󰑊 @" .. register
+end
+
 local function lsp_clients()
 	local clients = vim.lsp.get_clients({
 		bufnr = 0,
@@ -118,6 +128,10 @@ return {
 				-- Transient / contextual info on the right
 				lualine_x = {
 					{
+						macro_recording,
+						color = { fg = palette.red, gui = "bold" },
+					},
+					{
 						"searchcount",
 						icon = "",
 						color = { fg = palette.peach, gui = "bold" },
@@ -164,5 +178,18 @@ return {
 				lualine_z = { "location" },
 			},
 		},
+		config = function(_, opts)
+			require("lualine").setup(opts)
+
+			-- The statusline doesn't redraw when recording starts/stops, so the
+			-- macro indicator would lag until the next cursor move.
+			vim.api.nvim_create_autocmd({ "RecordingEnter", "RecordingLeave" }, {
+				group = vim.api.nvim_create_augroup("user_lualine_macro", { clear = true }),
+				callback = function()
+					require("lualine").refresh()
+				end,
+				desc = "Refresh statusline for the macro indicator",
+			})
+		end,
 	},
 }

@@ -29,6 +29,14 @@ end, {
 	desc = "Close floating windows or clear search highlight",
 })
 
+-- Leave terminal mode with a double Esc (covers neotest/dap consoles too;
+-- a single Esc still reaches the program inside the terminal)
+keymap("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+
+-- Stay in visual mode while indenting
+keymap("v", "<", "<gv", { desc = "Indent left and reselect" })
+keymap("v", ">", ">gv", { desc = "Indent right and reselect" })
+
 -- Move selected lines
 keymap("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 keymap("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
