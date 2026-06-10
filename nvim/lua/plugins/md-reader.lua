@@ -5,8 +5,6 @@ return {
 		dependencies = {
 			"nvim-treesitter/nvim-treesitter",
 			"nvim-mini/mini.icons",
-			-- alternatywnie:
-			-- "nvim-tree/nvim-web-devicons",
 		},
 		opts = {
 			file_types = { "markdown" },

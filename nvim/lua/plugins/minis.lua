@@ -82,9 +82,6 @@ return {
 				preview = false,
 				width_focus = 30,
 			},
-			options = {
-				use_as_default_explorer = true,
-			},
 		},
 		keys = {
 			{

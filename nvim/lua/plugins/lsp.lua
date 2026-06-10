@@ -52,7 +52,6 @@ return {
 				"gofumpt",
 				"golines",
 				"delve",
-				"staticcheck",
 				"gotestsum",
 				"gomodifytags",
 				"impl",
@@ -208,8 +207,9 @@ return {
 						validate = true,
 						completion = true,
 						hover = true,
+						-- Formatting is owned by conform (yamlfmt); keep yamlls out of it.
 						format = {
-							enable = true,
+							enable = false,
 						},
 						maxItemsComputed = 10000,
 						kubernetesCRDStore = kubernetes.crd_store_settings(),
@@ -389,16 +389,8 @@ return {
 						end
 						require("quicker").open()
 					end, "Diagnostics quickfix")
-					map("n", "]d", function() vim.diagnostic.jump({ count = 1, float = true }) end, "Next diagnostic")
-					map("n", "[d", function() vim.diagnostic.jump({ count = -1, float = true }) end, "Previous diagnostic")
-					map("n", "<leader>uv", function()
-						-- Toggle rich multi-line diagnostics on the cursor line (0.11+).
-						if vim.diagnostic.config().virtual_lines then
-							vim.diagnostic.config({ virtual_lines = false, virtual_text = false })
-						else
-							vim.diagnostic.config({ virtual_lines = { current_line = true }, virtual_text = false })
-						end
-					end, "Toggle virtual-line diagnostics")
+					-- ]d / [d / <leader>uv are global (config/keymaps.lua) so they also
+					-- work with nvim-lint diagnostics in buffers without an LSP client.
 
 					-- LSP management
 					map("n", "<leader>cL", "<cmd>LspInfo<CR>", "LSP info")

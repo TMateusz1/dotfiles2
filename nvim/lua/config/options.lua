@@ -13,7 +13,7 @@ opt.relativenumber = true
 -- Mouse
 opt.mouse = "a"
 
--- Disable netrw; file exploration is handled by Snacks explorer and Oil.
+-- Disable netrw; file exploration is handled by mini.files and Oil.
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
@@ -108,7 +108,7 @@ if vim.env.SSH_TTY or vim.env.SSH_CONNECTION then
 
 		vim.opt.clipboard = "unnamedplus"
 	else
-		vim.notify("OSC52 clipboard provider not avaliable", vim.log.levels.WARN)
+		vim.notify("OSC52 clipboard provider not available", vim.log.levels.WARN)
 	end
 end
 

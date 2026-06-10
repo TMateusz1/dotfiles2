@@ -7,6 +7,7 @@ Personal dotfiles for a terminal-first development environment. The repo is inte
 ```text
 .
 ├── README.md
+├── .tmux.conf
 ├── ghostty/
 │   └── config
 ├── nvim/
@@ -16,7 +17,10 @@ Personal dotfiles for a terminal-first development environment. The repo is inte
 │   │   ├── config/
 │   │   └── plugins/
 │   └── snippets/
-└── starship.toml
+├── starship.toml
+└── yazi/
+    ├── keymap.toml
+    └── package.toml
 ```
 
 The repo is split by tool:
@@ -24,10 +28,12 @@ The repo is split by tool:
 - `nvim/` is the complete Neovim configuration.
 - `ghostty/config` configures the Ghostty terminal.
 - `starship.toml` configures the shell prompt.
+- `.tmux.conf` configures tmux.
+- `yazi/` configures the Yazi file manager used from tmux.
 
 The Neovim config has two layers:
 
-- `nvim/lua/config/` contains core editor behavior: options, keymaps, autocmds, filetype detection, Go helper functions, Kubernetes schema logic, and Lazy plugin bootstrapping.
+- `nvim/lua/config/` contains core editor behavior: options, keymaps, autocmds, startup handling for directory arguments, filetype detection, Go helper functions, the Go struct-tag completion source, Kubernetes schema logic, and Lazy plugin bootstrapping.
 - `nvim/lua/plugins/` contains Lazy plugin specs grouped by feature area: completion, LSP, formatting, file explorers, fuzzy finding, Git, UI, Markdown, testing, Treesitter, and helper plugins.
 
 `nvim/init.lua` is intentionally thin. It loads the core modules in this order:
@@ -138,6 +144,7 @@ Core editing and window movement:
 | `<C-d>`, `<C-u>` | Half-page down/up and keep the cursor centered |
 | `n`, `N` | Next/previous search result and keep the cursor centered |
 | `]q`, `[q` | Next/previous quickfix item |
+| `<leader>xq`, `<leader>xl` | Toggle the quickfix/location list window (quicker.nvim) |
 | `q`, `<Esc>` in temporary windows | Close quickfix, help, man, notify, and neotest windows |
 
 Save, quit, and buffers:
@@ -186,6 +193,7 @@ Find and search with Snacks picker:
 | `<leader>fk` | Keymaps |
 | `<leader>f:` | Commands |
 | `<leader>fj` | Jump list |
+| `<leader>fs`, `<leader>fS` | Document/workspace symbols |
 | `<leader>fm` | Harpoon files |
 | `<leader>f;`, `<leader>f/` | Command/search history |
 | `<leader>fd`, `<leader>fD` | Document/workspace diagnostics |
@@ -228,7 +236,7 @@ Code, LSP, diagnostics, and formatting:
 | `<leader>cd`, `<leader>cD` | Go to definition/declaration |
 | `<leader>cy` | Go to type definition |
 | `<leader>cu` | Find usages (references without declaration) |
-| `<leader>cs`, `<leader>cS` | Document/workspace symbols |
+| `<leader>fs`, `<leader>fS` | Document/workspace symbols (under the find prefix) |
 | `<leader>cF` | LSP finder (definitions + references + implementations) |
 | `<leader>cI`, `<leader>cO` | Incoming/outgoing calls |
 
@@ -264,6 +272,7 @@ Go-specific code mappings (only active in Go buffers):
 | Key | Action |
 | --- | --- |
 | `<leader>ci` | Implement interface: put the cursor in a struct, then pick the interface from a live picker (type `fmt.Str` → `fmt.Stringer`); `impl` stubs are inserted after the struct |
+| `<leader>cgd` | Show `go doc` for the symbol under the cursor in a floating window |
 | `<leader>cgm` | Run `go mod tidy` |
 | `<leader>cgg` | Run `go generate ./...` |
 | `<leader>cgl` | Run `golangci-lint run ./...` |
@@ -288,7 +297,7 @@ Git:
 | `]h`, `[h` | Next/previous Git hunk (staged and unstaged, matching the sign column) |
 | `<leader>ghp` | Preview hunk |
 | `<leader>ghs`, `<leader>ghr` | Stage/reset hunk or visual selection |
-| `<leader>ghu` | Undo staged hunk |
+| `<leader>ghu` | Un-stage hunk under cursor (`stage_hunk` toggles on staged hunks) |
 | `<leader>ghb`, `<leader>ghB` | Blame line/full blame line |
 | `<leader>ghl` | Toggle inline blame |
 | `<leader>ghd`, `<leader>ghD` | Diff file against index/previous commit |
@@ -337,6 +346,7 @@ UI and toggles:
 | Key | Action |
 | --- | --- |
 | `<leader>ud` | Toggle code dimming (dims code outside current scope) |
+| `<leader>uf` | Toggle format-on-save |
 | `<leader>uh` | Toggle inlay hints |
 | `<leader>uv` | Toggle rich virtual-line diagnostics on the cursor line |
 | `<leader>ut` | Toggle terminal |
@@ -367,10 +377,10 @@ Surround editing from `mini.surround`:
 
 `nvim/lua/config/autocmds.lua` adds small quality-of-life behavior:
 
+- When Neovim starts with a directory argument (`nvim .`), switch to that directory and open an empty buffer instead of a directory listing (`nvim/lua/config/startup.lua`).
 - Highlight yanked text for 150 ms.
 - Restore the cursor to the last edit position when reopening a file.
 - Disable automatic comment continuation on new lines.
-- Show a 120-column guide for Go files.
 - Let temporary windows such as quickfix, help, man, notify, and neotest windows close with `q` or `<Esc>`.
 
 ### Filetype Detection
@@ -453,7 +463,7 @@ Installed LSP servers:
 
 Mason-managed tools:
 
-- Go: `goimports`, `gofumpt`, `golines`, `delve`, `staticcheck`, `gotestsum`, `gomodifytags`, `impl`, `golangci-lint`
+- Go: `goimports`, `gofumpt`, `golines`, `delve`, `gotestsum`, `gomodifytags`, `impl`, `golangci-lint`
 - General: `stylua`, `shfmt`, `prettier`, `yamlfmt`, `yamllint`, `hadolint`
 
 LSP behavior:
@@ -464,17 +474,17 @@ LSP behavior:
 - LSP folding (`vim.lsp.foldexpr`) is enabled for servers that support folding ranges, with `foldlevel = 99` so nothing is collapsed on open; `zM`/`zc` fold manually.
 - `gopls` enables gofumpt, unimported package completions, staticcheck, semantic tokens, selected analyses, code lenses, and inlay hints support.
 - `lua_ls` is configured for Neovim Lua, LuaJIT, `vim` globals, local config workspace, and disabled telemetry.
-- `yamlls` validates YAML, uses schemastore data, supports Kubernetes schemas, and reads the local CRD schema cache.
+- `yamlls` validates YAML, uses schemastore data, supports Kubernetes schemas, and reads the local CRD schema cache. Its formatter is disabled — conform owns YAML formatting via `yamlfmt`.
 - `helm_ls` delegates YAML behavior to `yaml-language-server` and recognizes `values*.yaml`.
 
 Common LSP mappings:
 
 - `gd`/`gD` definition/declaration, `gr`/`gi`/`gy` references/implementations/type definitions (all via Snacks picker), `K` hover
 - `<leader>cd`/`<leader>cD` definition/declaration, `<leader>cy` type definition, `<leader>cu` usages (use bare `gi` for implementations; `<leader>ci` is repurposed to implement-interface in Go buffers)
-- `<leader>cs`/`<leader>cS` document/workspace symbols, `<leader>cF` LSP finder, `<leader>cI`/`<leader>cO` calls
+- `<leader>fs`/`<leader>fS` document/workspace symbols, `<leader>cF` LSP finder, `<leader>cI`/`<leader>cO` calls
 - `<leader>ca` code action, `<leader>cr` references, `<leader>cn` rename, `<leader>co` organize imports, `<leader>cf` fix all
 - `<leader>cc`/`<leader>cC` run/refresh code lens
-- `<leader>cx` line diagnostics, `<leader>cq` diagnostics quickfix, `]d`/`[d` navigate diagnostics
+- `<leader>cx` line diagnostics, `<leader>cq` diagnostics quickfix; `]d`/`[d` and `<leader>uv` are global maps (`config/keymaps.lua`), so they also cover nvim-lint diagnostics in buffers without an LSP client
 - `<leader>cL` LSP info, `<leader>cR` restart LSP
 - `<leader>uh` toggles inlay hints when supported, `<leader>uv` toggles virtual-line diagnostics
 
@@ -483,6 +493,7 @@ Go-specific mappings (active only while `gopls` is attached):
 - `<leader>cgm` runs `go mod tidy`.
 - `<leader>cgg` runs `go generate ./...`.
 - `<leader>cgl` runs `golangci-lint run ./...`.
+- `<leader>cgd` shows `go doc` for the symbol under the cursor in a floating window.
 - `<leader>cgj` / `<leader>cgJ` add / remove json struct tags via `gomodifytags`.
 - `<leader>cgy` / `<leader>cgY` add / remove yaml struct tags via `gomodifytags`.
 - `<leader>cge` / `<leader>cgE` add / remove env struct tags for `caarlos0/env/v11` via `gomodifytags`.
@@ -592,6 +603,8 @@ Mappings:
 - `<leader>fk` keymaps
 - `<leader>f:` commands
 - `<leader>fj` jump list
+- `<leader>fs` document symbols
+- `<leader>fS` workspace symbols (live, via LSP)
 - `<leader>fm` Harpoon files
 - `<leader>f;` command history
 - `<leader>f/` search history
@@ -614,7 +627,7 @@ mini.files (`<leader>e`) is the main in-editor file explorer (configured in `nvi
 - `<C-v>` / `<C-s>` open the file in a vertical / horizontal split; on a directory they just enter it.
 - Arrows: up/down move the cursor, `<Right>` goes in (`l`), `<Left>` and `<BS>` go out (`h`).
 - `=` and `<leader>w` synchronize edits back to disk — rename, move, create, or delete files by editing the listing, then write.
-- Preview is disabled, and it is the default directory handler (`nvim .` opens mini.files); netrw is off.
+- Preview is disabled and netrw is off. Starting Neovim with a directory argument opens an empty buffer in that directory (see Autocmds); use `<leader>e` to browse.
 
 Oil is used as an editable file manager:
 
@@ -646,7 +659,7 @@ Mappings:
 - `<leader>ghp` preview hunk
 - `<leader>ghs` stage hunk
 - `<leader>ghr` reset hunk
-- `<leader>ghu` undo staged hunk
+- `<leader>ghu` un-stage hunk under cursor (staging is a toggle)
 - `<leader>ghb` blame line
 - `<leader>ghB` full blame line
 - `<leader>ghl` toggle inline blame
@@ -783,11 +796,22 @@ Highlights `TODO`, `FIXME`, `FIX`, `HACK`, `WARN`, `PERF`, `NOTE`, `TEST` keywor
 - `<leader>ft` open a Snacks picker with all todo comments in the project.
 - `<leader>fT` filter to `TODO`, `FIX`, `FIXME` only — the actionable ones.
 
+### Quickfix
+
+`nvim/lua/plugins/quicker.lua` configures `stevearc/quicker.nvim`, which upgrades the quickfix and location list windows:
+
+- `<leader>xq` / `<leader>xl` toggle the quickfix/location list window, sized to fit the list.
+- Entries are syntax-highlighted (Treesitter + LSP).
+- The list is editable: change lines in the quickfix buffer and `:w` applies the edits back to the underlying files.
+- `>` / `<` expand/collapse context lines around each entry.
+
+Diagnostics (`<leader>cq`), failed tests (`<leader>tq`), and failed Go commands (`<leader>cg…`) all open their quickfix lists through quicker so the window height matches the content.
+
 ### Harpoon
 
 `nvim/lua/plugins/harpoon.lua` configures `ThePrimeagen/harpoon` (harpoon2 branch) with a custom Snacks picker UI.
 
-- Up to 3 named slots, each pinned to a specific file and line.
+- Marks are pinned to a specific file and line; slots 1–3 have direct keys (`<leader>mm` can append beyond 3 — use the picker for those).
 - `<leader>mm` marks the current file/line into the next free slot.
 - `<leader>m1`–`<leader>m3` mark into a specific slot.
 - `<leader>1`–`<leader>3` jump directly to a slot.
@@ -832,6 +856,7 @@ Top-level groups:
 - `<leader>s` sessions
 - `<leader>t` tests
 - `<leader>u` UI/toggles
+- `<leader>x` lists (quickfix/location list)
 
 Every leader mapping in the config carries a `desc`, and the spec also documents the bare-key and bracket-pair mappings (`gd`/`gr`/`gi`, `]h`/`[h`, `]d`/`[d`, `]t`/`[t`, `]q`/`[q`, `]b`/`[b`), so `which-key` and `<leader>fk` stay an accurate map of the whole keyboard layout.
 
@@ -849,13 +874,13 @@ Local snippets live in `nvim/snippets/`.
 
 `go.json` includes snippets for:
 
-- `for` loops
-- `if err != nil`
-- wrapped errors
-- HTTP handlers
-- tests, subtests, table tests, benchmarks
-- goroutines and `select`
-- controller-runtime reconciliation helpers
+- `for` loops and `for range` (`for`, `forr`)
+- methods with a pointer receiver (`meth`)
+- `if err != nil` and wrapped errors (`iferr`, `errw`)
+- HTTP handlers (`httphandler`, `httphandlerm`)
+- tests, subtests, table tests, benchmarks (`test`, `tRun`, `tt`, `bench`)
+- goroutines and `select` with context (`gofunc`, `selectctx`)
+- controller-runtime reconciliation helpers (`reconcile`, `kget`, `ownerref`)
 
 `kubernetes.json` includes snippets for:
 

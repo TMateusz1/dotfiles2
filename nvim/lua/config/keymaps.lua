@@ -56,6 +56,23 @@ keymap("n", "[q", function()
 end, { desc = "Previous quickfix item" })
 -- <leader>xq / <leader>xl toggle the quickfix / location list (see plugins/quicker.lua)
 
+-- Diagnostics. Global (not LspAttach-local) so they also cover nvim-lint
+-- diagnostics in buffers without an LSP client.
+keymap("n", "]d", function()
+	vim.diagnostic.jump({ count = 1, float = true })
+end, { desc = "Next diagnostic" })
+keymap("n", "[d", function()
+	vim.diagnostic.jump({ count = -1, float = true })
+end, { desc = "Previous diagnostic" })
+keymap("n", "<leader>uv", function()
+	-- Toggle rich multi-line diagnostics on the cursor line (0.11+).
+	if vim.diagnostic.config().virtual_lines then
+		vim.diagnostic.config({ virtual_lines = false, virtual_text = false })
+	else
+		vim.diagnostic.config({ virtual_lines = { current_line = true }, virtual_text = false })
+	end
+end, { desc = "Toggle virtual-line diagnostics" })
+
 -- Save
 -- leaderW is mapped in minis.bufremove as save + buffer delete, same as leaderw + leaderq
 keymap("n", "<leader>w", "<cmd>write<CR>", { desc = "Save file" })

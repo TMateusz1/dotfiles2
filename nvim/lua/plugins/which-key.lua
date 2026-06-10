@@ -84,7 +84,7 @@ return {
 				{ "<leader>ghp", desc = "Preview hunk" },
 				{ "<leader>ghs", desc = "Stage hunk" },
 				{ "<leader>ghr", desc = "Reset hunk" },
-				{ "<leader>ghu", desc = "Undo stage hunk" },
+				{ "<leader>ghu", desc = "Undo stage hunk (toggle)" },
 
 				{ "<leader>ghb", desc = "Blame line" },
 				{ "<leader>ghB", desc = "Full blame line" },

@@ -61,6 +61,7 @@ return {
 					"lua",
 					"markdown",
 					"python",
+					"query",
 					"sql",
 					"tsx",
 					"typescript",

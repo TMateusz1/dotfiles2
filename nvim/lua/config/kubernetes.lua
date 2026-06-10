@@ -340,7 +340,7 @@ end
 function M.attach_buffer_schema(bufnr)
 	bufnr = bufnr or vim.api.nvim_get_current_buf()
 
-	if not vim.api.nvim_buf_is_valid(bufnr) or not is_yaml_buffer(bufnr) or not has_kubernetes_markers(bufnr) then
+	if not vim.api.nvim_buf_is_valid(bufnr) or not is_yaml_buffer(bufnr) then
 		return false
 	end
 
@@ -350,9 +350,15 @@ function M.attach_buffer_schema(bufnr)
 		return false
 	end
 
+	-- Cheap guards first: skip already-attached buffers before scanning the
+	-- buffer for apiVersion/kind markers (this runs on every text change).
 	local pattern = vim.uri_from_fname(filename)
 
 	if dynamic_schema_file_patterns[pattern] then
+		return false
+	end
+
+	if not has_kubernetes_markers(bufnr) then
 		return false
 	end
 
@@ -536,11 +542,13 @@ function M.setup()
 		desc = "Generate local CRD schemas for yamlls when needed",
 	})
 
+	-- InsertLeave instead of TextChangedI: re-checking once on leaving insert
+	-- mode is enough; per-keystroke checks just churned deferred callbacks.
 	vim.api.nvim_create_autocmd({
 		"BufReadPost",
 		"BufWritePost",
 		"TextChanged",
-		"TextChangedI",
+		"InsertLeave",
 	}, {
 		group = vim.api.nvim_create_augroup("user_kubernetes_schema_attach", { clear = true }),
 		pattern = {

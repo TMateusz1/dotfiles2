@@ -1,3 +1,14 @@
+-- Shared by the files and grep picker sources.
+local picker_exclude = {
+	".git",
+	".vscode",
+	"node_modules",
+	"dist",
+	"build",
+	"target",
+	".idea",
+}
+
 return {
 	"folke/snacks.nvim",
 	priority = 1000,
@@ -43,28 +54,12 @@ return {
 				files = {
 					hidden = true,
 					follow = true,
-					exclude = {
-						".git",
-						".vscode",
-						"node_modules",
-						"dist",
-						"build",
-						"target",
-						".idea",
-					},
+					exclude = picker_exclude,
 				},
 				grep = {
 					hidden = true,
 					follow = true,
-					exclude = {
-						".git",
-						".vscode",
-						"node_modules",
-						"dist",
-						"build",
-						"target",
-						".idea",
-					},
+					exclude = picker_exclude,
 				},
 			},
 		},

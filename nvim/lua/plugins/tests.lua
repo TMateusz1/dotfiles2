@@ -1,4 +1,4 @@
--- ~/.config/nvim/lua/plugins/testing.lua
+-- ~/.config/nvim/lua/plugins/tests.lua
 
 local function current_file()
 	local file = vim.api.nvim_buf_get_name(0)

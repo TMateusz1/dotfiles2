@@ -90,7 +90,9 @@ return {
 				map("n", "<leader>ghp", gitsigns.preview_hunk, "Preview hunk")
 				map("n", "<leader>ghs", gitsigns.stage_hunk, "Stage hunk")
 				map("n", "<leader>ghr", gitsigns.reset_hunk, "Reset hunk")
-				map("n", "<leader>ghu", gitsigns.undo_stage_hunk, "Undo stage hunk")
+				-- undo_stage_hunk is deprecated upstream; stage_hunk now toggles,
+				-- so on a staged hunk it un-stages it.
+				map("n", "<leader>ghu", gitsigns.stage_hunk, "Undo stage hunk (toggle)")
 
 				map("v", "<leader>ghs", function()
 					gitsigns.stage_hunk({
