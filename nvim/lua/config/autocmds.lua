@@ -51,9 +51,10 @@ vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
 vim.api.nvim_create_autocmd("VimResized", {
 	group = augroup,
 	callback = function()
+		-- pcall: tabdo is not allowed while the cmdline-window is open (E11).
 		local current_tab = vim.fn.tabpagenr()
-		vim.cmd("tabdo wincmd =")
-		vim.cmd("tabnext " .. current_tab)
+		pcall(vim.cmd, "tabdo wincmd =")
+		pcall(vim.cmd, "tabnext " .. current_tab)
 	end,
 	desc = "Equalize splits on resize",
 })
@@ -72,7 +73,12 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter" }, {
 vim.api.nvim_create_autocmd("WinLeave", {
 	group = augroup,
 	callback = function()
-		vim.wo.cursorline = false
+		-- Only normal file windows: special buffers (Snacks picker list,
+		-- quickfix, mini.files) manage their own cursorline and would lose
+		-- their selection highlight if this fired for them.
+		if vim.bo.buftype == "" then
+			vim.wo.cursorline = false
+		end
 	end,
 	desc = "Hide cursorline in inactive windows",
 })

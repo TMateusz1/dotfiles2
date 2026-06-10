@@ -279,6 +279,12 @@ return {
 						module = "config.blink_go_struct_tags",
 						score_offset = 20,
 					},
+					lazydev = {
+						name = "LazyDev",
+						module = "lazydev.integrations.blink",
+						-- Rank nvim/plugin API completions above plain lsp results.
+						score_offset = 100,
+					},
 					lsp = {
 						fallbacks = {},
 					},
@@ -304,6 +310,7 @@ return {
 				per_filetype = {
 					lua = {
 						inherit_defaults = true,
+						"lazydev",
 					},
 
 					go = {

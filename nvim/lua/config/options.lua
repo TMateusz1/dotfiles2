@@ -71,9 +71,6 @@ opt.jumpoptions = "stack"
 -- Show the current file in the terminal / tmux window title
 opt.title = true
 
--- Folded lines keep their normal syntax highlighting (first line of the fold)
-opt.foldtext = ""
-
 -- Files
 opt.swapfile = false
 opt.backup = false
@@ -142,6 +139,4 @@ vim.opt.fillchars = {
 	vertleft = "┫",
 	vertright = "┣",
 	verthoriz = "╋",
-	-- No trailing dashes after folded lines (pairs with foldtext = "")
-	fold = " ",
 }

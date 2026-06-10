@@ -186,7 +186,11 @@ return {
 			vim.api.nvim_create_autocmd({ "RecordingEnter", "RecordingLeave" }, {
 				group = vim.api.nvim_create_augroup("user_lualine_macro", { clear = true }),
 				callback = function()
-					require("lualine").refresh()
+					-- Scheduled: during RecordingLeave reg_recording() still returns
+					-- the register, so an immediate refresh would keep the indicator.
+					vim.schedule(function()
+						require("lualine").refresh()
+					end)
 				end,
 				desc = "Refresh statusline for the macro indicator",
 			})

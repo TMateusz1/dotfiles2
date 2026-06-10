@@ -7,6 +7,20 @@ return {
 	},
 
 	{
+		-- Lazily feeds lua_ls type definitions for the nvim API and only the
+		-- plugins actually require()d, instead of the static workspace.library
+		-- listing below. Faster lua_ls and real completions for plugin APIs.
+		"folke/lazydev.nvim",
+		ft = "lua",
+		opts = {
+			library = {
+				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+				{ path = "snacks.nvim", words = { "Snacks" } },
+			},
+		},
+	},
+
+	{
 		"qvalentin/helm-ls.nvim",
 		ft = {
 			"helm",
@@ -57,9 +71,10 @@ return {
 				"impl",
 				"golangci-lint",
 
-				-- Docker yaml helm
+				-- Docker yaml helm shell
 				"stylua",
 				"shfmt",
+				"shellcheck",
 				"prettier",
 				"yamlfmt",
 				"yamllint",
@@ -102,6 +117,9 @@ return {
 						usePlaceholders = false,
 						completeUnimported = true,
 						staticcheck = true,
+						-- govulncheck diagnostics on go.mod requires whose
+						-- vulnerable code is actually reachable from this module.
+						vulncheck = "Imports",
 						semanticTokens = true,
 						experimentalPostfixCompletions = true,
 						directoryFilters = {
@@ -144,6 +162,8 @@ return {
 				},
 			})
 
+			-- Workspace libraries (nvim runtime, plugin types) are injected
+			-- per-require by lazydev.nvim; no static library list needed.
 			vim.lsp.config("lua_ls", {
 				settings = {
 					Lua = {
@@ -151,19 +171,8 @@ return {
 							version = "LuaJIT",
 						},
 
-						diagnostics = {
-							globals = {
-								"vim",
-							},
-						},
-
 						workspace = {
 							checkThirdParty = false,
-							library = {
-								vim.env.VIMRUNTIME,
-								vim.fn.stdpath("config"),
-								"${3rd}/luv/library",
-							},
 						},
 
 						telemetry = {
@@ -190,6 +199,21 @@ return {
 			vim.lsp.config("dockerls", {})
 
 			vim.lsp.config("docker_compose_language_service", {})
+
+			vim.lsp.config("jsonls", {
+				settings = {
+					json = {
+						schemas = require("schemastore").json.schemas(),
+						validate = {
+							enable = true,
+						},
+					},
+				},
+			})
+
+			-- bash-language-server runs shellcheck itself when the binary is on
+			-- PATH (Mason's bin dir is prepended by mason.nvim).
+			vim.lsp.config("bashls", {})
 
 			vim.lsp.config("yamlls", {
 				filetypes = {
@@ -256,6 +280,8 @@ return {
 					"docker_compose_language_service",
 					"yamlls",
 					"helm_ls",
+					"jsonls",
+					"bashls",
 				},
 
 				automatic_enable = true,
@@ -310,16 +336,6 @@ return {
 					-- is enough and pcall guards repeated LspAttach events.
 					for _, lhs in ipairs({ "grn", "gra", "grx", "grr", "gri", "grt", "gO" }) do
 						pcall(vim.keymap.del, "n", lhs)
-					end
-
-					-- LSP-based folding (Neovim 0.11+).
-					-- Folds are available for manual use (zc/zM) but nothing is
-					-- collapsed by default: foldlevel 99 keeps every function open.
-					if client:supports_method("textDocument/foldingRange") then
-						local win = vim.api.nvim_get_current_win()
-						vim.wo[win][0].foldmethod = "expr"
-						vim.wo[win][0].foldexpr = "v:lua.vim.lsp.foldexpr()"
-						vim.wo[win][0].foldlevel = 99
 					end
 
 					local function map(mode, lhs, rhs, desc)

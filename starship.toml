@@ -7,13 +7,17 @@ format = """
 $directory\
 $git_branch\
 $git_status\
+$git_state\
 $golang\
 $python\
 $docker_context\
 $helm\
-$cmd_duration\
 $line_break\
+$jobs\
 $character"""
+
+# Transient info on the right edge; keeps the left prompt clean.
+right_format = "$cmd_duration"
 
 palette = "catppuccin_mocha"
 
@@ -50,6 +54,12 @@ symbol = " "
 style = "mauve"
 format = "[$symbol$branch]($style) "
 
+# Rebase/merge/cherry-pick progress (e.g. "REBASING 2/5"). Reads .git state
+# files only — no subprocess, effectively free.
+[git_state]
+style = "bold peach"
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+
 [git_status]
 style = "yellow"
 format = "[$all_status$ahead_behind]($style) "
@@ -79,7 +89,6 @@ format = "[$symbol]($style) "
 symbol = " "
 style = "yellow"
 format = "[$symbol$version]($style) "
-pyenv_version_name = true
 python_binary = ["python3", "python"]
 
 [docker_context]
@@ -96,10 +105,12 @@ detect_files = [
   "Dockerfile"
 ]
 
+# Symbol only: rendering $version would exec `helm version` on every prompt
+# in chart directories (~700 ms measured) — symbol-only skips the subprocess.
 [helm]
 symbol = "⎈ "
 style = "teal"
-format = "[$symbol$version]($style) "
+format = "[$symbol]($style) "
 
 
 # ----------------------------
@@ -120,6 +131,12 @@ disabled = true
 min_time = 1500
 style = "overlay1"
 format = "took [$duration]($style) "
+
+# Background job count next to the prompt character (e.g. after Ctrl-Z).
+[jobs]
+symbol = "✦ "
+style = "sky"
+format = "[$symbol$number]($style) "
 
 
 # ----------------------------

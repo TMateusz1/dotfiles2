@@ -123,7 +123,6 @@ ls -l ~/.config/starship.toml
 - Visual block mode can extend past line ends (`virtualedit=block`).
 - The jumplist behaves like a stack (`jumpoptions=stack`).
 - The terminal/tmux window title shows the current file (`title`).
-- Folded lines keep their syntax highlighting (`foldtext=""`).
 - UI defaults include true color, cursorline, signcolumn, no wrapping, global statusline, rounded window borders, and clean command/status display.
 - Split defaults are `splitright` and `splitbelow`.
 - Swap and backup files are disabled; persistent undo is enabled.
@@ -268,13 +267,10 @@ Code, LSP, diagnostics, and formatting:
 | `<leader>cx`, `<leader>cq` | Line diagnostics / diagnostics quickfix |
 | `]d`, `[d` | Next/previous diagnostic with float |
 | `]t`, `[t` | Next/previous todo comment |
+| `]f`, `[f` | Next/previous function start (Treesitter; works as a motion, e.g. `d]f`) |
 | `<leader>cL`, `<leader>cR` | LSP info / restart LSP |
 | `<leader>uh` | Toggle inlay hints when supported |
 | `<leader>uv` | Toggle rich virtual-line diagnostics on the cursor line |
-| `zc`, `zo`, `za` | Close / open / toggle fold under cursor (LSP-computed folds) |
-| `zM`, `zR` | Close all / open all folds |
-
-Folds are provided by the language server (`vim.lsp.foldexpr`) on servers that support folding ranges, but nothing is collapsed by default — `foldlevel` is set to `99` on attach so every function starts open. The fold keys above are only needed when you want to fold manually.
 
 Go-specific code mappings (only active in Go buffers):
 
@@ -357,6 +353,7 @@ UI and toggles:
 | `<leader>ud` | Toggle code dimming (dims code outside current scope) |
 | `<leader>uf` | Toggle format-on-save |
 | `<leader>uh` | Toggle inlay hints |
+| `<leader>uC` | Toggle sticky context (pinned enclosing function header) |
 | `<leader>uv` | Toggle rich virtual-line diagnostics on the cursor line |
 | `<leader>ut` | Toggle terminal |
 | `<leader>uz` | Toggle zen mode |
@@ -381,6 +378,8 @@ Surround editing from `mini.surround`:
 | `sf`, `sF` | Find surrounding to the right/left |
 | `sh` | Highlight surrounding |
 | `sn` | Update surrounding search line count |
+
+Text objects (`vaf` whole function, `dif` delete function body, `vac` type declaration, `vio` inside block, `cia` change argument, ...) come from `mini.ai` — see the Text Objects section under Mini Plugins for the full table.
 
 ### Autocmds
 
@@ -438,7 +437,7 @@ The same Catppuccin Mocha direction is used by Ghostty and Starship, so the term
 `nvim/lua/plugins/blink.lua` configures `saghen/blink.cmp`:
 
 - Loads on `InsertEnter`.
-- Completion sources are LSP, path, snippets, buffer, and Go struct tags.
+- Completion sources are LSP, path, snippets, buffer, and Go struct tags; Lua buffers add the lazydev source for Neovim/plugin API completions.
 - Snippets use friendly-snippets plus local snippets from `nvim/snippets/`.
 - Kubernetes snippets from friendly-snippets are filtered out so the local Kubernetes snippets take precedence. friendly-snippets' Go set stays enabled: it provides the general-purpose snippets (`tys`, `for`, `forr`, `meth`, `tdt`, ...) while the local `go.json` adds specialized ones under non-colliding prefixes.
 - Documentation and completion windows use rounded borders.
@@ -463,6 +462,7 @@ The same Catppuccin Mocha direction is used by Ghostty and Starship, so the term
 - `nvim-lspconfig` defines diagnostics UI and buffer-local LSP keymaps.
 - `schemastore.nvim` provides JSON/YAML schemas.
 - `helm-ls.nvim` improves Helm template editing.
+- `lazydev.nvim` feeds `lua_ls` Neovim/plugin type definitions per-`require` when editing Lua.
 
 Installed LSP servers:
 
@@ -472,20 +472,21 @@ Installed LSP servers:
 - `docker_compose_language_service`
 - `yamlls`
 - `helm_ls`
+- `jsonls` (schemastore-backed validation and completion)
+- `bashls` (runs shellcheck for shell diagnostics)
 
 Mason-managed tools:
 
 - Go: `goimports`, `gofumpt`, `golines`, `delve`, `gotestsum`, `gomodifytags`, `impl`, `golangci-lint`
-- General: `stylua`, `shfmt`, `prettier`, `yamlfmt`, `yamllint`, `hadolint`
+- General: `stylua`, `shfmt`, `shellcheck`, `prettier`, `yamlfmt`, `yamllint`, `hadolint`
 
 LSP behavior:
 
 - Diagnostics use signs and underlines, with virtual text disabled by default; `<leader>uv` toggles rich `virtual_lines` diagnostics on the cursor line.
 - Floating diagnostic windows use rounded borders and show sources.
 - On attach, the default Neovim 0.11+ LSP maps that shadow the bare `gr` (`grr`, `gri`, `grn`, `gra`, `grt`, `grx`, `gO`) are deleted so the picker-backed `gr` fires instantly with no `timeoutlen` delay.
-- LSP folding (`vim.lsp.foldexpr`) is enabled for servers that support folding ranges, with `foldlevel = 99` so nothing is collapsed on open; `zM`/`zc` fold manually.
-- `gopls` enables gofumpt, unimported package completions, staticcheck, semantic tokens, selected analyses, code lenses, and inlay hints support.
-- `lua_ls` is configured for Neovim Lua, LuaJIT, `vim` globals, local config workspace, and disabled telemetry.
+- `gopls` enables gofumpt, unimported package completions, staticcheck, govulncheck (`vulncheck = "Imports"` — vulnerability diagnostics on `go.mod` requires whose vulnerable code is reachable), semantic tokens, selected analyses, code lenses, and inlay hints support.
+- `lua_ls` runs with a minimal static config; workspace libraries (the Neovim runtime and plugin type definitions) are injected per-`require` by `folke/lazydev.nvim`, which also adds a blink completion source so plugin APIs (`Snacks.`, `require("conform")`, ...) complete while editing this config.
 - `yamlls` validates YAML, uses schemastore data, supports Kubernetes schemas, and reads the local CRD schema cache. Its formatter is disabled — conform owns YAML formatting via `yamlfmt`.
 - `helm_ls` delegates YAML behavior to `yaml-language-server` and recognizes `values*.yaml`.
 
@@ -583,6 +584,8 @@ The `format_on_save` hook checks `vim.g.disable_autoformat` / `vim.b.disable_aut
 - `yamllint` runs on `yaml`, `yaml.docker-compose`, and `yaml.helm-values` buffers. It is invoked with `-d relaxed` so the noisy stylistic warnings (line length, comment spacing, document-start) are dropped and only real problems — duplicate keys, bad indentation, syntax errors — surface. Helm templates are filetype `helm`, so `{{ }}` files are never linted as YAML.
 - `hadolint` runs on `dockerfile` buffers.
 
+Shell scripts are not wired through nvim-lint: `bashls` runs `shellcheck` itself and reports through LSP diagnostics.
+
 Linters run on read, write, and leaving insert mode. Diagnostics appear through the normal diagnostic UI (`<leader>cx`, `]d`/`[d`, `<leader>fd`).
 
 ### Treesitter
@@ -594,6 +597,8 @@ Installed parsers:
 - `bash`, `c`, `css`, `dockerfile`, `go`, `gomod`, `gosum`, `gowork`, `helm`, `html`, `javascript`, `json`, `lua`, `markdown`, `markdown_inline`, `python`, `query`, `regex`, `sql`, `tsx`, `typescript`, `vim`, `vimdoc`, `yaml`
 
 Treesitter highlighting is enabled on filetype events for the supported languages. `jsonc` is registered to use the JSON parser.
+
+`nvim/lua/plugins/treesitter-context.lua` adds `nvim-treesitter-context`: while scrolling inside a long function, the enclosing function/type header stays pinned at the top of the window (max 3 lines). `<leader>uC` toggles it; the plugin is on trial — delete the file to drop it.
 
 ### Fuzzy Finding and Picker
 
@@ -712,7 +717,7 @@ Diagnostics are shown in the bufferline.
 
 `nvim/lua/plugins/minis.lua` uses the mini.nvim suite for several core behaviors:
 
-- `mini.ai` — better text objects.
+- `mini.ai` — extra text objects, including Treesitter-powered ones (see Text Objects below).
 - `mini.surround` — surround operations (mappings below).
 - `mini.pairs` — autopairs.
 - `mini.icons` — icons plus `nvim-web-devicons` compatibility.
@@ -731,6 +736,24 @@ Surround mappings:
 - `sh` highlight
 - `sr` replace
 - `sn` update search line count
+
+### Text Objects
+
+`mini.ai` extends the built-in `a`/`i` text objects. The Treesitter-powered ones (queries come from `nvim-treesitter-textobjects`, which also provides the `]f`/`[f` function motions) understand Go syntax:
+
+| Object | Selects | Examples |
+| --- | --- | --- |
+| `af` / `if` | function or method **definition** (around / body only) | `vaf` select whole func, `dif` delete its body, `yif` yank body |
+| `aF` / `iF` | function **call** | `diF` delete the call's arguments, `vaF` select `foo(x, y)` |
+| `ao` / `io` | surrounding block, conditional, or loop | `vio` inside the enclosing `if`/`for`, `dao` delete the whole block |
+| `ac` / `ic` | type declaration (struct/interface) | `vac` select the whole `type Widget struct {...}` |
+| `aa` / `ia` | argument (built-in) | `cia` change one argument, `daa` delete it including the comma |
+| `a?` / `i?` | prompted — type any two delimiters | `vi?` then e.g. `(` and `)` |
+
+All of them compose with operators like native text objects (`d`, `c`, `y`, `v`). Two extras worth knowing:
+
+- **Next/last variants**: insert `n` or `l` after `a`/`i` to target the *next* or *previous* object without moving the cursor first — `vinf` selects inside the next function, `cina` changes the first argument of the next call, `valc` selects the previous type declaration.
+- **Dot-repeat and counts work**: `2daa` deletes two arguments; a repeated `.` after `dif` deletes the next function body you jump to.
 
 ### Markdown
 
@@ -848,7 +871,7 @@ Active modules:
 - `quickfile` — fast file rendering on startup.
 - `scratch` — scratch buffers; `<leader>.` toggles, `<leader>f.` lists.
 - `terminal` — `<leader>ut` toggles a terminal.
-- `toggle` — toggle utilities with visual on/off feedback; used for dim (`<leader>ud`) and inlay hints (`<leader>uh`).
+- `toggle` — toggle utilities with visual on/off feedback; used for dim (`<leader>ud`), inlay hints (`<leader>uh`), and sticky context (`<leader>uC`).
 - `zen` — `<leader>uz` toggles zen mode; `<leader>uZ` toggles zoom.
 
 Buffer deletion, notifications, the start screen, and smooth scrolling were migrated to mini.nvim (`mini.bufremove`, `mini.notify`, `mini.starter`, `mini.animate`), and the file explorer is `mini.files`. See the Mini Plugins section.
@@ -937,19 +960,23 @@ Global behavior:
 Prompt format:
 
 ```text
-directory git_branch git_status golang python docker_context helm cmd_duration
-character
+directory git_branch git_status git_state golang python docker_context helm
+jobs character                                                 [cmd_duration]
 ```
+
+`cmd_duration` renders right-aligned via `right_format`.
 
 Enabled prompt modules:
 
 - Directory, truncated to 3 segments and rooted at the repository when possible.
 - Git branch.
 - Git status with compact symbols for ahead, behind, modified, staged, deleted, untracked, and other states.
-- Go indicator.
-- Python version with pyenv version name support.
-- Helm version.
-- Command duration when a command takes at least 1500 ms.
+- Git state: rebase/merge/cherry-pick progress (e.g. `REBASING 2/5`); reads `.git` state files only, no subprocess.
+- Go indicator (symbol only — no `go version` subprocess).
+- Python version.
+- Helm chart indicator (symbol only — rendering the version would exec `helm` on every prompt, measured at ~700 ms).
+- Background job count next to the prompt character.
+- Command duration on the right when a command takes at least 1500 ms.
 - Prompt character with different colors for success, error, and Vim command mode.
 
 Disabled or hidden modules:
