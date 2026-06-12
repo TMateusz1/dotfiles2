@@ -247,6 +247,7 @@ return {
 				{ "<A-k>", desc = "Move line up", mode = { "n", "v" } },
 
 				-- UI / toggles
+				{ "<leader>uc", desc = "Toggle VSCode code colors" },
 				{ "<leader>ud", desc = "Toggle code dimming" },
 				{ "<leader>uf", desc = "Toggle format on save" },
 				{ "<leader>uh", desc = "Toggle inlay hints" },
