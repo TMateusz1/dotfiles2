@@ -314,13 +314,6 @@ return {
 							Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
 						end,
 					},
-					{
-						section = "Menu",
-						name = "Sessions",
-						action = function()
-							require("persistence").select()
-						end,
-					},
 					{ section = "Menu", name = "Lazy", action = "Lazy" },
 					{ section = "Menu", name = "Quit", action = "qa" },
 					starter.sections.recent_files(5, false),

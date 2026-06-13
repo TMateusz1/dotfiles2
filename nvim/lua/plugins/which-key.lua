@@ -41,7 +41,6 @@ return {
 				{ "<leader>d", group = "Debug" },
 				{ "<leader>m", group = "Marks (Harpoon)" },
 				{ "<leader>M", group = "Markdown" },
-				{ "<leader>s", group = "Sessions" },
 				{ "<leader>t", group = "Tests" },
 				{ "<leader>u", group = "UI / Toggles" },
 				{ "<leader>x", group = "Lists (quickfix)" },
@@ -204,13 +203,6 @@ return {
 				{ "<leader>tq", desc = "Test failures quickfix" },
 				{ "<leader>tw", desc = "Test watch file" },
 				{ "<leader>tx", desc = "Test stop" },
-
-				-- Sessions
-				{ "<leader>ss", desc = "Select session" },
-				{ "<leader>sc", desc = "Restore session (project root)" },
-				{ "<leader>sl", desc = "Restore last session" },
-				{ "<leader>sd", desc = "Delete session" },
-				{ "<leader>sx", desc = "Don't save session" },
 
 				-- Diagnostics
 				{ "]d", desc = "Next diagnostic" },
