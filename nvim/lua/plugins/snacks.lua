@@ -9,6 +9,42 @@ local picker_exclude = {
 	".idea",
 }
 
+-- Reset (discard) the working-tree hunk(s) under the cursor/selection in the
+-- git_diff picker. Each item carries a full unified-diff patch for one hunk
+-- (item.diff), so we reverse-apply it to the working tree, then reload any
+-- open buffers and refresh the picker list.
+local function git_diff_reset_hunk(picker)
+	local items = picker:selected({ fallback = true })
+	local first = items[1]
+
+	if not first or not first.diff then
+		Snacks.notify.warn("No hunk to reset here", { title = "Snacks Picker" })
+		return
+	end
+
+	local files = vim.tbl_map(function(item)
+		return Snacks.picker.util.path(item)
+	end, items)
+	local msg = #items == 1 and ("Discard hunk in `%s`?"):format(files[1])
+		or ("Discard %d hunks?"):format(#items)
+
+	Snacks.picker.util.confirm(msg, function()
+		local done = 0
+		for _, item in ipairs(items) do
+			Snacks.picker.util.cmd({ "git", "apply", "--reverse", "-" }, function()
+				done = done + 1
+				if done == #items then
+					vim.schedule(function()
+						-- Reload buffers that changed on disk, then refresh.
+						vim.cmd("checktime")
+						picker:refresh()
+					end)
+				end
+			end, { cwd = item.cwd, input = item.diff })
+		end
+	end)
+end
+
 return {
 	"folke/snacks.nvim",
 	priority = 1000,
@@ -279,7 +315,24 @@ return {
 		{
 			"<leader>gd",
 			function()
-				Snacks.picker.git_diff()
+				Snacks.picker.git_diff({
+					-- C-x discards the hunk under the cursor (like gitsigns reset).
+					actions = {
+						git_diff_reset_hunk = git_diff_reset_hunk,
+					},
+					win = {
+						input = {
+							keys = {
+								["<c-x>"] = { "git_diff_reset_hunk", mode = { "n", "i" }, desc = "Reset hunk" },
+							},
+						},
+						list = {
+							keys = {
+								["<c-x>"] = { "git_diff_reset_hunk", desc = "Reset hunk" },
+							},
+						},
+					},
+				})
 			end,
 			desc = "Git diff hunks",
 		},
