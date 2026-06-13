@@ -33,6 +33,7 @@ return {
 
 			spec = {
 				-- Top-level leader groups
+				{ "<leader>a", group = "AI (CodeCompanion)" },
 				{ "<leader>b", group = "Buffers" },
 				{ "<leader>f", group = "Find" },
 				{ "<leader>g", group = "Git" },
@@ -68,6 +69,13 @@ return {
 				{ "<leader>bX", desc = "Delete other buffers" },
 				{ "<leader>bL", desc = "Delete buffers to the right" },
 				{ "<leader>bH", desc = "Delete buffers to the left" },
+
+				-- AI
+				{ "<leader>aa", desc = "AI actions", mode = { "n", "v" } },
+				{ "<leader>ac", desc = "AI Codex chat" },
+				{ "<leader>ad", desc = "AI add selection to chat", mode = "v" },
+				{ "<leader>an", desc = "AI new Codex chat" },
+				{ "<leader>at", desc = "AI Codex terminal" },
 
 				-- Git
 				{ "<leader>gB", desc = "Git browse (open in browser)", mode = { "n", "v" } },

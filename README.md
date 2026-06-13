@@ -60,6 +60,7 @@ This setup expects these tools to be available on the machine:
 - `rg` and `fd` for fast search and file discovery.
 - `lazygit` for the Neovim LazyGit integration.
 - `yazi` for the tmux file manager popup.
+- `codex` and `npx` for CodeCompanion's Codex integrations.
 - `go` for Go tooling, tests, and helper commands.
 - `kubectl` for generating Kubernetes CRD schemas.
 - `starship` for the prompt.
@@ -855,6 +856,23 @@ Diagnostics (`<leader>cq`), failed tests (`<leader>tq`), and failed Go commands 
 - `<leader>1`–`<leader>3` jump directly to a slot.
 - `<leader>fm` opens the Harpoon picker; `<C-v>` opens in vsplit, `<C-x>` removes a mark, `<C-k>`/`<C-j>` reorder marks.
 
+### AI with CodeCompanion
+
+`nvim/lua/plugins/codecompanion.lua` configures `olimorris/codecompanion.nvim` around OpenAI Codex:
+
+- Codex is the default chat adapter, connected through `@zed-industries/codex-acp`.
+- The ACP adapter uses the existing ChatGPT subscription login and is launched through `npx`.
+- The CLI interaction opens the locally installed `codex` command in a Neovim terminal.
+- The action palette uses Snacks and chat opens in a vertical side window.
+
+Key mappings:
+
+- `<leader>aa` open CodeCompanion actions.
+- `<leader>ac` toggle the Codex chat.
+- `<leader>ad` add the visual selection to the current chat.
+- `<leader>an` open a new Codex chat.
+- `<leader>at` open the Codex CLI terminal.
+
 ### Snacks
 
 `nvim/lua/plugins/snacks.lua` is the central integration plugin (`folke/snacks.nvim`).
@@ -882,6 +900,7 @@ Buffer deletion, notifications, the start screen, and smooth scrolling were migr
 
 Top-level groups:
 
+- `<leader>a` AI (CodeCompanion)
 - `<leader>b` buffers
 - `<leader>f` find
 - `<leader>g` Git
@@ -1293,6 +1312,7 @@ Useful targeted checks:
 
 ```vim
 :checkhealth lazy
+:checkhealth codecompanion
 :checkhealth vim.lsp
 :checkhealth nvim-treesitter
 ```
