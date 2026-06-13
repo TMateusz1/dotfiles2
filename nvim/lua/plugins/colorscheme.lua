@@ -175,6 +175,7 @@ return {
 				mason = true,
 				cmp = true,
 				mini = true,
+				neotree = true,
 			},
 		},
 		config = function(_, opts)

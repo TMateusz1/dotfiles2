@@ -2,14 +2,6 @@ local augroup = vim.api.nvim_create_augroup("user_config", {
 	clear = true,
 })
 
-local startup = require("config.startup")
-
-vim.api.nvim_create_autocmd("VimEnter", {
-	group = augroup,
-	callback = startup.open_empty_startup_directory,
-	desc = "Open an empty buffer when Neovim starts with a directory",
-})
-
 -- Highlight text after yank
 vim.api.nvim_create_autocmd("TextYankPost", {
 	group = augroup,
@@ -74,7 +66,7 @@ vim.api.nvim_create_autocmd("WinLeave", {
 	group = augroup,
 	callback = function()
 		-- Only normal file windows: special buffers (Snacks picker list,
-		-- quickfix, mini.files) manage their own cursorline and would lose
+		-- quickfix, neo-tree) manage their own cursorline and would lose
 		-- their selection highlight if this fired for them.
 		if vim.bo.buftype == "" then
 			vim.wo.cursorline = false
