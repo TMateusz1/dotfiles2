@@ -48,6 +48,7 @@ return {
 				-- Direct leader mappings
 				{ "<leader>e", desc = "File explorer (neo-tree toggle)" },
 				{ "<leader>E", desc = "Oil multi-file edit" },
+				{ "<leader>F", desc = "Code outline (aerial)" },
 				{ "<leader>w", desc = "Save file" },
 				{ "<leader>W", desc = "Save and close buffer" },
 				{ "<leader>k", desc = "Close window (keep buffer)" },

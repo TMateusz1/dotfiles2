@@ -86,6 +86,21 @@ return {
 
 		picker = {
 			enabled = true,
+			-- Snacks' own "fancy" diff renderer (borders, gutter line numbers,
+			-- treesitter-highlighted code). Theme-integrated with catppuccin.
+			previewers = {
+				diff = {
+					style = "fancy",
+					wo = {
+						number = false,
+						relativenumber = false,
+						signcolumn = "no",
+						foldcolumn = "0",
+						cursorline = false,
+						wrap = false,
+					},
+				},
+			},
 			sources = {
 				files = {
 					hidden = true,
@@ -316,6 +331,29 @@ return {
 			"<leader>gd",
 			function()
 				Snacks.picker.git_diff({
+					-- Big, preview-dominant layout so the fancy diff has room.
+					layout = {
+						preview = true,
+						layout = {
+							box = "horizontal",
+							width = 0.92,
+							height = 0.92,
+							border = "rounded",
+							{
+								box = "vertical",
+								width = 0.32,
+								{
+									win = "input",
+									height = 1,
+									border = "rounded",
+									title = "{title} {live} {flags}",
+									title_pos = "center",
+								},
+								{ win = "list", border = "rounded" },
+							},
+							{ win = "preview", title = "{preview}", border = "rounded" },
+						},
+					},
 					-- C-x discards the hunk under the cursor (like gitsigns reset).
 					actions = {
 						git_diff_reset_hunk = git_diff_reset_hunk,
