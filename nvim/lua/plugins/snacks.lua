@@ -244,7 +244,7 @@ return {
 		{
 			"<leader>fn",
 			function()
-				require("mini.notify").show_history()
+				require("noice").cmd("history")
 			end,
 			desc = "Notification history",
 		},

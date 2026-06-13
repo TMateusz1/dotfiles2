@@ -90,7 +90,7 @@ keymap("n", "<leader>w", "<cmd>write<CR>", { desc = "Save file" })
 -- leaderk - close window only (keep the buffer open)
 -- leaderq - buffer delete (keep the window)
 -- leaderQ - close window + delete the buffer that window was showing
--- leaderC - quit all (prompts to save unsaved buffers)
+-- leaderX - quit all (prompts to save unsaved buffers)
 keymap("n", "<leader>k", "<cmd>close<CR>", { desc = "Close window (keep buffer)" })
 keymap("n", "<leader>Q", function()
 	-- Special / floating windows (quickfix, help, terminal, neotest, ...) have
@@ -113,4 +113,10 @@ keymap("n", "<leader>Q", function()
 		require("mini.bufremove").delete(buf)
 	end
 end, { desc = "Quit window + delete buffer" })
-keymap("n", "<leader>C", "<cmd>confirm qall<CR>", { desc = "Quit all (confirm save)" })
+keymap("n", "<leader>X", "<cmd>confirm qall<CR>", { desc = "Quit all (confirm save)" })
+
+-- Splits, mirroring tmux prefix bindings:
+--   tmux `=` -> split-window -h (side by side)  => vsplit
+--   tmux `-` -> split-window -v (stacked)        => split
+keymap("n", "<leader>=", "<cmd>vsplit<CR>", { desc = "Split window right (vsplit)" })
+keymap("n", "<leader>-", "<cmd>split<CR>", { desc = "Split window below (split)" })

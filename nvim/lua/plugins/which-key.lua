@@ -53,7 +53,9 @@ return {
 				{ "<leader>k", desc = "Close window (keep buffer)" },
 				{ "<leader>q", desc = "Smart close" },
 				{ "<leader>Q", desc = "Quit window + delete buffer" },
-				{ "<leader>C", desc = "Quit all (confirm save)" },
+				{ "<leader>X", desc = "Quit all (confirm save)" },
+				{ "<leader>=", desc = "Split window right (vsplit)" },
+				{ "<leader>-", desc = "Split window below (split)" },
 				{ "<leader>.", desc = "Toggle scratch buffer" },
 				{ "<leader>/", desc = "Search buffer lines" },
 

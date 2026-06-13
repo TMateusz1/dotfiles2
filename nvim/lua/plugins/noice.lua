@@ -12,10 +12,10 @@ return {
 			messages = {
 				enabled = true,
 			},
-			-- vim.notify stays routed through mini.notify (plugins/minis.lua),
-			-- so <leader>fn notification history keeps working.
+			-- Route all vim.notify calls through noice. History is available
+			-- via <leader>fn (require("noice").cmd("history")).
 			notify = {
-				enabled = false,
+				enabled = true,
 			},
 			lsp = {
 				progress = {

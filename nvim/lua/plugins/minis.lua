@@ -128,9 +128,10 @@ return {
 		"nvim-mini/mini.files",
 		version = false,
 		opts = {
-			-- `=` synchronizes the explorer's pending changes to disk.
+			-- `=`/`-` are reserved for window splits globally, so disable the
+			-- default `=` synchronize mapping here (use <leader>w to sync).
 			mappings = {
-				synchronize = "=",
+				synchronize = "",
 			},
 			windows = {
 				preview = false,
@@ -215,6 +216,13 @@ return {
 
 					-- Synchronize with <leader>w too, mirroring the global save map.
 					map("<leader>w", MiniFiles.synchronize, "Synchronize (save changes)")
+
+					-- `-`/`=` (and their leader variants) are global split keys;
+					-- keep them inert inside the explorer so muscle memory and
+					-- the global maps don't fire here.
+					for _, lhs in ipairs({ "-", "=", "<leader>-", "<leader>=" }) do
+						map(lhs, "<Nop>", "Disabled in mini.files")
+					end
 				end,
 			})
 		end,
@@ -270,29 +278,6 @@ return {
 				desc = "Delete buffer",
 			},
 		},
-	},
-
-	{
-		"nvim-mini/mini.notify",
-		version = false,
-		lazy = false,
-		opts = {
-			lsp_progress = {
-				enable = false,
-			},
-			window = {
-				config = {
-					border = "rounded",
-				},
-				winblend = 0,
-			},
-		},
-		config = function(_, opts)
-			local MiniNotify = require("mini.notify")
-			MiniNotify.setup(opts)
-			-- Route all `vim.notify` calls through mini.notify.
-			vim.notify = MiniNotify.make_notify()
-		end,
 	},
 
 	{

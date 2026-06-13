@@ -259,17 +259,6 @@ return {
 				oil_open_column_mode,
 				desc = "Oil multi-file edit",
 			},
-			{
-				"-",
-				function()
-					local current_win = vim.api.nvim_get_current_win()
-
-					vim.t.oil_origin_win = is_oil_win(current_win) and find_main_win() or current_win
-					close_oil_windows()
-					open_oil_column()
-				end,
-				desc = "Oil parent directory",
-			},
 		},
 		dependencies = {
 			"nvim-mini/mini.icons",
@@ -350,10 +339,13 @@ return {
 					desc = "Close all Oil columns",
 				},
 
-				["-"] = {
-					callback = oil_smart_back,
-					desc = "Smart back",
-				},
+				-- `-`/`=` (+ leader variants) are reserved for window splits
+				-- globally, so keep them inert inside Oil. Smart-back is still
+				-- on h / <Left> / <BS>.
+				["-"] = { callback = function() end, desc = "Disabled in Oil" },
+				["="] = { callback = function() end, desc = "Disabled in Oil" },
+				["<leader>-"] = { callback = function() end, desc = "Disabled in Oil" },
+				["<leader>="] = { callback = function() end, desc = "Disabled in Oil" },
 				["_"] = "actions.open_cwd",
 
 				["`"] = "actions.cd",
