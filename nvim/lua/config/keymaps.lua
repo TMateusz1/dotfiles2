@@ -62,7 +62,7 @@ keymap("n", "[q", function()
 	end
 	vim.cmd("normal! zz")
 end, { desc = "Previous quickfix item" })
--- <leader>xq / <leader>xl toggle the quickfix / location list (see plugins/quicker.lua)
+-- <leader>xq / <leader>xl toggle the quickfix / location list in Trouble (see plugins/trouble.lua)
 
 -- Diagnostics. Global (not LspAttach-local) so they also cover nvim-lint
 -- diagnostics in buffers without an LSP client.

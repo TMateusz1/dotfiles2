@@ -176,7 +176,8 @@ return {
 				cmp = true,
 				mini = true,
 				neotree = true,
-				aerial = true,
+				noice = true,
+				notify = true,
 			},
 		},
 		config = function(_, opts)

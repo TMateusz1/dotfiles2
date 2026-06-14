@@ -49,7 +49,7 @@ return {
 				-- Direct leader mappings
 				{ "<leader>e", desc = "File explorer (neo-tree toggle)" },
 				{ "<leader>E", desc = "Oil multi-file edit" },
-				{ "<leader>F", desc = "Code outline (aerial)" },
+				{ "<leader>F", desc = "Code outline (Trouble symbols)" },
 				{ "<leader>w", desc = "Save file" },
 				{ "<leader>W", desc = "Save and close buffer" },
 				{ "<leader>k", desc = "Close window (keep buffer)" },
@@ -220,11 +220,12 @@ return {
 				{ "[d", desc = "Previous diagnostic" },
 				{ "]q", desc = "Next quickfix item" },
 				{ "[q", desc = "Previous quickfix item" },
-				{ "<leader>xq", desc = "Toggle quickfix window" },
-				{ "<leader>xl", desc = "Toggle location list" },
+				{ "<leader>xq", desc = "Quickfix list (Trouble)" },
+				{ "<leader>xl", desc = "Location list (Trouble)" },
 				{ "<leader>xx", desc = "Problems panel (workspace)" },
 				{ "<leader>xX", desc = "Problems panel (buffer)" },
-				{ "<leader>xs", desc = "Symbols outline" },
+				{ "<leader>xs", desc = "Symbols outline (peek)" },
+				{ "<leader>xr", desc = "LSP references / definitions (Trouble)" },
 				{ "<leader>xt", desc = "Todo comments (Trouble)" },
 				{ "]t", desc = "Next todo comment" },
 				{ "[t", desc = "Previous todo comment" },
@@ -251,6 +252,7 @@ return {
 
 				-- UI / toggles
 				{ "<leader>uc", desc = "Toggle VSCode code colors" },
+				{ "<leader>un", desc = "Dismiss notifications" },
 				{ "<leader>ud", desc = "Toggle code dimming" },
 				{ "<leader>uf", desc = "Toggle format on save" },
 				{ "<leader>uh", desc = "Toggle inlay hints" },

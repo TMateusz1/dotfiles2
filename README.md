@@ -1,6 +1,8 @@
 # dotfiles2
 
-Personal dotfiles for a terminal-first development environment. The repo is intentionally small: it keeps the source configuration under version control and uses symlinks to expose those files at the paths expected by Neovim, Ghostty, and Starship.
+Personal dotfiles for a terminal-first development environment. The repo is intentionally small: it keeps the source configuration under version control and uses symlinks to expose those files at the paths expected by Neovim, Ghostty, Starship, tmux, and Yazi.
+
+The whole stack shares one visual language — **Catppuccin Mocha** — across Neovim, Ghostty, tmux, and Starship, so the editor, terminal, status bar, and prompt all match.
 
 ## Repository Architecture
 
@@ -33,8 +35,8 @@ The repo is split by tool:
 
 The Neovim config has two layers:
 
-- `nvim/lua/config/` contains core editor behavior: options, keymaps, autocmds, startup handling for directory arguments, filetype detection, Go helper functions, the Go struct-tag completion source, Kubernetes schema logic, and Lazy plugin bootstrapping.
-- `nvim/lua/plugins/` contains Lazy plugin specs grouped by feature area: completion, LSP, formatting, file explorers, fuzzy finding, Git, UI, Markdown, testing, Treesitter, and helper plugins.
+- `nvim/lua/config/` contains core editor behavior: options, keymaps, autocmds, filetype detection, Go helper functions, the Go struct-tag completion source, Kubernetes schema logic, and Lazy plugin bootstrapping.
+- `nvim/lua/plugins/` contains Lazy plugin specs grouped by feature area: completion, LSP, formatting, file explorers, fuzzy finding, Git, UI, notifications, outline, diagnostics, Markdown, testing, Treesitter, and helper plugins.
 
 `nvim/init.lua` is intentionally thin. It loads the core modules in this order:
 
@@ -116,7 +118,7 @@ ls -l ~/.config/starship.toml
 - Leader and local leader are both space.
 - Absolute and relative line numbers are enabled.
 - Mouse support is enabled.
-- netrw is disabled because file exploration is handled by mini.files and Oil.
+- netrw is disabled because file exploration is handled by neo-tree and Oil.
 - Clipboard uses `unnamedplus`.
 - Indentation uses spaces with a width of 4.
 - Search uses ignorecase plus smartcase; `:substitute` shows a live preview with off-screen matches in a split (`inccommand=split`).
@@ -151,7 +153,11 @@ Core editing and window movement:
 | `<C-d>`, `<C-u>` | Half-page down/up and keep the cursor centered |
 | `n`, `N` | Next/previous search result and keep the cursor centered |
 | `]q`, `[q` | Next/previous quickfix item |
-| `<leader>xq`, `<leader>xl` | Toggle the quickfix/location list window (quicker.nvim) |
+| `<leader>xq`, `<leader>xl` | Toggle the quickfix/location list in Trouble |
+| `<leader>xx`, `<leader>xX` | Toggle the Trouble problems panel (workspace / current buffer) |
+| `<leader>xs` | Trouble symbols outline (peek) |
+| `<leader>xr` | Trouble LSP references/definitions panel |
+| `<leader>xt` | Trouble todo-comment list |
 | `q`, `<Esc>` in temporary windows | Close quickfix, help, man, notify, and neotest windows |
 
 Save, quit, and buffers:
@@ -163,7 +169,9 @@ Save, quit, and buffers:
 | `<leader>q` | Smart close: close special/floating window or delete current buffer (keeps window) |
 | `<leader>W` | Save and delete current buffer |
 | `<leader>Q` | Close window and delete the buffer it showed (special/floating windows just close) |
-| `<leader>C` | Quit all windows, prompting to save unsaved buffers |
+| `<leader>X` | Quit all windows, prompting to save unsaved buffers |
+| `<leader>=` | Split window right (vsplit) — mirrors tmux `prefix =` |
+| `<leader>-` | Split window below (split) — mirrors tmux `prefix -` |
 | `[b`, `]b` | Previous/next buffer |
 | `<leader>bx` | Delete current buffer |
 | `<leader>bp` | Pick buffer from bufferline |
@@ -217,8 +225,9 @@ Files and project navigation:
 
 | Key | Action |
 | --- | --- |
-| `<leader>e` | Toggle mini.files, focused on the current file |
+| `<leader>e` | Toggle the neo-tree file explorer (reveals the current file) |
 | `<leader>E` | Open Oil multi-file edit manager |
+| `<leader>F` | Toggle the code outline (Trouble symbols, focused) |
 | `-` | Open Oil parent directory in a float |
 | Oil `<CR>`, `l`, `<Right>` | Smart open file or directory |
 | Oil `h`, `<Left>`, `<BS>` | Smart back |
@@ -324,16 +333,6 @@ Tests:
 | `<leader>tw` | Watch current file |
 | `<leader>tx` | Stop tests |
 
-Sessions:
-
-| Key | Action |
-| --- | --- |
-| `<leader>ss` | Pick from all saved sessions |
-| `<leader>sc` | Restore the session for the current project (git root) |
-| `<leader>sl` | Restore last session |
-| `<leader>sd` | Delete a saved session (pick one to remove) |
-| `<leader>sx` | Stop saving the current session on exit |
-
 Harpoon:
 
 | Key | Action |
@@ -351,9 +350,11 @@ UI and toggles:
 
 | Key | Action |
 | --- | --- |
+| `<leader>uc` | Toggle VSCode Dark+ code colors (fg-only overlay on catppuccin) |
 | `<leader>ud` | Toggle code dimming (dims code outside current scope) |
 | `<leader>uf` | Toggle format-on-save |
 | `<leader>uh` | Toggle inlay hints |
+| `<leader>un` | Dismiss visible notifications |
 | `<leader>uC` | Toggle sticky context (pinned enclosing function header) |
 | `<leader>uv` | Toggle rich virtual-line diagnostics on the cursor line |
 | `<leader>ut` | Toggle terminal |
@@ -386,7 +387,6 @@ Text objects (`vaf` whole function, `dif` delete function body, `vac` type decla
 
 `nvim/lua/config/autocmds.lua` adds small quality-of-life behavior:
 
-- When Neovim starts with a directory argument (`nvim .`), switch to that directory and open an empty buffer instead of a directory listing (`nvim/lua/config/startup.lua`).
 - Highlight yanked text for 150 ms.
 - Restore the cursor to the last edit position when reopening a file.
 - Reload files changed on disk on focus gain or after a terminal command (lazygit, `go generate`, branch switches).
@@ -429,9 +429,10 @@ The lockfile is `nvim/lazy-lock.json`.
 - Terminal colors enabled.
 - Transparent background disabled.
 - Comment text is italic.
-- Integrations are enabled for Treesitter, native LSP, which-key, gitsigns, Mason, completion, and mini plugins.
+- Integrations are enabled for Treesitter, native LSP, which-key, gitsigns, Mason, completion, neo-tree, noice, nvim-notify, and the mini plugins.
+- `<leader>uc` toggles a VSCode Dark+ palette over the **code text only** (foreground overrides on top of catppuccin); the UI chrome, statusline, and backgrounds stay catppuccin.
 
-The same Catppuccin Mocha direction is used by Ghostty and Starship, so the terminal, prompt, and editor share one visual language.
+The same Catppuccin Mocha direction is used by Ghostty, tmux, and Starship, so the terminal, status bar, prompt, and editor share one visual language.
 
 ### Completion
 
@@ -640,16 +641,18 @@ Mappings:
 
 Two complementary file tools are provided.
 
-mini.files (`<leader>e`) is the main in-editor file explorer (configured in `nvim/lua/plugins/minis.lua`):
+neo-tree (`<leader>e`) is the main sidebar file explorer (`nvim/lua/plugins/neo-tree.lua`):
 
-- `<leader>e` toggles the explorer focused on the current file (falls back to the cwd for unnamed buffers).
-- `<CR>` enters a directory, or opens a file in the current window and closes the explorer.
-- `<C-v>` / `<C-s>` open the file in a vertical / horizontal split; on a directory they just enter it.
-- Arrows: up/down move the cursor, `<Right>` goes in (`l`), `<Left>` and `<BS>` go out (`h`).
-- `=` and `<leader>w` synchronize edits back to disk — rename, move, create, or delete files by editing the listing, then write.
-- Preview is disabled and netrw is off. Starting Neovim with a directory argument opens an empty buffer in that directory (see Autocmds); use `<leader>e` to browse.
+- `<leader>e` toggles a left-side tree and reveals the current file when it is a real on-disk buffer (otherwise it just opens at the cwd).
+- It hijacks netrw, so starting Neovim on a directory (`nvim .`) opens the tree in that window.
+- A source selector in the winbar switches between Files, Buffers, and Git status.
+- `l` / `<CR>` open a node, `h` closes it; `s` / `<C-s>` open in a horizontal split and `v` / `<C-v>` in a vertical split.
+- The tree auto-closes as soon as a file is opened from it, and closes itself if it is the last window.
+- Git status and LSP diagnostics are shown inline; hidden files are visible, but `.git`, `.idea`, and `.vscode` are filtered out.
+- `-` and `=` are inert inside the tree (reserved globally for window splits).
+- Icons come from mini.icons (via its `nvim-web-devicons` mock).
 
-Oil is used as an editable file manager:
+Oil is used as an editable, column-mode file manager:
 
 - `<leader>E` opens the custom floating column-mode file manager.
 - `-` opens Oil at the parent directory.
@@ -721,12 +724,12 @@ Diagnostics are shown in the bufferline.
 - `mini.ai` — extra text objects, including Treesitter-powered ones (see Text Objects below).
 - `mini.surround` — surround operations (mappings below).
 - `mini.pairs` — autopairs.
-- `mini.icons` — icons plus `nvim-web-devicons` compatibility.
-- `mini.files` — the main file explorer (`<leader>e`); see the File Explorers section.
+- `mini.icons` — icons plus `nvim-web-devicons` compatibility (used by neo-tree, Oil, bufferline, lualine, blink, and more).
 - `mini.bufremove` — layout-preserving buffer deletion, wired into `<leader>q`, `<leader>Q`, `<leader>W`, `<leader>bx`, and the bufferline close buttons.
-- `mini.notify` — notifications; replaces `vim.notify` and backs `<leader>fn` (history).
-- `mini.starter` — the start screen shown when Neovim opens with no file (find/grep/recent/config/sessions/Lazy/quit, plus recent files).
+- `mini.starter` — the start screen shown when Neovim opens with no file (Find File / Find Text / Recent Files / Config / Lazy / Quit, plus recent files).
 - `mini.animate` — smooth scrolling only (cursor/resize/window animations are disabled). Small scrolls of ≤ 6 lines (short `<C-d>`/`<C-u>`/`n`/`N`) jump instantly; larger scrolls animate at a steady per-step rate.
+
+Notifications are handled by **noice + nvim-notify**, not mini.notify (see the Notifications section). The file explorer is **neo-tree**, not mini.files (see File Explorers).
 
 Surround mappings:
 
@@ -811,19 +814,24 @@ Mappings (all under the `<leader>d` group):
 | `<leader>df`, `<leader>ds`, `<leader>dS` | Float frames / scopes / wide scopes |
 | `<leader>dg`, `<leader>dG` | Debug current / last Go test |
 
-### Sessions
+### Trouble (panel for diagnostics, symbols, lists)
 
-`nvim/lua/plugins/sessions.lua` configures `folke/persistence.nvim` with two customizations: sessions are keyed to the **git root** of the project (by overriding `persistence.current`), and **branches are not** part of the session name. So opening Neovim from any subdirectory of a project, on any branch, restores the same session.
+`nvim/lua/plugins/trouble.lua` configures `folke/trouble.nvim` as the single panel for diagnostics, the symbol outline, todos, LSP references, and the quickfix/location lists. It replaced **aerial** (outline) and **quicker** (quickfix window).
 
-A session is auto-saved on exit when at least one real file buffer is open. Persistence loads lazily on the first file read, so just browsing a directory and quitting saves nothing. Restoring is always manual.
+| Key | Action |
+| --- | --- |
+| `<leader>F` | Code outline — focused symbols panel on the right (jump in and navigate) |
+| `<leader>xs` | Symbols outline — peek without leaving the code window |
+| `<leader>xx` / `<leader>xX` | Problems panel (workspace / current buffer) |
+| `<leader>xt` | Todo-comment list |
+| `<leader>xr` | LSP references / definitions panel |
+| `<leader>xq` / `<leader>xl` | Quickfix / location list |
 
-- `<leader>ss` pick from all saved sessions (loads on choice).
-- `<leader>sc` restore the session for the current project (git root).
-- `<leader>sl` restore the most recent session regardless of project.
-- `<leader>sd` pick a saved session and delete its file.
-- `<leader>sx` stop auto-saving the current session (useful for throwaway windows).
+Trouble also **hijacks the native quickfix and location list windows**: any `:copen`, `:grep`, `:vimgrep`, `:make`, or picker "send to quickfix" opens in Trouble instead of the plain window (a `BufWinEnter` autocmd registered in the plugin's `init`). The config's own lists — diagnostics (`<leader>cq`), failed tests (`<leader>tq`), and failed Go commands (`<leader>cg…`) — populate the quickfix list with `setqflist` and then call `:Trouble qflist open` directly.
 
-Sessions are stored under `stdpath("state")/sessions/`. The mini.starter start screen also exposes a "Sessions" entry that opens the same picker.
+Inside any Trouble panel, `<CR>` jumps to the item, `o` jumps and stays, and `q` / `<Esc>` close. `]q` / `[q` still navigate the underlying quickfix list as usual.
+
+> Note: this drops quicker's **editable quickfix** (`:w` from the qf buffer to apply edits back to files) and `>` / `<` context expansion — Trouble has no equivalent. Use `:cdo` / `:cfdo` if you need batch edits across quickfix entries.
 
 ### Todo Comments
 
@@ -834,17 +842,6 @@ Highlights `TODO`, `FIXME`, `FIX`, `HACK`, `WARN`, `PERF`, `NOTE`, `TEST` keywor
 - `]t` / `[t` jump to the next/previous todo comment in the buffer.
 - `<leader>ft` open a Snacks picker with all todo comments in the project.
 - `<leader>fT` filter to `TODO`, `FIX`, `FIXME` only — the actionable ones.
-
-### Quickfix
-
-`nvim/lua/plugins/quicker.lua` configures `stevearc/quicker.nvim`, which upgrades the quickfix and location list windows:
-
-- `<leader>xq` / `<leader>xl` toggle the quickfix/location list window, sized to fit the list.
-- Entries are syntax-highlighted (Treesitter + LSP).
-- The list is editable: change lines in the quickfix buffer and `:w` applies the edits back to the underlying files.
-- `>` / `<` expand/collapse context lines around each entry.
-
-Diagnostics (`<leader>cq`), failed tests (`<leader>tq`), and failed Go commands (`<leader>cg…`) all open their quickfix lists through quicker so the window height matches the content.
 
 ### Harpoon
 
@@ -892,7 +889,16 @@ Active modules:
 - `toggle` — toggle utilities with visual on/off feedback; used for dim (`<leader>ud`), inlay hints (`<leader>uh`), and sticky context (`<leader>uC`).
 - `zen` — `<leader>uz` toggles zen mode; `<leader>uZ` toggles zoom.
 
-Buffer deletion, notifications, the start screen, and smooth scrolling were migrated to mini.nvim (`mini.bufremove`, `mini.notify`, `mini.starter`, `mini.animate`), and the file explorer is `mini.files`. See the Mini Plugins section.
+Buffer deletion, the start screen, and smooth scrolling are handled by mini.nvim (`mini.bufremove`, `mini.starter`, `mini.animate`); the file explorer is neo-tree; notifications and the command line are handled by noice + nvim-notify. See the Mini Plugins, File Explorers, and Notifications sections.
+
+### Notifications and Command Line
+
+`nvim/lua/plugins/noice.lua` configures `folke/noice.nvim` with `rcarriga/nvim-notify` as the notification backend.
+
+- `vim.notify` is routed through noice into nvim-notify, which renders **animated, rounded popup cards stacked in the top-right corner** (fade-in / slide-out, 3 s timeout). Cards are themed by the catppuccin `notify` integration and colored per level.
+- The command line (`:`) renders on the **bottom line** (`cmdline` view, with the `command_palette` preset off so it isn't re-centered); search (`/`, `?`) uses the classic bottom line too (`bottom_search` preset). Long messages split off and the `long_message_to_split` preset is on.
+- LSP progress is shown, and LSP hover/signature markdown is rendered with a border (`lsp_doc_border`).
+- `<leader>fn` opens the notification history; `<leader>un` dismisses the visible popups.
 
 ### which-key
 
@@ -910,10 +916,9 @@ Top-level groups:
 - `<leader>d` debug
 - `<leader>m` marks (Harpoon)
 - `<leader>M` Markdown
-- `<leader>s` sessions
 - `<leader>t` tests
 - `<leader>u` UI/toggles
-- `<leader>x` lists (quickfix/location list)
+- `<leader>x` lists (quickfix, location list, Trouble)
 
 Every leader mapping in the config carries a `desc`, and the spec also documents the bare-key and bracket-pair mappings (`gd`/`gr`/`gi`, `]h`/`[h`, `]d`/`[d`, `]t`/`[t`, `]q`/`[q`, `]b`/`[b`), so `which-key` and `<leader>fk` stay an accurate map of the whole keyboard layout.
 
@@ -1241,6 +1246,7 @@ Window bindings:
 - `Ctrl-Space n` move to the next window.
 - `Ctrl-Space p` move to the previous window.
 - `Ctrl-Space l` move to the previously selected window.
+- `Ctrl-Space C-]` / `Ctrl-Space C-[` roll to the next/previous window — repeatable: hold the prefix once, then tap `C-]`/`C-[` (repeat window is 1 s).
 - `Ctrl-Space 0` through `Ctrl-Space 9` select a window by index.
 - `Ctrl-Space .` move the current window to another index.
 
@@ -1248,6 +1254,7 @@ Pane bindings:
 
 - `Ctrl-Space =` split the current pane left/right in the current pane directory.
 - `Ctrl-Space -` split the current pane top/bottom in the current pane directory.
+- `Ctrl-Space H` / `J` / `K` / `L` resize the pane left / down / up / right by 5 cells (repeatable).
 - `Ctrl-Space x` kill the current pane.
 - `Ctrl-Space z` zoom or unzoom the current pane.
 - `Ctrl-Space o` move to the next pane.
