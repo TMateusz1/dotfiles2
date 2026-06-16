@@ -177,7 +177,6 @@ return {
 				mini = true,
 				neotree = true,
 				noice = true,
-				notify = true,
 			},
 		},
 		config = function(_, opts)

@@ -68,6 +68,13 @@ return {
 		lazygit = {
 			enabled = true,
 		},
+		notifier = {
+			-- Renders vim.notify as stacked top-right cards (replaces the
+			-- noice → nvim-notify path). noice keeps the cmdline + messages.
+			enabled = true,
+			top_down = true,
+			timeout = 3000,
+		},
 		quickfile = {
 			enabled = true,
 		},
@@ -295,7 +302,7 @@ return {
 		{
 			"<leader>fn",
 			function()
-				require("noice").cmd("history")
+				Snacks.notifier.show_history()
 			end,
 			desc = "Notification history",
 		},

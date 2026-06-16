@@ -174,9 +174,6 @@ Save, quit, and buffers:
 | `<leader>-` | Split window below (split) — mirrors tmux `prefix -` |
 | `[b`, `]b` | Previous/next buffer |
 | `<leader>bx` | Delete current buffer |
-| `<leader>bp` | Pick buffer from bufferline |
-| `<leader>bX` | Delete all other buffers |
-| `<leader>bH`, `<leader>bL` | Delete buffers to the left/right |
 
 Completion and snippets:
 
@@ -368,7 +365,6 @@ Markdown:
 | --- | --- |
 | `<leader>Md` | Toggle rendered Markdown view |
 | `<leader>MD` | Open rendered Markdown preview in a side window |
-| `<leader>Me` | Toggle browser Markdown preview |
 
 Surround editing from `mini.surround`:
 
@@ -429,7 +425,7 @@ The lockfile is `nvim/lazy-lock.json`.
 - Terminal colors enabled.
 - Transparent background disabled.
 - Comment text is italic.
-- Integrations are enabled for Treesitter, native LSP, which-key, gitsigns, Mason, completion, neo-tree, noice, nvim-notify, and the mini plugins.
+- Integrations are enabled for Treesitter, native LSP, which-key, gitsigns, Mason, completion, neo-tree, noice, and the mini plugins.
 - `<leader>uc` toggles a VSCode Dark+ palette over the **code text only** (foreground overrides on top of catppuccin); the UI chrome, statusline, and backgrounds stay catppuccin.
 
 The same Catppuccin Mocha direction is used by Ghostty, tmux, and Starship, so the terminal, status bar, prompt, and editor share one visual language.
@@ -696,26 +692,23 @@ Mappings:
 - `<leader>gg` opens LazyGit.
 - `<leader>gG` opens LazyGit for the current file.
 
-### Bufferline and Statusline
+### Tabline and Statusline
 
-`nvim/lua/plugins/bufferline.lua` configures buffer tabs:
+Both are mini.nvim modules (declared in `nvim/lua/plugins/minis.lua` and `nvim/lua/plugins/statusline.lua`), themed automatically by catppuccin's `mini` integration (`MiniTabline*` / `MiniStatusline*` groups) — no hand-built palette table.
 
-- `]b` next buffer
-- `[b` previous buffer
-- `<leader>bp` pick buffer
-- `<leader>bX` close other buffers
-- `<leader>bL` close buffers to the right
-- `<leader>bH` close buffers to the left
+`mini.tabline` renders buffer tabs:
 
-Diagnostics are shown in the bufferline.
+- `]b` next buffer, `[b` previous buffer (plain `:bnext` / `:bprevious`).
+- File icons come from mini.icons; modified buffers and same-name disambiguation are handled automatically.
+- Note: it has no buffer-pick or close-button equivalents (the old `<leader>bp`/`bX`/`bL`/`bH` are gone); use `<leader>fb` to jump buffers and `<leader>bx` to delete one.
 
-`nvim/lua/plugins/lueline.lua` configures the global statusline:
+`mini.statusline` configures the global statusline (intentionally compact):
 
-- Shows mode, branch, filename, diagnostics, active LSP clients, diff, filetype, progress, and location.
-- Shows a red `@register` indicator while a macro is recording (refreshed via `RecordingEnter`/`RecordingLeave`).
-- Uses global statusline mode.
-- Disables the statusline for Oil and the mini.starter start screen.
-- Colors are sourced from the Catppuccin palette API so they follow flavour changes automatically.
+- Left: abbreviated mode (`N`/`I`/`V`), Git branch, and diagnostic counts.
+- Right: attached LSP server names (e.g. `gopls, lua_ls`), filetype + icon, and a compact `line:col`.
+- Shows a `@register` macro-recording indicator (refreshed via `RecordingEnter`/`RecordingLeave`).
+- Filename is shown as the name only (`%t`), not the path.
+- Uses global statusline mode (`laststatus=3`, already set in `options.lua`).
 
 ### Mini Plugins
 
@@ -724,12 +717,14 @@ Diagnostics are shown in the bufferline.
 - `mini.ai` — extra text objects, including Treesitter-powered ones (see Text Objects below).
 - `mini.surround` — surround operations (mappings below).
 - `mini.pairs` — autopairs.
-- `mini.icons` — icons plus `nvim-web-devicons` compatibility (used by neo-tree, Oil, bufferline, lualine, blink, and more).
-- `mini.bufremove` — layout-preserving buffer deletion, wired into `<leader>q`, `<leader>Q`, `<leader>W`, `<leader>bx`, and the bufferline close buttons.
+- `mini.icons` — icons plus `nvim-web-devicons` compatibility (used by neo-tree, Oil, mini.tabline, mini.statusline, blink, and more).
+- `mini.bufremove` — layout-preserving buffer deletion, wired into `<leader>q`, `<leader>Q`, `<leader>W`, and `<leader>bx`.
+- `mini.tabline` — buffer tabs (see the Tabline and Statusline section).
+- `mini.statusline` — the global statusline (see the Tabline and Statusline section).
 - `mini.starter` — the start screen shown when Neovim opens with no file (Find File / Find Text / Recent Files / Config / Lazy / Quit, plus recent files).
 - `mini.animate` — smooth scrolling only (cursor/resize/window animations are disabled). Small scrolls of ≤ 6 lines (short `<C-d>`/`<C-u>`/`n`/`N`) jump instantly; larger scrolls animate at a steady per-step rate.
 
-Notifications are handled by **noice + nvim-notify**, not mini.notify (see the Notifications section). The file explorer is **neo-tree**, not mini.files (see File Explorers).
+Notifications are handled by **snacks.notifier** (see the Notifications section); the command line is owned by **noice**. The file explorer is **neo-tree**, not mini.files (see File Explorers).
 
 Surround mappings:
 
@@ -761,16 +756,12 @@ All of them compose with operators like native text objects (`d`, `c`, `y`, `v`)
 
 ### Markdown
 
-`nvim/lua/plugins/md-reader.lua` configures:
-
-- `render-markdown.nvim` for rendered Markdown inside Neovim.
-- `markdown-preview.nvim` for browser preview.
+`nvim/lua/plugins/md-reader.lua` configures `render-markdown.nvim` for rendered Markdown inside Neovim.
 
 Mappings:
 
 - `<leader>Md` toggles rendered Markdown view.
 - `<leader>MD` opens rendered preview in a side window.
-- `<leader>Me` toggles browser preview.
 
 ### Testing
 
@@ -882,6 +873,7 @@ Active modules:
 - `indent` — animated indent guides with scope highlighting for the current block.
 - `input` — improved `vim.ui.input` UI.
 - `lazygit` — `<leader>gg` and `<leader>gG` open LazyGit.
+- `notifier` — renders `vim.notify` as stacked top-right cards; `<leader>fn` opens history, `<leader>un` dismisses. Replaces the old noice → nvim-notify path.
 - `picker` — unified fuzzy finder (see Fuzzy Finding section).
 - `quickfile` — fast file rendering on startup.
 - `scratch` — scratch buffers; `<leader>.` toggles, `<leader>f.` lists.
@@ -889,16 +881,19 @@ Active modules:
 - `toggle` — toggle utilities with visual on/off feedback; used for dim (`<leader>ud`), inlay hints (`<leader>uh`), and sticky context (`<leader>uC`).
 - `zen` — `<leader>uz` toggles zen mode; `<leader>uZ` toggles zoom.
 
-Buffer deletion, the start screen, and smooth scrolling are handled by mini.nvim (`mini.bufremove`, `mini.starter`, `mini.animate`); the file explorer is neo-tree; notifications and the command line are handled by noice + nvim-notify. See the Mini Plugins, File Explorers, and Notifications sections.
+Buffer deletion, the start screen, tabline, statusline, and smooth scrolling are handled by mini.nvim (`mini.bufremove`, `mini.starter`, `mini.tabline`, `mini.statusline`, `mini.animate`); the file explorer is neo-tree; the command line is handled by noice. See the Mini Plugins, File Explorers, and Notifications sections.
 
 ### Notifications and Command Line
 
-`nvim/lua/plugins/noice.lua` configures `folke/noice.nvim` with `rcarriga/nvim-notify` as the notification backend.
+Notifications and the command line are split between two plugins:
 
-- `vim.notify` is routed through noice into nvim-notify, which renders **animated, rounded popup cards stacked in the top-right corner** (fade-in / slide-out, 3 s timeout). Cards are themed by the catppuccin `notify` integration and colored per level.
+- **Notifications** are owned by `snacks.notifier` (configured in `nvim/lua/plugins/snacks.lua`). `vim.notify` renders as **stacked top-right cards** (`top_down`, 3 s timeout). `<leader>fn` opens the notification history; `<leader>un` dismisses the visible cards.
+- **Command line and messages** are owned by `folke/noice.nvim` (`nvim/lua/plugins/noice.lua`, depending only on `nui.nvim`). Its own notification routing is disabled (`notify.enabled = false`) so it never touches `vim.notify` — snacks does.
+
+noice behavior:
+
 - The command line (`:`) renders on the **bottom line** (`cmdline` view, with the `command_palette` preset off so it isn't re-centered); search (`/`, `?`) uses the classic bottom line too (`bottom_search` preset). Long messages split off and the `long_message_to_split` preset is on.
 - LSP progress is shown, and LSP hover/signature markdown is rendered with a border (`lsp_doc_border`).
-- `<leader>fn` opens the notification history; `<leader>un` dismisses the visible popups.
 
 ### which-key
 

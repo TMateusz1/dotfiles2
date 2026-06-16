@@ -244,7 +244,6 @@ return {
 				-- Markdown
 				{ "<leader>Md", desc = "Toggle rendered Markdown view" },
 				{ "<leader>MD", desc = "Preview in side window" },
-				{ "<leader>Me", desc = "Browser preview (markdown only)" },
 
 				-- Line movement
 				{ "<A-j>", desc = "Move line down", mode = { "n", "v" } },
