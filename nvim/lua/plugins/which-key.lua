@@ -33,7 +33,6 @@ return {
 
 			spec = {
 				-- Top-level leader groups
-				{ "<leader>a", group = "AI (CodeCompanion)" },
 				{ "<leader>b", group = "Buffers" },
 				{ "<leader>f", group = "Find" },
 				{ "<leader>g", group = "Git" },
@@ -46,7 +45,6 @@ return {
 
 				-- Direct leader mappings
 				{ "<leader>e", desc = "File explorer (mini.files)" },
-				{ "<leader>E", desc = "Oil multi-file edit" },
 				{ "<leader>F", desc = "Document symbols" },
 				{ "<leader>w", desc = "Save file" },
 				{ "<leader>W", desc = "Save and close buffer" },
@@ -66,13 +64,6 @@ return {
 				{ "<leader>bX", desc = "Delete other buffers" },
 				{ "<leader>bL", desc = "Delete buffers to the right" },
 				{ "<leader>bH", desc = "Delete buffers to the left" },
-
-				-- AI
-				{ "<leader>aa", desc = "AI actions", mode = { "n", "v" } },
-				{ "<leader>ac", desc = "AI Codex chat" },
-				{ "<leader>ad", desc = "AI add selection to chat", mode = "v" },
-				{ "<leader>an", desc = "AI new Codex chat" },
-				{ "<leader>at", desc = "AI Codex terminal" },
 
 				-- Git
 				{ "<leader>gg", desc = "LazyGit" },
