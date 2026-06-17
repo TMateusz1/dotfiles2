@@ -128,7 +128,11 @@ return {
 			local actions = require("fzf-lua.actions")
 			opts.actions = {
 				files = {
-					["ctrl-q"] = actions.file_sel_to_qf,
+					["default"] = actions.file_edit_or_qf,
+					["ctrl-s"]  = actions.file_split,
+					["ctrl-v"]  = actions.file_vsplit,
+					["ctrl-t"]  = actions.file_tabedit,
+					["ctrl-q"]  = actions.file_sel_to_qf,
 				},
 			}
 			require("fzf-lua").setup(opts)
