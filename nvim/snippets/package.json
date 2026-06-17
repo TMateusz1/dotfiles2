@@ -12,6 +12,10 @@
           "helm"
         ],
         "path": "./kubernetes.json"
+      },
+      {
+        "language": "helm",
+        "path": "./helm.json"
       }
     ]
   }

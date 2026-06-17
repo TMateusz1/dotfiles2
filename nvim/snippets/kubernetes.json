@@ -30,6 +30,41 @@
       "          ${0}"
     ]
   },
+  "Kubernetes StatefulSet": {
+    "prefix": "k-sts",
+    "description": "Minimal Kubernetes StatefulSet",
+    "body": [
+      "apiVersion: apps/v1",
+      "kind: StatefulSet",
+      "metadata:",
+      "  name: ${1:app}",
+      "spec:",
+      "  serviceName: ${1:app}",
+      "  replicas: ${2:1}",
+      "  selector:",
+      "    matchLabels:",
+      "      app: ${1:app}",
+      "  template:",
+      "    metadata:",
+      "      labels:",
+      "        app: ${1:app}",
+      "    spec:",
+      "      containers:",
+      "        - name: ${1:app}",
+      "          image: ${3:image:tag}",
+      "          ports:",
+      "            - containerPort: ${4:8080}",
+      "          ${0}",
+      "  volumeClaimTemplates:",
+      "    - metadata:",
+      "        name: data",
+      "      spec:",
+      "        accessModes: [\"ReadWriteOnce\"]",
+      "        resources:",
+      "          requests:",
+      "            storage: ${5:1Gi}"
+    ]
+  },
   "Kubernetes Service": {
     "prefix": "k-svc",
     "description": "Minimal Kubernetes Service",
@@ -73,6 +108,18 @@
       "type: ${2:Opaque}",
       "stringData:",
       "  ${3:key}: ${4:value}",
+      "${0}"
+    ]
+  },
+  "Kubernetes ServiceAccount": {
+    "prefix": "k-sa",
+    "description": "Minimal Kubernetes ServiceAccount",
+    "body": [
+      "apiVersion: v1",
+      "kind: ServiceAccount",
+      "metadata:",
+      "  name: ${1:controller}",
+      "  namespace: ${2:default}",
       "${0}"
     ]
   },
@@ -166,6 +213,24 @@
       "      ${0}"
     ]
   },
+  "Kubernetes PVC": {
+    "prefix": "k-pvc",
+    "description": "Minimal PersistentVolumeClaim",
+    "body": [
+      "apiVersion: v1",
+      "kind: PersistentVolumeClaim",
+      "metadata:",
+      "  name: ${1:pvc}",
+      "spec:",
+      "  accessModes:",
+      "    - ReadWriteOnce",
+      "  storageClassName: ${2:standard}",
+      "  resources:",
+      "    requests:",
+      "      storage: ${3:1Gi}",
+      "${0}"
+    ]
+  },
   "Kubernetes CRD": {
     "prefix": "k-crd",
     "description": "Minimal Kubernetes CustomResourceDefinition",
@@ -197,6 +262,19 @@
       "      ${0}"
     ]
   },
+  "Kubernetes Custom Resource": {
+    "prefix": "k-cr",
+    "description": "Operator Custom Resource sample",
+    "body": [
+      "apiVersion: ${1:example.com}/${2:v1alpha1}",
+      "kind: ${3:MyKind}",
+      "metadata:",
+      "  name: ${4:sample}",
+      "  namespace: ${5:default}",
+      "spec:",
+      "  ${0}"
+    ]
+  },
   "Kubernetes RBAC Role": {
     "prefix": "k-role",
     "description": "Minimal Kubernetes Role",
@@ -211,6 +289,122 @@
       "    resources: [\"${4:resources}\"]",
       "    verbs: [\"get\", \"list\", \"watch\", \"create\", \"update\", \"patch\", \"delete\"]",
       "${0}"
+    ]
+  },
+  "Kubernetes ClusterRole": {
+    "prefix": "k-clusterrole",
+    "description": "Minimal Kubernetes ClusterRole",
+    "body": [
+      "apiVersion: rbac.authorization.k8s.io/v1",
+      "kind: ClusterRole",
+      "metadata:",
+      "  name: ${1:role}",
+      "rules:",
+      "  - apiGroups: [\"${2:example.com}\"]",
+      "    resources: [\"${3:resources}\"]",
+      "    verbs: [\"get\", \"list\", \"watch\", \"create\", \"update\", \"patch\", \"delete\"]",
+      "${0}"
+    ]
+  },
+  "Kubernetes RoleBinding": {
+    "prefix": "k-rb",
+    "description": "Minimal Kubernetes RoleBinding",
+    "body": [
+      "apiVersion: rbac.authorization.k8s.io/v1",
+      "kind: RoleBinding",
+      "metadata:",
+      "  name: ${1:rolebinding}",
+      "  namespace: ${2:default}",
+      "subjects:",
+      "  - kind: ServiceAccount",
+      "    name: ${3:serviceaccount}",
+      "    namespace: ${2:default}",
+      "roleRef:",
+      "  apiGroup: rbac.authorization.k8s.io",
+      "  kind: Role",
+      "  name: ${4:role}",
+      "${0}"
+    ]
+  },
+  "Kubernetes ClusterRoleBinding": {
+    "prefix": "k-crb",
+    "description": "Minimal Kubernetes ClusterRoleBinding",
+    "body": [
+      "apiVersion: rbac.authorization.k8s.io/v1",
+      "kind: ClusterRoleBinding",
+      "metadata:",
+      "  name: ${1:rolebinding}",
+      "subjects:",
+      "  - kind: ServiceAccount",
+      "    name: ${2:serviceaccount}",
+      "    namespace: ${3:default}",
+      "roleRef:",
+      "  apiGroup: rbac.authorization.k8s.io",
+      "  kind: ClusterRole",
+      "  name: ${4:clusterrole}",
+      "${0}"
+    ]
+  },
+  "Kubernetes HPA": {
+    "prefix": "k-hpa",
+    "description": "Minimal HorizontalPodAutoscaler (autoscaling/v2)",
+    "body": [
+      "apiVersion: autoscaling/v2",
+      "kind: HorizontalPodAutoscaler",
+      "metadata:",
+      "  name: ${1:app}",
+      "spec:",
+      "  scaleTargetRef:",
+      "    apiVersion: apps/v1",
+      "    kind: Deployment",
+      "    name: ${1:app}",
+      "  minReplicas: ${2:1}",
+      "  maxReplicas: ${3:10}",
+      "  metrics:",
+      "    - type: Resource",
+      "      resource:",
+      "        name: cpu",
+      "        target:",
+      "          type: Utilization",
+      "          averageUtilization: ${4:80}",
+      "${0}"
+    ]
+  },
+  "Kubernetes PDB": {
+    "prefix": "k-pdb",
+    "description": "Minimal PodDisruptionBudget",
+    "body": [
+      "apiVersion: policy/v1",
+      "kind: PodDisruptionBudget",
+      "metadata:",
+      "  name: ${1:app}",
+      "spec:",
+      "  minAvailable: ${2:1}",
+      "  selector:",
+      "    matchLabels:",
+      "      app: ${1:app}",
+      "${0}"
+    ]
+  },
+  "Kubernetes NetworkPolicy": {
+    "prefix": "k-netpol",
+    "description": "Minimal Kubernetes NetworkPolicy",
+    "body": [
+      "apiVersion: networking.k8s.io/v1",
+      "kind: NetworkPolicy",
+      "metadata:",
+      "  name: ${1:allow-same-namespace}",
+      "  namespace: ${2:default}",
+      "spec:",
+      "  podSelector:",
+      "    matchLabels:",
+      "      app: ${3:app}",
+      "  policyTypes:",
+      "    - Ingress",
+      "  ingress:",
+      "    - from:",
+      "        - podSelector: {}",
+      "  ${0}"
     ]
   }
 }

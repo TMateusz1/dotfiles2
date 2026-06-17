@@ -108,5 +108,132 @@
       "}",
       "${0}"
     ]
+  },
+  "controller add finalizer": {
+    "prefix": "kfinalizer",
+    "description": "Check and add finalizer",
+    "body": [
+      "if !controllerutil.ContainsFinalizer(&${1:obj}, ${2:\"example.com/finalizer\"}) {",
+      "\tcontrollerutil.AddFinalizer(&${1:obj}, ${2:\"example.com/finalizer\"})",
+      "\tif err := r.Update(ctx, &${1:obj}); err != nil {",
+      "\t\treturn ctrl.Result{}, err",
+      "\t}",
+      "}",
+      "${0}"
+    ]
+  },
+  "controller finalizer on delete": {
+    "prefix": "kfinremove",
+    "description": "Handle deletion: run cleanup and remove finalizer",
+    "body": [
+      "if !${1:obj}.DeletionTimestamp.IsZero() {",
+      "\tif controllerutil.ContainsFinalizer(&${1:obj}, ${2:\"example.com/finalizer\"}) {",
+      "\t\t${0:// cleanup logic here}",
+      "\t\tcontrollerutil.RemoveFinalizer(&${1:obj}, ${2:\"example.com/finalizer\"})",
+      "\t\tif err := r.Update(ctx, &${1:obj}); err != nil {",
+      "\t\t\treturn ctrl.Result{}, err",
+      "\t\t}",
+      "\t}",
+      "\treturn ctrl.Result{}, nil",
+      "}"
+    ]
+  },
+  "controller patch object": {
+    "prefix": "kpatch",
+    "description": "Patch object using MergeFrom",
+    "body": [
+      "patch := client.MergeFrom(${1:obj}.DeepCopy())",
+      "${0}",
+      "if err := r.Patch(ctx, &${1:obj}, patch); err != nil {",
+      "\treturn ctrl.Result{}, err",
+      "}"
+    ]
+  },
+  "controller patch status": {
+    "prefix": "kstatuspatch",
+    "description": "Patch status subresource using MergeFrom",
+    "body": [
+      "patch := client.MergeFrom(${1:obj}.DeepCopy())",
+      "${0}",
+      "if err := r.Status().Patch(ctx, &${1:obj}, patch); err != nil {",
+      "\treturn ctrl.Result{}, err",
+      "}"
+    ]
+  },
+  "controller create or update": {
+    "prefix": "kcreateupdate",
+    "description": "ctrl.CreateOrUpdate",
+    "body": [
+      "op, err := ctrl.CreateOrUpdate(ctx, r.Client, &${1:child}, func() error {",
+      "\t${0}",
+      "\treturn nil",
+      "})",
+      "if err != nil {",
+      "\treturn ctrl.Result{}, err",
+      "}",
+      "log.Info(\"reconciled\", \"resource\", client.ObjectKeyFromObject(&${1:child}), \"operation\", op)"
+    ]
+  },
+  "controller requeue after": {
+    "prefix": "krequeue",
+    "description": "Return ctrl.Result{RequeueAfter: ...}",
+    "body": ["return ctrl.Result{RequeueAfter: ${1:30 * time.Second}}, nil"]
+  },
+  "controller list objects": {
+    "prefix": "klist",
+    "description": "List objects with InNamespace selector",
+    "body": [
+      "var ${1:list} ${2:appv1.MyKindList}",
+      "if err := r.List(ctx, &${1:list},",
+      "\tclient.InNamespace(req.Namespace),",
+      "\t${0}); err != nil {",
+      "\treturn ctrl.Result{}, err",
+      "}"
+    ]
+  },
+  "controller set condition": {
+    "prefix": "kcondition",
+    "description": "Set status condition via apimeta.SetStatusCondition",
+    "body": [
+      "apimeta.SetStatusCondition(&${1:obj}.Status.Conditions, metav1.Condition{",
+      "\tType:               \"${2:Ready}\",",
+      "\tStatus:             metav1.ConditionTrue,",
+      "\tReason:             \"${3:Reconciled}\",",
+      "\tMessage:            \"${4:}\",",
+      "\tObservedGeneration: ${1:obj}.Generation,",
+      "})",
+      "${0}"
+    ]
+  },
+  "controller setup with manager": {
+    "prefix": "ksetup",
+    "description": "SetupWithManager with controller builder",
+    "body": [
+      "func (r *${1:Kind}Reconciler) SetupWithManager(mgr ctrl.Manager) error {",
+      "\treturn ctrl.NewControllerManagedBy(mgr).",
+      "\t\tFor(&${2:v1alpha1.Kind}{}).",
+      "\t\t${0}Complete(r)",
+      "}"
+    ]
+  },
+  "kubebuilder rbac marker": {
+    "prefix": "kmarker",
+    "description": "kubebuilder:rbac marker comments for controller",
+    "body": [
+      "//+kubebuilder:rbac:groups=${1:example.com},resources=${2:myresources},verbs=get;list;watch;create;update;patch;delete",
+      "//+kubebuilder:rbac:groups=${1:example.com},resources=${2:myresources}/status,verbs=get;update;patch",
+      "//+kubebuilder:rbac:groups=${1:example.com},resources=${2:myresources}/finalizers,verbs=update",
+      "${0}"
+    ]
+  },
+  "log info": {
+    "prefix": "logi",
+    "description": "log.Info with key-value pairs",
+    "body": ["log.Info(\"${1:message}\"${2:, \"${3:key}\", ${4:val}})"]
+  },
+  "log error": {
+    "prefix": "loge",
+    "description": "log.Error with key-value pairs",
+    "body": ["log.Error(err, \"${1:message}\"${2:, \"${3:key}\", ${4:val}})"]
   }
 }
