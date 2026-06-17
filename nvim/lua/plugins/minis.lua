@@ -52,7 +52,10 @@ return {
 					{
 						"]f",
 						function()
-							require("nvim-treesitter-textobjects.move").goto_next_start("@function.outer", "textobjects")
+							require("nvim-treesitter-textobjects.move").goto_next_start(
+								"@function.outer",
+								"textobjects"
+							)
 						end,
 						mode = { "n", "x", "o" },
 						desc = "Next function start",
@@ -60,7 +63,10 @@ return {
 					{
 						"[f",
 						function()
-							require("nvim-treesitter-textobjects.move").goto_previous_start("@function.outer", "textobjects")
+							require("nvim-treesitter-textobjects.move").goto_previous_start(
+								"@function.outer",
+								"textobjects"
+							)
 						end,
 						mode = { "n", "x", "o" },
 						desc = "Previous function start",
@@ -221,6 +227,51 @@ return {
 				desc = "File explorer (mini.files)",
 			},
 		},
+	},
+
+	{
+		"nvim-mini/mini.indentscope",
+		version = false,
+		event = { "BufReadPre", "BufNewFile" },
+		opts = function()
+			local indentscope = require("mini.indentscope")
+
+			return {
+				symbol = "│",
+				-- No animation: draw the active-scope line instantly. This is the
+				-- bolder "current block" guide layered on top of the static
+				-- indent-blankline guides (it's indentation-based, so it always
+				-- matches the block under the cursor, unlike ibl's treesitter scope).
+				draw = {
+					delay = 0,
+					animation = indentscope.gen_animation.none(),
+				},
+				options = { try_as_border = true },
+			}
+		end,
+		init = function()
+			-- Don't draw the scope line in special / non-code buffers.
+			vim.api.nvim_create_autocmd("FileType", {
+				group = vim.api.nvim_create_augroup("user_indentscope_disable", { clear = true }),
+				pattern = {
+					"help",
+					"man",
+					"qf",
+					"lazy",
+					"mason",
+					"minifiles",
+					"trouble",
+					"Trouble",
+					"checkhealth",
+					"gitcommit",
+					"snacks_picker_list",
+					"snacks_picker_input",
+				},
+				callback = function()
+					vim.b.miniindentscope_disable = true
+				end,
+			})
+		end,
 	},
 
 	-- mini.starter and mini.animate are commented out for now. Re-enable by

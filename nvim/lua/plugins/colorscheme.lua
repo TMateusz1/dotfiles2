@@ -163,6 +163,13 @@ return {
 				return {
 					-- Thick, solid window separators (chars set via fillchars in options.lua)
 					WinSeparator = { fg = colors.lavender, bg = "NONE", bold = true },
+					-- indent-blankline guide: catppuccin defaults this to surface0,
+					-- which is nearly invisible on the base bg. surface1 is the
+					-- visible-but-subtle level (close to VSCode's indent guides).
+					IblIndent = { fg = colors.surface1 },
+					-- Active scope line (mini.indentscope) drawn over the static ibl
+					-- guides: brighter + bold so the current block stands out a bit.
+					MiniIndentscopeSymbol = { fg = colors.overlay1, bold = true },
 				}
 			end,
 			integrations = {
@@ -176,6 +183,9 @@ return {
 				cmp = true,
 				mini = true,
 				noice = true,
+				indent_blankline = {
+					enabled = true,
+				},
 			},
 		},
 		config = function(_, opts)

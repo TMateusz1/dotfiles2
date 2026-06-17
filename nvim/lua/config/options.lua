@@ -86,8 +86,9 @@ opt.completeopt = { "menu", "menuone", "noselect" }
 -- Better diff
 opt.diffopt:append("linematch:60")
 
--- Invisible characters. Render tabs as blank (no "»" glyph); still flag
--- trailing whitespace and non-breaking spaces.
+-- Invisible characters. Render tabs as blank so indentation is marked only by
+-- the indent-blankline guides (no overlapping "»" glyph); still flag trailing
+-- whitespace and non-breaking spaces.
 opt.list = true
 opt.listchars = {
 	tab = "  ",

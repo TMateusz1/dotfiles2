@@ -394,7 +394,7 @@ The lockfile is `nvim/lazy-lock.json`.
 - Terminal colors enabled.
 - Transparent background disabled.
 - Comment text is italic.
-- Integrations are enabled for Treesitter, native LSP, which-key, gitsigns, Mason, completion, noice, and the mini plugins.
+- Integrations are enabled for Treesitter, native LSP, which-key, gitsigns, Mason, completion, noice, indent-blankline, and the mini plugins.
 - `<leader>uc` toggles a VSCode Dark+ palette over the **code text only** (foreground overrides on top of catppuccin); the UI chrome, statusline, and backgrounds stay catppuccin.
 
 The same Catppuccin Mocha direction is used by Ghostty, tmux, and Starship, so the terminal, status bar, prompt, and editor share one visual language.
@@ -565,6 +565,15 @@ Installed parsers:
 
 Treesitter highlighting is enabled on filetype events for the supported languages. `jsonc` is registered to use the JSON parser.
 
+### Indent Guides
+
+Indent guides come from two plugins working together:
+
+- **Static guides** — `nvim/lua/plugins/indent.lua` configures `indent-blankline.nvim` (`ibl`): a plain `│` on **every** indent level, no animation, its own treesitter scope **disabled**. `tab_char` is set explicitly so tab-indented files (Lua, Go) draw the line instead of an invisible space (ibl otherwise inherits the blank `listchars` tab). The guide colour is overridden to `surface1` in `colorscheme.lua` (catppuccin's default `surface0` is nearly invisible on the base background).
+- **Active scope** — `mini.indentscope` (in `minis.lua`) draws the line for the block under the cursor a bit bolder (`overlay1` + bold, no animation). It's **indentation-based**, so it always matches the block you're visually in — unlike ibl's treesitter scope, which snaps to the outer syntactic scope when the cursor sits on a block's opening/closing line.
+
+Together they replace the removed snacks `indent` module.
+
 ### Fuzzy Finding and Picker
 
 `nvim/lua/plugins/snacks.lua` configures `snacks.picker` as the unified fuzzy finder.
@@ -666,6 +675,7 @@ Both are mini.nvim modules (declared in `nvim/lua/plugins/minis.lua` and `nvim/l
 - `mini.files` — the file explorer (`<leader>e`, see the File Explorers section).
 - `mini.tabline` — buffer tabs (see the Tabline and Statusline section).
 - `mini.statusline` — the global statusline (see the Tabline and Statusline section).
+- `mini.indentscope` — bolder line for the active indent scope (indentation-based), layered on the static indent-blankline guides (see Indent Guides). Disabled in special buffers; themed by the catppuccin `mini` integration.
 
 `mini.starter` (start screen) and `mini.animate` (smooth scrolling) are currently **commented out** in `minis.lua` — their specs are kept behind a block comment for easy re-enabling.
 
@@ -804,7 +814,7 @@ Active modules:
 
 - `picker` — unified fuzzy finder (see Fuzzy Finding section). This is the **only** snacks module enabled.
 
-All other snacks modules were removed (`bigfile`, `dim`, `gitbrowse`, `indent`, `input`, `lazygit`, `notifier`, `quickfile`, `scratch`, `terminal`, `toggle`, `zen`) — along with their keymaps (`<leader>gB`/`gg`/`gG`, `<leader>.`, `<leader>ud`/`ut`/`uz`/`uZ`, `<leader>f.`). `Snacks.toggle` is still used directly by `<leader>uc` (theme) and `<leader>uh` (inlay hints) — it works without the `toggle` module being enabled.
+All other snacks modules were removed (`bigfile`, `dim`, `gitbrowse`, `indent`, `input`, `lazygit`, `notifier`, `quickfile`, `scratch`, `terminal`, `toggle`, `zen`) — along with their keymaps (`<leader>gB`/`gg`/`gG`, `<leader>.`, `<leader>ud`/`ut`/`uz`/`uZ`, `<leader>f.`). The `indent` guides are replaced by `indent-blankline.nvim` (see Indent Guides). `Snacks.toggle` is still used directly by `<leader>uc` (theme) and `<leader>uh` (inlay hints) — it works without the `toggle` module being enabled.
 
 Buffer deletion, the tabline, and the statusline are handled by mini.nvim (`mini.bufremove`, `mini.tabline`, `mini.statusline`); the file explorer is mini.files; notifications and the command line are handled by noice. (`mini.starter` and `mini.animate` are currently commented out.) See the Mini Plugins, File Explorers, and Notifications sections.
 
