@@ -99,7 +99,6 @@ return {
 				{ "<leader>fd", desc = "Document diagnostics" },
 				{ "<leader>fD", desc = "Workspace diagnostics" },
 				{ "<leader>fq", desc = "Quickfix list" },
-				{ "<leader>fu", desc = "Undo history" },
 				{ "<leader>ft", desc = "Todo/Fix/Fixme/Bug" },
 
 				-- LSP / Code — bare keys (fast)

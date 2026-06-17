@@ -131,3 +131,25 @@ keymap("n", "<leader>X", "<cmd>confirm qall<CR>", { desc = "Quit all (confirm sa
 --   tmux `-` -> split-window -v (stacked)        => split
 keymap("n", "<leader>=", "<cmd>vsplit<CR>", { desc = "Split window right (vsplit)" })
 keymap("n", "<leader>-", "<cmd>split<CR>", { desc = "Split window below (split)" })
+
+-- LazyGit in a floating terminal
+keymap("n", "<leader>gg", function()
+	local buf = vim.api.nvim_create_buf(false, true)
+	local width = math.floor(vim.o.columns * 0.92)
+	local height = math.floor(vim.o.lines * 0.92)
+	local win = vim.api.nvim_open_win(buf, true, {
+		relative = "editor",
+		width = width,
+		height = height,
+		row = math.floor((vim.o.lines - height) / 2),
+		col = math.floor((vim.o.columns - width) / 2),
+		style = "minimal",
+		border = "rounded",
+	})
+	vim.fn.termopen("lazygit", {
+		on_exit = function()
+			vim.api.nvim_win_close(win, true)
+		end,
+	})
+	vim.cmd("startinsert")
+end, { desc = "LazyGit" })

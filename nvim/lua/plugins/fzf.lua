@@ -162,13 +162,6 @@ return {
 				desc = "Search buffer lines",
 			},
 			{
-				"<leader>fu",
-				function()
-					fzf().undotree()
-				end,
-				desc = "Undo history",
-			},
-			{
 				"<leader>fG",
 				function()
 					fzf().git_status()
