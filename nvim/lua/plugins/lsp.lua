@@ -396,9 +396,6 @@ return {
 					-- ]d / [d / <leader>uv are global (config/keymaps.lua) so they also
 					-- work with nvim-lint diagnostics in buffers without an LSP client.
 
-					-- LSP management
-					map("n", "<leader>cL", "<cmd>LspInfo<CR>", "LSP info")
-					map("n", "<leader>cR", "<cmd>LspRestart<CR>", "Restart LSP")
 
 					-- Go tools (gopls)
 					if client.name == "gopls" then

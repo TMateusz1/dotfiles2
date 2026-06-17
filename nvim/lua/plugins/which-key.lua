@@ -67,11 +67,7 @@ return {
 
 				-- Git
 				{ "<leader>gg", desc = "LazyGit" },
-				{ "<leader>gc", desc = "Git commits" },
-				{ "<leader>gC", desc = "Git buffer commits" },
-				{ "<leader>gb", desc = "Git branches" },
 				{ "<leader>gl", desc = "Git line commits" },
-				{ "<leader>gs", desc = "Git stash" },
 				{ "<leader>gh", group = "Git Hunks" },
 
 				{ "]h", desc = "Next git hunk" },
@@ -128,8 +124,6 @@ return {
 				{ "<leader>xq", desc = "Toggle quickfix" },
 				{ "<leader>cx", desc = "Line diagnostics" },
 				{ "<leader>cq", desc = "Diagnostics quickfix" },
-				{ "<leader>cL", desc = "LSP info" },
-				{ "<leader>cR", desc = "Restart LSP" },
 
 				-- <leader>ck — Kubernetes
 				{ "<leader>cks", desc = "Generate CRD schemas from cluster" },

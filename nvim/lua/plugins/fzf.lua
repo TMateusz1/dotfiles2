@@ -218,39 +218,11 @@ return {
 				desc = "Quickfix list",
 			},
 			{
-				"<leader>gc",
-				function()
-					fzf().git_commits()
-				end,
-				desc = "Git commits",
-			},
-			{
-				"<leader>gb",
-				function()
-					fzf().git_branches()
-				end,
-				desc = "Git branches",
-			},
-			{
-				"<leader>gC",
-				function()
-					fzf().git_bcommits()
-				end,
-				desc = "Git buffer commits",
-			},
-			{
 				"<leader>gl",
 				function()
 					git_line_commits()
 				end,
 				desc = "Git line commits",
-			},
-			{
-				"<leader>gs",
-				function()
-					fzf().git_stash()
-				end,
-				desc = "Git stash",
 			},
 		},
 	},
