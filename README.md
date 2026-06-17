@@ -209,7 +209,6 @@ Find and search with FZF-Lua:
 | `<leader>fd`, `<leader>fD` | Document/workspace diagnostics |
 | `<leader>fq` | Quickfix list |
 | `<leader>fR` | Resume last picker |
-| `<leader>fn` | Notification history |
 | `<leader>ft` | All todo comments |
 | `<leader>fT` | Todo/Fix/Fixme only |
 
@@ -319,6 +318,7 @@ UI and toggles:
 | Key | Action |
 | --- | --- |
 | `<leader>uc` | Toggle VSCode Dark+ code colors (fg-only overlay on catppuccin) |
+| `<leader>fn` | Notification history |
 | `<leader>uf` | Toggle format-on-save |
 | `<leader>uh` | Toggle inlay hints |
 | `<leader>un` | Dismiss visible notifications |
@@ -596,7 +596,6 @@ Mappings:
 - `<leader>fD` workspace diagnostics
 - `<leader>fq` quickfix list
 - `<leader>fR` resume last picker
-- `<leader>fn` notification history
 
 ### File Explorers
 
@@ -806,14 +805,14 @@ It owns:
 - `vim.ui.select`, so code actions and other selection prompts use the same picker backend.
 - FZF-Lua's builtin previewer for file, grep, git, and diagnostic results.
 
-Buffer deletion, the tabline, and the statusline are handled by mini.nvim (`mini.bufremove`, `mini.tabline`, `mini.statusline`); the file explorer is mini.files; notifications and the command line are handled by noice. (`mini.starter` and `mini.animate` are currently commented out.) See the Mini Plugins, File Explorers, and Notifications sections.
+Buffer deletion, the tabline, and the statusline are handled by mini.nvim (`mini.bufremove`, `mini.tabline`, `mini.statusline`); the file explorer is mini.files; notifications and the command line are handled by noice, while ordinary messages stay native. (`mini.starter` and `mini.animate` are currently commented out.) See the Mini Plugins, File Explorers, and Notifications sections.
 
 ### Notifications and Command Line
 
-Notifications, the command line, and messages are all owned by `folke/noice.nvim` (`nvim/lua/plugins/noice.lua`, depending only on `nui.nvim`).
+Notifications and the command line are owned by one plugin: `folke/noice.nvim` (`nvim/lua/plugins/noice.lua`, depending only on `nui.nvim`). Ordinary command output such as `:echo 'xxx'` stays in Neovim's native message area.
 
-- **Notifications**: `vim.notify` is routed through noice's own `mini` view — small, fading messages in the bottom-right — so there's no nvim-notify dependency. `<leader>fn` opens the notification history; `<leader>un` dismisses visible notifications.
-- The command line (`:`) renders on the **bottom line** (`cmdline` view, with the `command_palette` preset off so it isn't re-centered); search (`/`, `?`) uses the classic bottom line too (`bottom_search` preset). Long messages split off and the `long_message_to_split` preset is on.
+- **Notifications**: `vim.notify` is routed through noice's own `mini` view, so there is no `nvim-notify` dependency. `<leader>fn` runs `:Noice history`; `<leader>un` runs `:Noice dismiss`.
+- The command line (`:`) renders on the **bottom line** (`cmdline` view, with the `command_palette` preset off so it isn't re-centered); search (`/`, `?`) uses the classic bottom line too (`bottom_search` preset).
 - LSP progress is shown, and LSP hover/signature markdown is rendered with a border (`lsp_doc_border`).
 
 ### which-key

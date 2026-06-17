@@ -183,6 +183,7 @@ return {
 				cmp = true,
 				mini = true,
 				noice = true,
+				notify = true,
 				indent_blankline = {
 					enabled = true,
 				},

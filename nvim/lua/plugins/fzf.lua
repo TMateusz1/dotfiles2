@@ -250,13 +250,6 @@ return {
 				desc = "Resume picker",
 			},
 			{
-				"<leader>fn",
-				function()
-					require("noice").cmd("history")
-				end,
-				desc = "Notification history",
-			},
-			{
 				"<leader>gc",
 				function()
 					fzf().git_commits()

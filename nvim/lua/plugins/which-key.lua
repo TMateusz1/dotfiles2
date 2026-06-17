@@ -119,7 +119,6 @@ return {
 				{ "<leader>fq", desc = "Quickfix list" },
 				{ "<leader>fR", desc = "Resume picker" },
 				{ "<leader>fu", desc = "Undo history" },
-				{ "<leader>fn", desc = "Notification history" },
 				{ "<leader>ft", desc = "Todo comments" },
 				{ "<leader>fT", desc = "Todo/Fix/Fixme only" },
 
@@ -229,6 +228,7 @@ return {
 
 				-- UI / toggles
 				{ "<leader>uc", desc = "Toggle VSCode code colors" },
+				{ "<leader>fn", desc = "Notification history" },
 				{ "<leader>un", desc = "Dismiss notifications" },
 				{ "<leader>uf", desc = "Toggle format on save" },
 				{ "<leader>uh", desc = "Toggle inlay hints" },

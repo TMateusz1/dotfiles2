@@ -1,9 +1,21 @@
 return {
 	{
 		"folke/noice.nvim",
-		event = "VeryLazy",
+		lazy = false,
 		dependencies = {
 			"MunifTanjim/nui.nvim",
+			{
+				"rcarriga/nvim-notify",
+				opts = {
+					timeout = 3000,
+					render = "wrapped-compact",
+					stages = "fade",
+					top_down = true,
+					max_width = function()
+						return math.floor(vim.o.columns * 0.40)
+					end,
+				},
+			},
 		},
 		opts = {
 			cmdline = {
@@ -13,13 +25,15 @@ return {
 			},
 			messages = {
 				enabled = true,
+				view = "notify",
+				view_error = "notify",
+				view_warn = "notify",
+				view_history = "messages",
+				view_search = "virtualtext",
 			},
-			-- Notification history/dismiss live on <leader>fn / <leader>un.
 			notify = {
 				enabled = true,
-				-- noice's own minimal view (small, fading, bottom-right) — no
-				-- nvim-notify dependency.
-				view = "mini",
+				view = "notify",
 			},
 			lsp = {
 				progress = {
@@ -36,16 +50,18 @@ return {
 				-- command_palette would re-center the cmdline + completion menu
 				-- as a popup; left off so `:` stays on the bottom line.
 				command_palette = false,
-				long_message_to_split = true,
 				lsp_doc_border = true,
 			},
 		},
 		keys = {
 			{
+				"<leader>fn",
+				"<cmd>Noice history<CR>",
+				desc = "Notification history",
+			},
+			{
 				"<leader>un",
-				function()
-					require("noice").cmd("dismiss")
-				end,
+				"<cmd>Noice dismiss<CR>",
 				desc = "Dismiss notifications",
 			},
 		},
