@@ -14,13 +14,11 @@ return {
 			messages = {
 				enabled = true,
 			},
-			-- Notifications are owned by snacks.notifier, not noice. Leaving this
-			-- disabled means noice doesn't touch vim.notify, so the snacks cards
-			-- render instead. History/dismiss live on <leader>fn / <leader>un.
+			-- Notification history/dismiss live on <leader>fn / <leader>un.
 			notify = {
 				enabled = true,
 				-- noice's own minimal view (small, fading, bottom-right) — no
-				-- nvim-notify/snacks dependency now that snacks.notifier is gone.
+				-- nvim-notify dependency.
 				view = "mini",
 			},
 			lsp = {

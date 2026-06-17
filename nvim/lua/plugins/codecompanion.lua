@@ -52,7 +52,7 @@ return {
 			},
 			display = {
 				action_palette = {
-					provider = "snacks",
+					provider = "fzf_lua",
 				},
 				chat = {
 					window = {

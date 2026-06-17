@@ -292,8 +292,7 @@ return {
 					"Trouble",
 					"checkhealth",
 					"gitcommit",
-					"snacks_picker_list",
-					"snacks_picker_input",
+					"fzf",
 				},
 				callback = function()
 					vim.b.miniindentscope_disable = true
@@ -314,14 +313,14 @@ return {
 
 			starter.setup({
 				items = {
-					{ section = "Menu", name = "Find File", action = function() Snacks.picker.files() end },
-					{ section = "Menu", name = "Find Text", action = function() Snacks.picker.grep() end },
-					{ section = "Menu", name = "Recent Files", action = function() Snacks.picker.recent() end },
+					{ section = "Menu", name = "Find File", action = function() require("fzf-lua").files() end },
+					{ section = "Menu", name = "Find Text", action = function() require("fzf-lua").live_grep() end },
+					{ section = "Menu", name = "Recent Files", action = function() require("fzf-lua").oldfiles() end },
 					{
 						section = "Menu",
 						name = "Config",
 						action = function()
-							Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
+							require("fzf-lua").files({ cwd = vim.fn.stdpath("config") })
 						end,
 					},
 					{ section = "Menu", name = "Lazy", action = "Lazy" },
@@ -342,7 +341,7 @@ return {
 		event = "VeryLazy",
 		config = function()
 			local animate = require("mini.animate")
-			-- Smooth scrolling only (replacing Snacks `scroll`); leave the
+			-- Smooth scrolling only; leave the
 			-- cursor/window animations off to match the previous behaviour.
 			animate.setup({
 				scroll = {

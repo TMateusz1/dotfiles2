@@ -15,7 +15,7 @@ return {
 		opts = {
 			library = {
 				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
-				{ path = "snacks.nvim", words = { "Snacks" } },
+				{ path = "fzf-lua", words = { "FzfLua" } },
 			},
 		},
 	},
@@ -345,44 +345,68 @@ return {
 						})
 					end
 
+					local function fzf_lsp()
+						return require("fzf-lua")
+					end
+
 					-- Quick navigation (bare keys — fast access)
-					map("n", "gd", function() Snacks.picker.lsp_definitions() end, "Go to definition")
-					map("n", "gD", vim.lsp.buf.declaration, "Go to declaration")
-					map("n", "gr", function() Snacks.picker.lsp_references() end, "Go to references")
-					map("n", "gi", function() Snacks.picker.lsp_implementations() end, "Go to implementation")
-					map("n", "gy", function() Snacks.picker.lsp_type_definitions() end, "Go to type definition")
+					map("n", "gd", function()
+						fzf_lsp().lsp_definitions()
+					end, "Go to definition")
+					map("n", "gD", function()
+						fzf_lsp().lsp_declarations()
+					end, "Go to declaration")
+					map("n", "gr", function()
+						fzf_lsp().lsp_references()
+					end, "Go to references")
+					map("n", "gi", function()
+						fzf_lsp().lsp_implementations()
+					end, "Go to implementation")
+					map("n", "gy", function()
+						fzf_lsp().lsp_typedefs()
+					end, "Go to type definition")
 					map("n", "K", vim.lsp.buf.hover, "Hover documentation")
 
 					-- Navigation (discoverable via <leader>c)
-					map("n", "<leader>cd", function() Snacks.picker.lsp_definitions() end, "Go to definition")
-					map("n", "<leader>cD", vim.lsp.buf.declaration, "Go to declaration")
-					map("n", "<leader>cy", function() Snacks.picker.lsp_type_definitions() end, "Go to type definition")
+					map("n", "<leader>cd", function()
+						fzf_lsp().lsp_definitions()
+					end, "Go to definition")
+					map("n", "<leader>cD", function()
+						fzf_lsp().lsp_declarations()
+					end, "Go to declaration")
+					map("n", "<leader>cy", function()
+						fzf_lsp().lsp_typedefs()
+					end, "Go to type definition")
 					map("n", "<leader>cu", function()
-						Snacks.picker.lsp_references({ include_declaration = false })
+						fzf_lsp().lsp_references({ includeDeclaration = false })
 					end, "Find usages")
 
 					-- Browse / search
-					map("n", "<leader>fS", function() Snacks.picker.lsp_workspace_symbols() end, "Workspace symbols")
+					map("n", "<leader>fS", function()
+						fzf_lsp().lsp_live_workspace_symbols()
+					end, "Workspace symbols")
 					map("n", "<leader>cF", function()
-						Snacks.picker({
-							title = "LSP finder",
-							multi = {
-								"lsp_definitions",
-								"lsp_references",
-								"lsp_implementations",
-								"lsp_type_definitions",
-							},
-						})
+						fzf_lsp().lsp_finder()
 					end, "LSP finder (all)")
-					map("n", "<leader>cI", function() Snacks.picker.lsp_incoming_calls() end, "Incoming calls")
-					map("n", "<leader>cO", function() Snacks.picker.lsp_outgoing_calls() end, "Outgoing calls")
+					map("n", "<leader>cI", function()
+						fzf_lsp().lsp_incoming_calls()
+					end, "Incoming calls")
+					map("n", "<leader>cO", function()
+						fzf_lsp().lsp_outgoing_calls()
+					end, "Outgoing calls")
 
 					-- Actions
 					map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "Code action")
-					map("n", "<leader>cr", function() Snacks.picker.lsp_references() end, "References")
+					map("n", "<leader>cr", function()
+						fzf_lsp().lsp_references()
+					end, "References")
 					map("n", "<leader>cn", vim.lsp.buf.rename, "Rename symbol")
-					map("n", "<leader>co", function() require("config.go").organize_imports(bufnr) end, "Organize imports")
-					map("n", "<leader>cf", function() require("config.go").fix_all(bufnr) end, "Fix all")
+					map("n", "<leader>co", function()
+						require("config.go").organize_imports(bufnr)
+					end, "Organize imports")
+					map("n", "<leader>cf", function()
+						require("config.go").fix_all(bufnr)
+					end, "Fix all")
 
 					if client:supports_method("textDocument/codeLens") then
 						map("n", "<leader>cc", vim.lsp.codelens.run, "Run code lens")
@@ -414,24 +438,49 @@ return {
 
 					-- Go tools (gopls)
 					if client.name == "gopls" then
-						map("n", "<leader>cgm", function() require("config.go").mod_tidy(bufnr) end, "Go mod tidy")
-						map("n", "<leader>cgg", function() require("config.go").generate(bufnr) end, "Go generate")
-						map("n", "<leader>cgl", function() require("config.go").lint(bufnr) end, "Go lint")
-						map("n", "<leader>cgd", function() require("config.go").doc(bufnr) end, "Go doc")
+						map("n", "<leader>cgm", function()
+							require("config.go").mod_tidy(bufnr)
+						end, "Go mod tidy")
+						map("n", "<leader>cgg", function()
+							require("config.go").generate(bufnr)
+						end, "Go generate")
+						map("n", "<leader>cgl", function()
+							require("config.go").lint(bufnr)
+						end, "Go lint")
+						map("n", "<leader>cgd", function()
+							require("config.go").doc(bufnr)
+						end, "Go doc")
 
 						-- Code generation (gomodifytags / impl)
-						map("n", "<leader>cgj", function() require("config.go").add_json_tags(bufnr) end, "Add json tags")
-						map("n", "<leader>cgJ", function() require("config.go").remove_json_tags(bufnr) end, "Remove json tags")
-						map("n", "<leader>cgy", function() require("config.go").add_yaml_tags(bufnr) end, "Add yaml tags")
-						map("n", "<leader>cgY", function() require("config.go").remove_yaml_tags(bufnr) end, "Remove yaml tags")
-						map("n", "<leader>cge", function() require("config.go").add_env_tags(bufnr) end, "Add env tags")
-						map("n", "<leader>cgE", function() require("config.go").remove_env_tags(bufnr) end, "Remove env tags")
-						map("n", "<leader>ci", function() require("config.go").implement_interface(bufnr) end, "Implement interface")
+						map("n", "<leader>cgj", function()
+							require("config.go").add_json_tags(bufnr)
+						end, "Add json tags")
+						map("n", "<leader>cgJ", function()
+							require("config.go").remove_json_tags(bufnr)
+						end, "Remove json tags")
+						map("n", "<leader>cgy", function()
+							require("config.go").add_yaml_tags(bufnr)
+						end, "Add yaml tags")
+						map("n", "<leader>cgY", function()
+							require("config.go").remove_yaml_tags(bufnr)
+						end, "Remove yaml tags")
+						map("n", "<leader>cge", function()
+							require("config.go").add_env_tags(bufnr)
+						end, "Add env tags")
+						map("n", "<leader>cgE", function()
+							require("config.go").remove_env_tags(bufnr)
+						end, "Remove env tags")
+						map("n", "<leader>ci", function()
+							require("config.go").implement_interface(bufnr)
+						end, "Implement interface")
 					end
 
 					-- Inlay hints
 					if client:supports_method("textDocument/inlayHint") then
-						Snacks.toggle.inlay_hints():map("<leader>uh")
+						map("n", "<leader>uh", function()
+							local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr })
+							vim.lsp.inlay_hint.enable(not enabled, { bufnr = bufnr })
+						end, "Toggle inlay hints")
 					end
 				end,
 			})

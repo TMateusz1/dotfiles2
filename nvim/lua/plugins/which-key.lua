@@ -102,7 +102,7 @@ return {
 				{ "<leader>ght", desc = "Toggle deleted lines" },
 				{ "<leader>ghw", desc = "Toggle word diff" },
 
-				-- Snacks picker
+				-- FZF picker
 				{ "<leader>ff", desc = "Find files" },
 				{ "<leader>fG", desc = "Git changed files" },
 				{ "<leader>fg", desc = "Live grep" },
@@ -137,7 +137,7 @@ return {
 				{ "gy", desc = "Go to type definition" },
 				{ "K", desc = "Hover documentation" },
 
-				-- <leader>c — navigation (all use picker)
+				-- <leader>c — navigation
 				{ "<leader>cd", desc = "Go to definition" },
 				{ "<leader>cD", desc = "Go to declaration" },
 				{ "<leader>ci", desc = "Implement interface (Go)" },

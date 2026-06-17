@@ -463,50 +463,119 @@ function M.implement_interface(bufnr)
 					iface_arg = name
 				end
 
-				run_impl(iface_arg, name)
+				run_impl(iface_arg, item.display or name)
 			end)
 		end)
 	end
 
 	local ok = pcall(function()
-		Snacks.picker.lsp_workspace_symbols({
-			title = "Implement interface on " .. struct,
-			-- gopls workspace/symbol is queried live as you type; restrict the
-			-- results to interfaces.
-			filter = {
-				["go"] = { "Interface" },
+		local items_by_entry = {}
+
+		local function short_package(container)
+			if not container or container == "" then
+				return nil
+			end
+
+			local pkg = container:match("([^/]+)$") or container
+
+			if pkg:match("^v%d+$") then
+				pkg = container:match("([^/]+)/[^/]+$") or pkg
+			end
+
+			return pkg
+		end
+
+		local function symbol_item(symbol)
+			if vim.lsp.protocol.SymbolKind[symbol.kind] ~= "Interface" or not symbol.location then
+				return nil
+			end
+
+			local file = vim.uri_to_fname(symbol.location.uri)
+			local range = symbol.location.range
+			local bare = (symbol.name or ""):match("[^.]+$") or symbol.name
+			local pkg = short_package(symbol.containerName)
+			local display = pkg and (pkg .. "." .. bare) or bare
+			local lnum = range.start.line + 1
+			local col = range.start.character + 1
+			local rel = vim.fs.relpath(M.project_root(bufnr), file) or file
+
+			return {
+				name = symbol.name,
+				display = display,
+				file = file,
+				line = lnum,
+				col = col,
+				item = symbol,
+				entry = table.concat({
+					display,
+					("%s:%d:%d"):format(rel, lnum, col),
+					symbol.containerName or "",
+				}, "\t"),
+			}
+		end
+
+		local function interface_entries(query)
+			if query == "" then
+				items_by_entry = {}
+				return {}
+			end
+
+			local responses = vim.lsp.buf_request_sync(bufnr, "workspace/symbol", {
+				query = query,
+			}, 5000) or {}
+			local entries = {}
+			local next_items = {}
+
+			for _, response in pairs(responses) do
+				for _, symbol in ipairs(response.result or {}) do
+					local item = symbol_item(symbol)
+
+					if item then
+						table.insert(entries, item.entry)
+						next_items[item.entry] = item
+					end
+				end
+			end
+
+			table.sort(entries)
+			items_by_entry = next_items
+
+			return entries
+		end
+
+		require("fzf-lua").fzf_live(function(args)
+			return interface_entries(args[1] or "")
+		end, {
+			prompt = "Implement interface on " .. struct .. "> ",
+			fzf_opts = {
+				["--delimiter"] = "\t",
+				["--with-nth"] = "1,2",
+				["--nth"] = "1",
 			},
-			-- gopls returns bare names ("Writer") for unqualified queries; rewrite
-			-- every item to "package.Name" ("io.Writer") before display and
-			-- matching, so the list always shows which package an interface comes
-			-- from. containerName holds the full import path — reduce it to the
-			-- short package name (last segment, skipping "/v2"-style suffixes).
-			transform = function(item)
-				local container = item.item and item.item.containerName
-				local name = item.name or ""
+			preview = {
+				fn = function(selected)
+					local item = selected and items_by_entry[selected[1]]
 
-				if not container or container == "" then
-					return
-				end
+					if not item then
+						return ""
+					end
 
-				local pkg = container:match("([^/]+)$") or container
+					return table.concat({
+						item.display,
+						("%s:%d:%d"):format(item.file, item.line, item.col),
+						item.item.containerName or "",
+					}, "\n")
+				end,
+			},
+			actions = {
+				["default"] = function(selected)
+					local item = selected and items_by_entry[selected[1]]
 
-				if pkg:match("^v%d+$") then
-					pkg = container:match("([^/]+)/[^/]+$") or pkg
-				end
-
-				local bare = name:match("[^.]+$") or name
-
-				item.name = pkg .. "." .. bare
-				item.text = table.concat({ item.kind or "Interface", item.name, item.file or "" }, " ")
-			end,
-			confirm = function(picker, item)
-				picker:close()
-
-				if item then
-					implement_symbol(item)
-				end
-			end,
+					if item then
+						implement_symbol(item)
+					end
+				end,
+			},
 		})
 	end)
 

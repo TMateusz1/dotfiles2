@@ -22,14 +22,14 @@ return {
 			{
 				"<leader>ft",
 				function()
-					Snacks.picker.todo_comments()
+					require("todo-comments.fzf").todo()
 				end,
 				desc = "Todo comments",
 			},
 			{
 				"<leader>fT",
 				function()
-					Snacks.picker.todo_comments({ keywords = { "TODO", "FIX", "FIXME" } })
+					require("todo-comments.fzf").todo({ keywords = { "TODO", "FIX", "FIXME" } })
 				end,
 				desc = "Todo/Fix/Fixme only",
 			},

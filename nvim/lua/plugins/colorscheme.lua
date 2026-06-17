@@ -212,20 +212,17 @@ return {
 				desc = "Strip the red underline from the active mini.tabline label",
 			})
 
-			-- Registered on VeryLazy: snacks.nvim loads at the same priority
-			-- as catppuccin, so Snacks may not exist yet at this point.
-			vim.api.nvim_create_autocmd("User", {
-				pattern = "VeryLazy",
-				once = true,
-				callback = function()
-					Snacks.toggle({
-						name = "VSCode Code Colors",
-						get = function()
-							return vscode_syntax_enabled
-						end,
-						set = set_vscode_syntax,
-					}):map("<leader>uc")
-				end,
+			vim.keymap.set("n", "<leader>uc", function()
+				set_vscode_syntax(not vscode_syntax_enabled)
+				vim.notify(
+					vscode_syntax_enabled and "VSCode code colors enabled" or "VSCode code colors disabled",
+					vim.log.levels.INFO,
+					{
+						title = "UI",
+					}
+				)
+			end, {
+				desc = "Toggle VSCode code colors",
 			})
 		end,
 	},

@@ -190,7 +190,7 @@ Completion and snippets:
 | Command-line `<Tab>`, `<S-Tab>` | Accept/select command-line completion |
 | Command-line `<Up>`, `<Down>`, `<C-k>`, `<C-j>` | Move through command-line completion items |
 
-Find and search with Snacks picker:
+Find and search with FZF-Lua:
 
 | Key | Action |
 | --- | --- |
@@ -231,8 +231,8 @@ Code, LSP, diagnostics, and formatting:
 
 | Key | Action |
 | --- | --- |
-| `gd`, `gD` | Go to definition/declaration (Snacks picker / native) |
-| `gr`, `gi`, `gy` | References, implementations, type definitions — Snacks picker |
+| `gd`, `gD` | Go to definition/declaration (FZF picker) |
+| `gr`, `gi`, `gy` | References, implementations, type definitions (FZF picker) |
 | `K` | Hover documentation |
 
 **Code navigation** (discoverable via `<leader>c`):
@@ -251,7 +251,7 @@ Code, LSP, diagnostics, and formatting:
 | Key | Action |
 | --- | --- |
 | `<leader>ca` | Code action in normal or visual mode |
-| `<leader>cr` | References (Snacks picker) |
+| `<leader>cr` | References (FZF picker) |
 | `<leader>cn` | Rename symbol |
 | `<leader>co` | Organize imports |
 | `<leader>cf` | Fix all |
@@ -451,15 +451,15 @@ LSP behavior:
 
 - Diagnostics use signs and underlines, with virtual text disabled by default; `<leader>uv` toggles rich `virtual_lines` diagnostics on the cursor line.
 - Floating diagnostic windows use rounded borders and show sources.
-- On attach, the default Neovim 0.11+ LSP maps that shadow the bare `gr` (`grr`, `gri`, `grn`, `gra`, `grt`, `grx`, `gO`) are deleted so the picker-backed `gr` fires instantly with no `timeoutlen` delay.
+- On attach, the default Neovim 0.11+ LSP maps that shadow the bare `gr` (`grr`, `gri`, `grn`, `gra`, `grt`, `grx`, `gO`) are deleted so the FZF-backed `gr` fires instantly with no `timeoutlen` delay.
 - `gopls` enables gofumpt, unimported package completions, staticcheck, govulncheck (`vulncheck = "Imports"` — vulnerability diagnostics on `go.mod` requires whose vulnerable code is reachable), semantic tokens, selected analyses, code lenses, and inlay hints support.
-- `lua_ls` runs with a minimal static config; workspace libraries (the Neovim runtime and plugin type definitions) are injected per-`require` by `folke/lazydev.nvim`, which also adds a blink completion source so plugin APIs (`Snacks.`, `require("conform")`, ...) complete while editing this config.
+- `lua_ls` runs with a minimal static config; workspace libraries (the Neovim runtime and plugin type definitions) are injected per-`require` by `folke/lazydev.nvim`, which also adds a blink completion source so plugin APIs (`FzfLua`, `require("conform")`, ...) complete while editing this config.
 - `yamlls` validates YAML, uses schemastore data, supports Kubernetes schemas, and reads the local CRD schema cache. Its formatter is disabled — conform owns YAML formatting via `yamlfmt`.
 - `helm_ls` delegates YAML behavior to `yaml-language-server` and recognizes `values*.yaml`.
 
 Common LSP mappings:
 
-- `gd`/`gD` definition/declaration, `gr`/`gi`/`gy` references/implementations/type definitions (all via Snacks picker), `K` hover
+- `gd`/`gD` definition/declaration, `gr`/`gi`/`gy` references/implementations/type definitions (all via FZF picker), `K` hover
 - `<leader>cd`/`<leader>cD` definition/declaration, `<leader>cy` type definition, `<leader>cu` usages (use bare `gi` for implementations; `<leader>ci` is repurposed to implement-interface in Go buffers)
 - `<leader>fs`/`<leader>fS` document/workspace symbols, `<leader>cF` LSP finder, `<leader>cI`/`<leader>cO` calls
 - `<leader>ca` code action, `<leader>cr` references, `<leader>cn` rename, `<leader>co` organize imports, `<leader>cf` fix all
@@ -572,13 +572,13 @@ Indent guides come from two plugins working together:
 - **Static guides** — `nvim/lua/plugins/indent.lua` configures `indent-blankline.nvim` (`ibl`): a plain `│` on **every** indent level, no animation, its own treesitter scope **disabled**. `tab_char` is set explicitly so tab-indented files (Lua, Go) draw the line instead of an invisible space (ibl otherwise inherits the blank `listchars` tab). The guide colour is overridden to `surface1` in `colorscheme.lua` (catppuccin's default `surface0` is nearly invisible on the base background).
 - **Active scope** — `mini.indentscope` (in `minis.lua`) draws the line for the block under the cursor a bit bolder (`overlay1` + bold, no animation). It's **indentation-based**, so it always matches the block you're visually in — unlike ibl's treesitter scope, which snaps to the outer syntactic scope when the cursor sits on a block's opening/closing line.
 
-Together they replace the removed snacks `indent` module.
+Together they replace the removed indent-guide module.
 
 ### Fuzzy Finding and Picker
 
-`nvim/lua/plugins/snacks.lua` configures `snacks.picker` as the unified fuzzy finder.
+`nvim/lua/plugins/fzf.lua` configures `ibhagwan/fzf-lua` as the unified fuzzy finder and registers it for `vim.ui.select`.
 
-File search excludes `.git`, `.vscode`, `node_modules`, `dist`, `build`, `target`, and `.idea`. Hidden files and symlinks are followed. Markdown files in the picker preview are syntax-highlighted with Treesitter only: Snacks' heavier markdown pass (inline image scanning via `Snacks.image` and a synchronous `render-markdown` decoration) is disabled in previews so scrolling large `.md` files stays fast. This is done by overriding `snacks.picker.util.markdown.render` in the plugin `config` function.
+File search excludes `.git`, `.vscode`, `node_modules`, `dist`, `build`, `target`, and `.idea`. Hidden files and symlinks are followed. Previews use FZF-Lua's builtin previewer.
 
 Mappings:
 
@@ -620,7 +620,7 @@ Mappings:
 
 ### Git
 
-Git support is split between gitsigns and snacks.picker. (LazyGit is available from tmux with `Ctrl-Space g`; the in-editor `<leader>gg` mapping was removed with the snacks `lazygit` module.)
+Git support is split between gitsigns and FZF-Lua. (LazyGit is available from tmux with `Ctrl-Space g`; the in-editor `<leader>gg` mapping remains removed.)
 
 `nvim/lua/plugins/gitsigns.lua`:
 
@@ -785,7 +785,7 @@ Inside any Trouble panel, `<CR>` jumps to the item, `o` jumps and stays, and `q`
 Highlights `TODO`, `FIXME`, `FIX`, `HACK`, `WARN`, `PERF`, `NOTE`, `TEST` keywords in comments with distinct colors. Works in all filetypes.
 
 - `]t` / `[t` jump to the next/previous todo comment in the buffer.
-- `<leader>ft` open a Snacks picker with all todo comments in the project.
+- `<leader>ft` opens an FZF picker with all todo comments in the project.
 - `<leader>fT` filter to `TODO`, `FIX`, `FIXME` only — the actionable ones.
 
 ### AI with CodeCompanion
@@ -795,7 +795,7 @@ Highlights `TODO`, `FIXME`, `FIX`, `HACK`, `WARN`, `PERF`, `NOTE`, `TEST` keywor
 - Codex is the default chat adapter, connected through `@zed-industries/codex-acp`.
 - The ACP adapter uses the existing ChatGPT subscription login and is launched through `npx`.
 - The CLI interaction opens the locally installed `codex` command in a Neovim terminal.
-- The action palette uses Snacks and chat opens in a vertical side window.
+- The action palette uses FZF-Lua and chat opens in a vertical side window.
 
 Key mappings:
 
@@ -805,15 +805,15 @@ Key mappings:
 - `<leader>an` open a new Codex chat.
 - `<leader>at` open the Codex CLI terminal.
 
-### Snacks
+### Picker Stack
 
-`nvim/lua/plugins/snacks.lua` is the central integration plugin (`folke/snacks.nvim`).
+`nvim/lua/plugins/fzf.lua` is the central picker integration (`ibhagwan/fzf-lua`).
 
-Active modules:
+It owns:
 
-- `picker` — unified fuzzy finder (see Fuzzy Finding section). This is the **only** snacks module enabled.
-
-All other snacks modules were removed (`bigfile`, `dim`, `gitbrowse`, `indent`, `input`, `lazygit`, `notifier`, `quickfile`, `scratch`, `terminal`, `toggle`, `zen`) — along with their keymaps (`<leader>gB`/`gg`/`gG`, `<leader>.`, `<leader>ud`/`ut`/`uz`/`uZ`, `<leader>f.`). The `indent` guides are replaced by `indent-blankline.nvim` (see Indent Guides). `Snacks.toggle` is still used directly by `<leader>uc` (theme) and `<leader>uh` (inlay hints) — it works without the `toggle` module being enabled.
+- File, grep, buffer, history, help, command, diagnostic, quickfix/location, git, todo, and LSP pickers.
+- `vim.ui.select`, so code actions and other selection prompts use the same picker backend.
+- FZF-Lua's builtin previewer for file, grep, git, and diagnostic results.
 
 Buffer deletion, the tabline, and the statusline are handled by mini.nvim (`mini.bufremove`, `mini.tabline`, `mini.statusline`); the file explorer is mini.files; notifications and the command line are handled by noice. (`mini.starter` and `mini.animate` are currently commented out.) See the Mini Plugins, File Explorers, and Notifications sections.
 
@@ -821,7 +821,7 @@ Buffer deletion, the tabline, and the statusline are handled by mini.nvim (`mini
 
 Notifications, the command line, and messages are all owned by `folke/noice.nvim` (`nvim/lua/plugins/noice.lua`, depending only on `nui.nvim`).
 
-- **Notifications**: `vim.notify` is routed through noice's own `mini` view — small, fading messages in the bottom-right — so there's no nvim-notify or snacks dependency. `<leader>fn` opens the notification history; `<leader>un` dismisses visible notifications.
+- **Notifications**: `vim.notify` is routed through noice's own `mini` view — small, fading messages in the bottom-right — so there's no nvim-notify dependency. `<leader>fn` opens the notification history; `<leader>un` dismisses visible notifications.
 - The command line (`:`) renders on the **bottom line** (`cmdline` view, with the `command_palette` preset off so it isn't re-centered); search (`/`, `?`) uses the classic bottom line too (`bottom_search` preset). Long messages split off and the `long_message_to_split` preset is on.
 - LSP progress is shown, and LSP hover/signature markdown is rendered with a border (`lsp_doc_border`).
 
