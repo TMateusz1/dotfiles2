@@ -68,8 +68,7 @@ return {
 				end
 
 				-- Navigation. Target "all" hunks (staged + unstaged) so that
-				-- ]h / [h stop at every hunk shown in the sign column and listed
-				-- by <leader>gd (FZF git_hunks), instead of skipping staged ones.
+				-- ]h / [h stop at every current-file hunk shown in the sign column.
 				map("n", "]h", function()
 					if vim.wo.diff then
 						vim.cmd.normal({ "]c", bang = true })

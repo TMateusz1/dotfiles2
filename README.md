@@ -205,12 +205,9 @@ Find and search with FZF-Lua:
 | `<leader>fw`, `<leader>fW` | Grep word/WORD under cursor |
 | `<leader>fh` | Help tags |
 | `<leader>fk` | Keymaps |
-| `<leader>f:` | Commands |
-| `<leader>fj` | Jump list |
 | `<leader>fs`, `<leader>fS` | Document/workspace symbols |
-| `<leader>f;`, `<leader>f/` | Command/search history |
 | `<leader>fd`, `<leader>fD` | Document/workspace diagnostics |
-| `<leader>fq`, `<leader>fl` | Quickfix/location list |
+| `<leader>fq` | Quickfix list |
 | `<leader>fR` | Resume last picker |
 | `<leader>fn` | Notification history |
 | `<leader>ft` | All todo comments |
@@ -291,7 +288,6 @@ Git:
 | --- | --- |
 | `<leader>gc`, `<leader>gC` | Git commits/all commits for current buffer |
 | `<leader>gb` | Git branches |
-| `<leader>gd` | Git diff hunks |
 | `<leader>gl` | Git line commits |
 | `<leader>gs` | Git stash |
 | `]h`, `[h` | Next/previous Git hunk (staged and unstaged, matching the sign column) |
@@ -594,16 +590,11 @@ Mappings:
 - `<leader>fW` grep WORD under cursor
 - `<leader>fh` help tags
 - `<leader>fk` keymaps
-- `<leader>f:` commands
-- `<leader>fj` jump list
 - `<leader>fs` document symbols
 - `<leader>fS` workspace symbols (live, via LSP)
-- `<leader>f;` command history
-- `<leader>f/` search history
 - `<leader>fd` document diagnostics
 - `<leader>fD` workspace diagnostics
 - `<leader>fq` quickfix list
-- `<leader>fl` location list
 - `<leader>fR` resume last picker
 - `<leader>fn` notification history
 
@@ -631,7 +622,7 @@ Git support is split between gitsigns and FZF-Lua. (LazyGit is available from tm
 
 Mappings:
 
-- `]h` / `[h` next/previous hunk — navigates both staged and unstaged hunks so it matches the sign column and the `<leader>gd` diff list
+- `]h` / `[h` next/previous hunk — navigates both staged and unstaged hunks in the current file
 - `<leader>ghp` preview hunk
 - `<leader>ghs` stage hunk
 - `<leader>ghr` reset hunk

@@ -114,18 +114,6 @@ return {
 			oldfiles = {
 				include_current_session = true,
 			},
-			git = {
-				hunks = {
-					winopts = {
-						width = 0.92,
-						height = 0.92,
-						preview = {
-							horizontal = "right:68%",
-							vertical = "down:60%",
-						},
-					},
-				},
-			},
 			lsp = {
 				jump1 = false,
 				finder = {
@@ -227,34 +215,6 @@ return {
 				desc = "Keymaps",
 			},
 			{
-				"<leader>f:",
-				function()
-					fzf().commands()
-				end,
-				desc = "Commands",
-			},
-			{
-				"<leader>fj",
-				function()
-					fzf().jumps()
-				end,
-				desc = "Jump list",
-			},
-			{
-				"<leader>f;",
-				function()
-					fzf().command_history()
-				end,
-				desc = "Command history",
-			},
-			{
-				"<leader>f/",
-				function()
-					fzf().search_history()
-				end,
-				desc = "Search history",
-			},
-			{
 				"<leader>fs",
 				function()
 					fzf().lsp_document_symbols()
@@ -281,13 +241,6 @@ return {
 					fzf().quickfix()
 				end,
 				desc = "Quickfix list",
-			},
-			{
-				"<leader>fl",
-				function()
-					fzf().loclist()
-				end,
-				desc = "Location list",
 			},
 			{
 				"<leader>fR",
@@ -323,13 +276,6 @@ return {
 					fzf().git_bcommits()
 				end,
 				desc = "Git buffer commits",
-			},
-			{
-				"<leader>gd",
-				function()
-					fzf().git_hunks()
-				end,
-				desc = "Git diff hunks",
 			},
 			{
 				"<leader>gl",
