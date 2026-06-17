@@ -22,16 +22,9 @@ return {
 			{
 				"<leader>ft",
 				function()
-					require("todo-comments.fzf").todo()
+					require("todo-comments.fzf").todo({ keywords = { "TODO", "FIX", "FIXME", "BUG" } })
 				end,
 				desc = "Todo comments",
-			},
-			{
-				"<leader>fT",
-				function()
-					require("todo-comments.fzf").todo({ keywords = { "TODO", "FIX", "FIXME" } })
-				end,
-				desc = "Todo/Fix/Fixme only",
 			},
 		},
 	},

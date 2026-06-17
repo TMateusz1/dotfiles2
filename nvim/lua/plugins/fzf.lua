@@ -115,7 +115,7 @@ return {
 				include_current_session = true,
 			},
 			lsp = {
-				jump1 = false,
+				jump1 = true,
 				finder = {
 					no_autoclose = true,
 				},
@@ -176,13 +176,6 @@ return {
 				desc = "Git changed files",
 			},
 			{
-				"<leader>fb",
-				function()
-					fzf().buffers()
-				end,
-				desc = "Find buffers",
-			},
-			{
 				"<leader>fr",
 				function()
 					fzf().oldfiles()
@@ -190,42 +183,11 @@ return {
 				desc = "Recent files",
 			},
 			{
-				"<leader>fc",
-				function()
-					fzf().files({
-						cwd = vim.fn.stdpath("config"),
-						prompt = "Config files> ",
-					})
-				end,
-				desc = "Find config files",
-			},
-			{
 				"<leader>fw",
 				function()
 					fzf().grep_cword()
 				end,
 				desc = "Grep word under cursor",
-			},
-			{
-				"<leader>fW",
-				function()
-					fzf().grep_cWORD()
-				end,
-				desc = "Grep WORD under cursor",
-			},
-			{
-				"<leader>fh",
-				function()
-					fzf().helptags()
-				end,
-				desc = "Help tags",
-			},
-			{
-				"<leader>fk",
-				function()
-					fzf().keymaps()
-				end,
-				desc = "Keymaps",
 			},
 			{
 				"<leader>fs",
@@ -254,13 +216,6 @@ return {
 					fzf().quickfix()
 				end,
 				desc = "Quickfix list",
-			},
-			{
-				"<leader>fR",
-				function()
-					fzf().resume()
-				end,
-				desc = "Resume picker",
 			},
 			{
 				"<leader>gc",

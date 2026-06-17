@@ -367,53 +367,20 @@ return {
 					end, "Go to type definition")
 					map("n", "K", vim.lsp.buf.hover, "Hover documentation")
 
-					-- Navigation (discoverable via <leader>c)
-					map("n", "<leader>cd", function()
-						fzf_lsp().lsp_definitions()
-					end, "Go to definition")
-					map("n", "<leader>cD", function()
-						fzf_lsp().lsp_declarations()
-					end, "Go to declaration")
-					map("n", "<leader>cy", function()
-						fzf_lsp().lsp_typedefs()
-					end, "Go to type definition")
-					map("n", "<leader>cu", function()
-						fzf_lsp().lsp_references({ includeDeclaration = false })
-					end, "Find usages")
-
 					-- Browse / search
 					map("n", "<leader>fS", function()
 						fzf_lsp().lsp_live_workspace_symbols()
 					end, "Workspace symbols")
-					map("n", "<leader>cF", function()
-						fzf_lsp().lsp_finder()
-					end, "LSP finder (all)")
 					map("n", "<leader>cI", function()
 						fzf_lsp().lsp_incoming_calls()
 					end, "Incoming calls")
-					map("n", "<leader>cO", function()
-						fzf_lsp().lsp_outgoing_calls()
-					end, "Outgoing calls")
 
 					-- Actions
 					map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "Code action")
-					map("n", "<leader>cr", function()
-						fzf_lsp().lsp_references()
-					end, "References")
 					map("n", "<leader>cn", vim.lsp.buf.rename, "Rename symbol")
-					map("n", "<leader>co", function()
+					map("n", "<leader>cgo", function()
 						require("config.go").organize_imports(bufnr)
 					end, "Organize imports")
-					map("n", "<leader>cf", function()
-						require("config.go").fix_all(bufnr)
-					end, "Fix all")
-
-					if client:supports_method("textDocument/codeLens") then
-						map("n", "<leader>cc", vim.lsp.codelens.run, "Run code lens")
-						map("n", "<leader>cC", function()
-							pcall(vim.lsp.codelens.enable, true, { bufnr = bufnr })
-						end, "Refresh code lens")
-					end
 
 					-- Diagnostics
 					map("n", "<leader>cx", vim.diagnostic.open_float, "Line diagnostics")
@@ -435,12 +402,6 @@ return {
 
 					-- Go tools (gopls)
 					if client.name == "gopls" then
-						map("n", "<leader>cgm", function()
-							require("config.go").mod_tidy(bufnr)
-						end, "Go mod tidy")
-						map("n", "<leader>cgg", function()
-							require("config.go").generate(bufnr)
-						end, "Go generate")
 						map("n", "<leader>cgl", function()
 							require("config.go").lint(bufnr)
 						end, "Go lint")

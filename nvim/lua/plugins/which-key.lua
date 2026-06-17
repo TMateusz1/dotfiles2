@@ -96,22 +96,15 @@ return {
 				{ "<leader>ff", desc = "Find files" },
 				{ "<leader>fG", desc = "Git changed files" },
 				{ "<leader>fg", desc = "Live grep" },
-				{ "<leader>fb", desc = "Find buffers" },
 				{ "<leader>fr", desc = "Recent files" },
-				{ "<leader>fc", desc = "Find config files" },
 				{ "<leader>fw", desc = "Grep word under cursor" },
-				{ "<leader>fW", desc = "Grep WORD under cursor" },
-				{ "<leader>fh", desc = "Help tags" },
-				{ "<leader>fk", desc = "Keymaps" },
 				{ "<leader>fs", desc = "Document symbols (all kinds)" },
 				{ "<leader>fS", desc = "Workspace symbols" },
 				{ "<leader>fd", desc = "Document diagnostics" },
 				{ "<leader>fD", desc = "Workspace diagnostics" },
 				{ "<leader>fq", desc = "Quickfix list" },
-				{ "<leader>fR", desc = "Resume picker" },
 				{ "<leader>fu", desc = "Undo history" },
-				{ "<leader>ft", desc = "Todo comments" },
-				{ "<leader>fT", desc = "Todo/Fix/Fixme only" },
+				{ "<leader>ft", desc = "Todo/Fix/Fixme/Bug" },
 
 				-- LSP / Code — bare keys (fast)
 				{ "gd", desc = "Go to definition" },
@@ -122,24 +115,13 @@ return {
 				{ "K", desc = "Hover documentation" },
 
 				-- <leader>c — navigation
-				{ "<leader>cd", desc = "Go to definition" },
-				{ "<leader>cD", desc = "Go to declaration" },
-				{ "<leader>cgi", desc = "Implement interface" },
-				{ "<leader>cy", desc = "Go to type definition" },
-				{ "<leader>cu", desc = "Find usages" },
-				{ "<leader>cF", desc = "LSP finder (all)" },
 				{ "<leader>cI", desc = "Incoming calls" },
-				{ "<leader>cO", desc = "Outgoing calls" },
 
 				-- <leader>c — actions
 				{ "<leader>ca", desc = "Code action" },
-				{ "<leader>cr", desc = "References" },
 				{ "<leader>cn", desc = "Rename symbol" },
-				{ "<leader>co", desc = "Organize imports" },
-				{ "<leader>cf", desc = "Fix all" },
+				{ "<leader>cgo", desc = "Organize imports" },
 				{ "<leader>cl", desc = "Format file" },
-				{ "<leader>cc", desc = "Run code lens" },
-				{ "<leader>cC", desc = "Refresh code lens" },
 
 				-- <leader>c — diagnostics & LSP management
 				{ "<leader>x", group = "Lists" },
@@ -155,10 +137,9 @@ return {
 				{ "<leader>cka", desc = "Attach Kubernetes schema to buffer" },
 
 				-- <leader>cg — Go tools
-				{ "<leader>cgg", desc = "Go generate" },
-				{ "<leader>cgm", desc = "Go mod tidy" },
 				{ "<leader>cgl", desc = "Go lint" },
 				{ "<leader>cgd", desc = "Go doc" },
+				{ "<leader>cgi", desc = "Implement interface" },
 				{ "<leader>cgj", desc = "Add json tags" },
 				{ "<leader>cgJ", desc = "Remove json tags" },
 				{ "<leader>cgy", desc = "Add yaml tags" },
