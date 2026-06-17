@@ -57,7 +57,6 @@ return {
 				{ "<leader>X", desc = "Quit all (confirm save)" },
 				{ "<leader>=", desc = "Split window right (vsplit)" },
 				{ "<leader>-", desc = "Split window below (split)" },
-				{ "<leader>.", desc = "Toggle scratch buffer" },
 				{ "<leader>/", desc = "Search buffer lines" },
 
 				-- Buffers
@@ -77,9 +76,6 @@ return {
 				{ "<leader>at", desc = "AI Codex terminal" },
 
 				-- Git
-				{ "<leader>gB", desc = "Git browse (open in browser)", mode = { "n", "v" } },
-				{ "<leader>gg", desc = "LazyGit" },
-				{ "<leader>gG", desc = "LazyGit current file" },
 				{ "<leader>gc", desc = "Git commits" },
 				{ "<leader>gC", desc = "Git buffer commits" },
 				{ "<leader>gb", desc = "Git branches" },
@@ -130,7 +126,6 @@ return {
 				{ "<leader>fR", desc = "Resume picker" },
 				{ "<leader>fu", desc = "Undo history" },
 				{ "<leader>fn", desc = "Notification history" },
-				{ "<leader>f.", desc = "Scratch buffers" },
 				{ "<leader>ft", desc = "Todo comments" },
 				{ "<leader>fT", desc = "Todo/Fix/Fixme only" },
 
@@ -241,13 +236,9 @@ return {
 				-- UI / toggles
 				{ "<leader>uc", desc = "Toggle VSCode code colors" },
 				{ "<leader>un", desc = "Dismiss notifications" },
-				{ "<leader>ud", desc = "Toggle code dimming" },
 				{ "<leader>uf", desc = "Toggle format on save" },
 				{ "<leader>uh", desc = "Toggle inlay hints" },
 				{ "<leader>uv", desc = "Toggle virtual-line diagnostics" },
-				{ "<leader>ut", desc = "Toggle terminal" },
-				{ "<leader>uz", desc = "Toggle zen mode" },
-				{ "<leader>uZ", desc = "Toggle zoom" },
 			},
 		},
 	},

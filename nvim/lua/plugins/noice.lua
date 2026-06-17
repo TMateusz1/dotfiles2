@@ -18,7 +18,10 @@ return {
 			-- disabled means noice doesn't touch vim.notify, so the snacks cards
 			-- render instead. History/dismiss live on <leader>fn / <leader>un.
 			notify = {
-				enabled = false,
+				enabled = true,
+				-- noice's own minimal view (small, fading, bottom-right) — no
+				-- nvim-notify/snacks dependency now that snacks.notifier is gone.
+				view = "mini",
 			},
 			lsp = {
 				progress = {
@@ -43,7 +46,7 @@ return {
 			{
 				"<leader>un",
 				function()
-					Snacks.notifier.hide()
+					require("noice").cmd("dismiss")
 				end,
 				desc = "Dismiss notifications",
 			},

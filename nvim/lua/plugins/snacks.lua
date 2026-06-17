@@ -50,47 +50,10 @@ return {
 	priority = 1000,
 	lazy = false,
 	opts = {
-		bigfile = {
-			enabled = true,
-		},
-		dim = {
-			enabled = true,
-		},
-		gitbrowse = {
-			enabled = true,
-		},
-		indent = {
-			enabled = true,
-		},
-		input = {
-			enabled = true,
-		},
-		lazygit = {
-			enabled = true,
-		},
-		notifier = {
-			-- Renders vim.notify as stacked top-right cards (replaces the
-			-- noice → nvim-notify path). noice keeps the cmdline + messages.
-			enabled = true,
-			top_down = true,
-			timeout = 3000,
-		},
-		quickfile = {
-			enabled = true,
-		},
-		scratch = {
-			enabled = true,
-		},
-		terminal = {
-			enabled = true,
-		},
-		toggle = {
-			enabled = true,
-		},
-		zen = {
-			enabled = true,
-		},
-
+		-- Only the picker remains enabled. All other snacks modules (bigfile,
+		-- dim, gitbrowse, indent, input, lazygit, notifier, quickfile, scratch,
+		-- terminal, toggle, zen) were removed; notifications + cmdline are
+		-- handled by noice instead.
 		picker = {
 			enabled = true,
 			-- Snacks' own "fancy" diff renderer (borders, gutter line numbers,
@@ -302,16 +265,9 @@ return {
 		{
 			"<leader>fn",
 			function()
-				Snacks.notifier.show_history()
+				require("noice").cmd("history")
 			end,
 			desc = "Notification history",
-		},
-		{
-			"<leader>f.",
-			function()
-				Snacks.scratch.select()
-			end,
-			desc = "Scratch buffers",
 		},
 		{
 			"<leader>gc",
@@ -394,63 +350,6 @@ return {
 				Snacks.picker.git_stash()
 			end,
 			desc = "Git stash",
-		},
-		{
-			"<leader>gB",
-			function()
-				Snacks.gitbrowse()
-			end,
-			desc = "Git browse (open in browser)",
-			mode = { "n", "v" },
-		},
-		{
-			"<leader>gg",
-			function()
-				Snacks.lazygit()
-			end,
-			desc = "LazyGit",
-		},
-		{
-			"<leader>gG",
-			function()
-				Snacks.lazygit.log_file()
-			end,
-			desc = "LazyGit current file",
-		},
-		{
-			"<leader>.",
-			function()
-				Snacks.scratch()
-			end,
-			desc = "Toggle scratch buffer",
-		},
-		{
-			"<leader>ud",
-			function()
-				Snacks.toggle.dim():toggle()
-			end,
-			desc = "Toggle code dimming",
-		},
-		{
-			"<leader>ut",
-			function()
-				Snacks.terminal(vim.o.shell)
-			end,
-			desc = "Toggle terminal",
-		},
-		{
-			"<leader>uz",
-			function()
-				Snacks.zen()
-			end,
-			desc = "Toggle zen mode",
-		},
-		{
-			"<leader>uZ",
-			function()
-				Snacks.zen.zoom()
-			end,
-			desc = "Toggle zoom",
 		},
 	},
 }

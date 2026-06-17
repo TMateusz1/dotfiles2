@@ -130,7 +130,7 @@ ls -l ~/.config/starship.toml
 - Split defaults are `splitright` and `splitbelow`.
 - Swap and backup files are disabled; persistent undo is enabled.
 - Completion uses `menu`, `menuone`, and `noselect`.
-- Invisible characters are shown for trailing spaces and non-breaking spaces; tabs render as blank so only the Snacks indent guides mark indentation.
+- Invisible characters are shown for trailing spaces and non-breaking spaces; tabs render as blank.
 - OSC52 clipboard integration is enabled automatically over SSH when available.
 
 The config also customizes separator fill characters and highlights `WinSeparator`.
@@ -213,7 +213,6 @@ Find and search with Snacks picker:
 | `<leader>fq`, `<leader>fl` | Quickfix/location list |
 | `<leader>fR` | Resume last picker |
 | `<leader>fn` | Notification history |
-| `<leader>f.` | Scratch buffers |
 | `<leader>ft` | All todo comments |
 | `<leader>fT` | Todo/Fix/Fixme only |
 
@@ -290,9 +289,6 @@ Git:
 
 | Key | Action |
 | --- | --- |
-| `<leader>gg` | Open LazyGit |
-| `<leader>gG` | Open LazyGit for current file |
-| `<leader>gB` | Open current file/line in browser (GitHub/GitLab) |
 | `<leader>gc`, `<leader>gC` | Git commits/all commits for current buffer |
 | `<leader>gb` | Git branches |
 | `<leader>gd` | Git diff hunks |
@@ -327,15 +323,10 @@ UI and toggles:
 | Key | Action |
 | --- | --- |
 | `<leader>uc` | Toggle VSCode Dark+ code colors (fg-only overlay on catppuccin) |
-| `<leader>ud` | Toggle code dimming (dims code outside current scope) |
 | `<leader>uf` | Toggle format-on-save |
 | `<leader>uh` | Toggle inlay hints |
 | `<leader>un` | Dismiss visible notifications |
 | `<leader>uv` | Toggle rich virtual-line diagnostics on the cursor line |
-| `<leader>ut` | Toggle terminal |
-| `<leader>uz` | Toggle zen mode |
-| `<leader>uZ` | Toggle zoom |
-| `<leader>.` | Toggle scratch buffer |
 
 Markdown:
 
@@ -606,7 +597,6 @@ Mappings:
 - `<leader>fl` location list
 - `<leader>fR` resume last picker
 - `<leader>fn` notification history
-- `<leader>f.` scratch buffers
 
 ### File Explorers
 
@@ -622,7 +612,7 @@ Mappings:
 
 ### Git
 
-Git support is split between gitsigns, snacks.picker, and LazyGit (via snacks.lazygit).
+Git support is split between gitsigns and snacks.picker. (LazyGit is available from tmux with `Ctrl-Space g`; the in-editor `<leader>gg` mapping was removed with the snacks `lazygit` module.)
 
 `nvim/lua/plugins/gitsigns.lua`:
 
@@ -645,11 +635,6 @@ Mappings:
 - `<leader>ghD` diff current file against previous commit
 - `<leader>ght` toggle deleted lines
 - `<leader>ghw` toggle word diff
-
-`snacks.lazygit` (configured in `nvim/lua/plugins/snacks.lua`):
-
-- `<leader>gg` opens LazyGit.
-- `<leader>gG` opens LazyGit for the current file.
 
 ### Tabline and Statusline
 
@@ -684,7 +669,7 @@ Both are mini.nvim modules (declared in `nvim/lua/plugins/minis.lua` and `nvim/l
 
 `mini.starter` (start screen) and `mini.animate` (smooth scrolling) are currently **commented out** in `minis.lua` — their specs are kept behind a block comment for easy re-enabling.
 
-Notifications are handled by **snacks.notifier** (see the Notifications section); the command line is owned by **noice**. The file explorer is **mini.files** (see File Explorers).
+Notifications and the command line are handled by **noice** (see the Notifications section). The file explorer is **mini.files** (see File Explorers).
 
 Surround mappings:
 
@@ -817,31 +802,17 @@ Key mappings:
 
 Active modules:
 
-- `bigfile` — disables heavy features for large files.
-- `dim` — dims code outside the active scope; `<leader>ud` toggles. Pairs with `<leader>uz` zen mode.
-- `gitbrowse` — `<leader>gB` opens the current file/line in GitHub or GitLab; works in visual mode to link a range.
-- `indent` — animated indent guides with scope highlighting for the current block.
-- `input` — improved `vim.ui.input` UI.
-- `lazygit` — `<leader>gg` and `<leader>gG` open LazyGit.
-- `notifier` — renders `vim.notify` as stacked top-right cards; `<leader>fn` opens history, `<leader>un` dismisses. Replaces the old noice → nvim-notify path.
-- `picker` — unified fuzzy finder (see Fuzzy Finding section).
-- `quickfile` — fast file rendering on startup.
-- `scratch` — scratch buffers; `<leader>.` toggles, `<leader>f.` lists.
-- `terminal` — `<leader>ut` toggles a terminal.
-- `toggle` — toggle utilities with visual on/off feedback; used for dim (`<leader>ud`) and inlay hints (`<leader>uh`).
-- `zen` — `<leader>uz` toggles zen mode; `<leader>uZ` toggles zoom.
+- `picker` — unified fuzzy finder (see Fuzzy Finding section). This is the **only** snacks module enabled.
 
-Buffer deletion, the tabline, and the statusline are handled by mini.nvim (`mini.bufremove`, `mini.tabline`, `mini.statusline`); the file explorer is mini.files; the command line is handled by noice. (`mini.starter` and `mini.animate` are currently commented out.) See the Mini Plugins, File Explorers, and Notifications sections.
+All other snacks modules were removed (`bigfile`, `dim`, `gitbrowse`, `indent`, `input`, `lazygit`, `notifier`, `quickfile`, `scratch`, `terminal`, `toggle`, `zen`) — along with their keymaps (`<leader>gB`/`gg`/`gG`, `<leader>.`, `<leader>ud`/`ut`/`uz`/`uZ`, `<leader>f.`). `Snacks.toggle` is still used directly by `<leader>uc` (theme) and `<leader>uh` (inlay hints) — it works without the `toggle` module being enabled.
+
+Buffer deletion, the tabline, and the statusline are handled by mini.nvim (`mini.bufremove`, `mini.tabline`, `mini.statusline`); the file explorer is mini.files; notifications and the command line are handled by noice. (`mini.starter` and `mini.animate` are currently commented out.) See the Mini Plugins, File Explorers, and Notifications sections.
 
 ### Notifications and Command Line
 
-Notifications and the command line are split between two plugins:
+Notifications, the command line, and messages are all owned by `folke/noice.nvim` (`nvim/lua/plugins/noice.lua`, depending only on `nui.nvim`).
 
-- **Notifications** are owned by `snacks.notifier` (configured in `nvim/lua/plugins/snacks.lua`). `vim.notify` renders as **stacked top-right cards** (`top_down`, 3 s timeout). `<leader>fn` opens the notification history; `<leader>un` dismisses the visible cards.
-- **Command line and messages** are owned by `folke/noice.nvim` (`nvim/lua/plugins/noice.lua`, depending only on `nui.nvim`). Its own notification routing is disabled (`notify.enabled = false`) so it never touches `vim.notify` — snacks does.
-
-noice behavior:
-
+- **Notifications**: `vim.notify` is routed through noice's own `mini` view — small, fading messages in the bottom-right — so there's no nvim-notify or snacks dependency. `<leader>fn` opens the notification history; `<leader>un` dismisses visible notifications.
 - The command line (`:`) renders on the **bottom line** (`cmdline` view, with the `command_palette` preset off so it isn't re-centered); search (`/`, `?`) uses the classic bottom line too (`bottom_search` preset). Long messages split off and the `long_message_to_split` preset is on.
 - LSP progress is shown, and LSP hover/signature markdown is rendered with a border (`lsp_doc_border`).
 
