@@ -418,16 +418,13 @@ return {
 					-- Diagnostics
 					map("n", "<leader>cx", vim.diagnostic.open_float, "Line diagnostics")
 					map("n", "<leader>cq", function()
-						-- Populate without auto-opening. With no diagnostics, close any
-						-- stale list instead of showing an empty one; otherwise render
-						-- the quickfix list in Trouble (matching <leader>xq).
 						vim.diagnostic.setqflist({ open = false, title = "Diagnostics" })
 						if vim.tbl_isempty(vim.fn.getqflist()) then
-							pcall(vim.cmd, "Trouble qflist close")
+							pcall(vim.cmd, "cclose")
 							vim.notify("No diagnostics", vim.log.levels.INFO, { title = "Diagnostics" })
 							return
 						end
-						vim.cmd("Trouble qflist open")
+						require("fzf-lua").quickfix()
 					end, "Diagnostics quickfix")
 					-- ]d / [d / <leader>uv are global (config/keymaps.lua) so they also
 					-- work with nvim-lint diagnostics in buffers without an LSP client.

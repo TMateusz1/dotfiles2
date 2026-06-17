@@ -250,6 +250,20 @@ return {
 				desc = "Resume picker",
 			},
 			{
+				"<leader>F",
+				function()
+					fzf().lsp_document_symbols()
+				end,
+				desc = "Document symbols",
+			},
+			{
+				"<leader>xq",
+				function()
+					fzf().quickfix()
+				end,
+				desc = "Quickfix list",
+			},
+			{
 				"<leader>gc",
 				function()
 					fzf().git_commits()

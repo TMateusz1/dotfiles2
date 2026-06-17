@@ -288,8 +288,6 @@ return {
 					"lazy",
 					"mason",
 					"minifiles",
-					"trouble",
-					"Trouble",
 					"checkhealth",
 					"gitcommit",
 					"fzf",

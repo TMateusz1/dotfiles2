@@ -78,7 +78,7 @@ function M.run(args, opts)
 				-- an unrelated quickfix list.
 				if vim.fn.getqflist({ title = 0 }).title == label then
 					vim.fn.setqflist({}, "r", { title = label, items = {} })
-					pcall(vim.cmd, "Trouble qflist close")
+					pcall(vim.cmd, "cclose")
 				end
 
 				notify(label .. " finished")
@@ -92,9 +92,7 @@ function M.run(args, opts)
 						plain = true,
 					}),
 				})
-				-- Render the failure output (now in the quickfix list) in
-				-- Trouble, matching <leader>xq.
-				vim.cmd("Trouble qflist open")
+				vim.cmd("copen")
 			end
 
 			notify(label .. " failed", vim.log.levels.ERROR)

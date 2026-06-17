@@ -106,16 +106,12 @@ local function test_quickfix_consumer(client)
 			replace_quickfix()
 
 			if #items == 0 then
-				-- Nothing failed: close any stale failures list instead of leaving
-				-- it open.
-				pcall(vim.cmd, "Trouble qflist close")
+				pcall(vim.cmd, "cclose")
 				vim.notify("No failed Neotest results", vim.log.levels.INFO, { title = "Tests" })
 				return
 			end
 
-			-- Render the failures (already in the quickfix list) in Trouble,
-			-- matching <leader>xq.
-			vim.cmd("Trouble qflist open")
+			vim.cmd("copen")
 		end,
 	}
 end
