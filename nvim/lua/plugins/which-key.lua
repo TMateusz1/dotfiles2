@@ -40,7 +40,6 @@ return {
 				{ "<leader>c", group = "Code" },
 				{ "<leader>cg", group = "Go" },
 				{ "<leader>d", group = "Debug" },
-				{ "<leader>m", group = "Marks (Harpoon)" },
 				{ "<leader>M", group = "Markdown" },
 				{ "<leader>t", group = "Tests" },
 				{ "<leader>u", group = "UI / Toggles" },
@@ -120,7 +119,6 @@ return {
 				{ "<leader>fk", desc = "Keymaps" },
 				{ "<leader>f:", desc = "Commands" },
 				{ "<leader>fj", desc = "Jump list" },
-				{ "<leader>fm", desc = "Harpoon files" },
 				{ "<leader>f;", desc = "Command history" },
 				{ "<leader>f/", desc = "Search history" },
 				{ "<leader>fs", desc = "Document symbols (all kinds)" },
@@ -231,15 +229,6 @@ return {
 				{ "[t", desc = "Previous todo comment" },
 				{ "]f", desc = "Next function start" },
 				{ "[f", desc = "Previous function start" },
-
-				-- Harpoon marks
-				{ "<leader>mm", desc = "Mark newest Harpoon file" },
-				{ "<leader>m1", desc = "Mark Harpoon slot 1" },
-				{ "<leader>m2", desc = "Mark Harpoon slot 2" },
-				{ "<leader>m3", desc = "Mark Harpoon slot 3" },
-				{ "<leader>1", desc = "Go to Harpoon slot 1" },
-				{ "<leader>2", desc = "Go to Harpoon slot 2" },
-				{ "<leader>3", desc = "Go to Harpoon slot 3" },
 
 				-- Markdown
 				{ "<leader>Md", desc = "Toggle rendered Markdown view" },

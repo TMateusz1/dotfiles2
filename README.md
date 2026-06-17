@@ -208,7 +208,6 @@ Find and search with Snacks picker:
 | `<leader>f:` | Commands |
 | `<leader>fj` | Jump list |
 | `<leader>fs`, `<leader>fS` | Document/workspace symbols |
-| `<leader>fm` | Harpoon files |
 | `<leader>f;`, `<leader>f/` | Command/search history |
 | `<leader>fd`, `<leader>fD` | Document/workspace diagnostics |
 | `<leader>fq`, `<leader>fl` | Quickfix/location list |
@@ -322,19 +321,6 @@ Tests:
 | `<leader>tq` | Open failed-test quickfix list; navigate with `]q` / `[q` |
 | `<leader>tw` | Watch current file |
 | `<leader>tx` | Stop tests |
-
-Harpoon:
-
-| Key | Action |
-| --- | --- |
-| `<leader>mm` | Mark current file/line as the next Harpoon slot |
-| `<leader>m1`–`<leader>m3` | Mark current file/line into Harpoon slot 1–3 |
-| `<leader>1`–`<leader>3` | Jump to Harpoon slot 1–3 |
-| `<leader>fm` | Open Harpoon file picker |
-| Harpoon picker `<C-v>` | Open selected file in vertical split |
-| Harpoon picker `<C-x>` | Remove selected mark |
-| Harpoon picker `<C-k>`, `<C-up>` | Move mark up |
-| Harpoon picker `<C-j>`, `<C-down>` | Move mark down |
 
 UI and toggles:
 
@@ -612,7 +598,6 @@ Mappings:
 - `<leader>fj` jump list
 - `<leader>fs` document symbols
 - `<leader>fS` workspace symbols (live, via LSP)
-- `<leader>fm` Harpoon files
 - `<leader>f;` command history
 - `<leader>f/` search history
 - `<leader>fd` document diagnostics
@@ -809,16 +794,6 @@ Highlights `TODO`, `FIXME`, `FIX`, `HACK`, `WARN`, `PERF`, `NOTE`, `TEST` keywor
 - `<leader>ft` open a Snacks picker with all todo comments in the project.
 - `<leader>fT` filter to `TODO`, `FIX`, `FIXME` only — the actionable ones.
 
-### Harpoon
-
-`nvim/lua/plugins/harpoon.lua` configures `ThePrimeagen/harpoon` (harpoon2 branch) with a custom Snacks picker UI.
-
-- Marks are pinned to a specific file and line; slots 1–3 have direct keys (`<leader>mm` can append beyond 3 — use the picker for those).
-- `<leader>mm` marks the current file/line into the next free slot.
-- `<leader>m1`–`<leader>m3` mark into a specific slot.
-- `<leader>1`–`<leader>3` jump directly to a slot.
-- `<leader>fm` opens the Harpoon picker; `<C-v>` opens in vsplit, `<C-x>` removes a mark, `<C-k>`/`<C-j>` reorder marks.
-
 ### AI with CodeCompanion
 
 `nvim/lua/plugins/codecompanion.lua` configures `olimorris/codecompanion.nvim` around OpenAI Codex:
@@ -884,7 +859,6 @@ Top-level groups:
 - `<leader>c` code
 - `<leader>cg` Go
 - `<leader>d` debug
-- `<leader>m` marks (Harpoon)
 - `<leader>M` Markdown
 - `<leader>t` tests
 - `<leader>u` UI/toggles
