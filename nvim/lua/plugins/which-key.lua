@@ -38,6 +38,7 @@ return {
 				{ "<leader>g", group = "Git" },
 				{ "<leader>c", group = "Code" },
 				{ "<leader>cg", group = "Go" },
+				{ "<leader>ck", group = "Kubernetes" },
 				{ "<leader>d", group = "Debug" },
 				{ "<leader>M", group = "Markdown" },
 				{ "<leader>t", group = "Tests" },
@@ -148,6 +149,11 @@ return {
 				{ "<leader>cq", desc = "Diagnostics quickfix" },
 				{ "<leader>cL", desc = "LSP info" },
 				{ "<leader>cR", desc = "Restart LSP" },
+
+				-- <leader>ck — Kubernetes
+				{ "<leader>cks", desc = "Generate CRD schemas from cluster" },
+				{ "<leader>ckl", desc = "Generate CRD schemas from local files" },
+				{ "<leader>cka", desc = "Attach Kubernetes schema to buffer" },
 
 				-- <leader>cg — Go tools
 				{ "<leader>cgg", desc = "Go generate" },

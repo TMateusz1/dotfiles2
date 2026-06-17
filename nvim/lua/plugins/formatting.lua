@@ -48,7 +48,7 @@ return {
 		end,
 		opts = {
 			formatters_by_ft = {
-				go = { "goimports", "gofumpt", "golines" },
+				go = { "goimports", "gofumpt" },
 				lua = { "stylua" },
 				sh = { "shfmt" },
 				bash = { "shfmt" },
@@ -75,13 +75,6 @@ return {
 			notify_on_error = true,
 			notify_no_formatters = false,
 
-			formatters = {
-				golines = {
-					prepend_args = {
-						"--max-len=120",
-					},
-				},
-			},
 		},
 	},
 }
