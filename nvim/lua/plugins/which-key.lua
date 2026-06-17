@@ -46,7 +46,6 @@ return {
 
 				-- Direct leader mappings
 				{ "<leader>e", desc = "File explorer (mini.files)" },
-				{ "<leader>F", desc = "Document symbols" },
 				{ "<leader>w", desc = "Save file" },
 				{ "<leader>W", desc = "Save and close buffer" },
 				{ "<leader>k", desc = "Close window (keep buffer)" },
@@ -125,7 +124,7 @@ return {
 				-- <leader>c — navigation
 				{ "<leader>cd", desc = "Go to definition" },
 				{ "<leader>cD", desc = "Go to declaration" },
-				{ "<leader>ci", desc = "Implement interface (Go)" },
+				{ "<leader>cgi", desc = "Implement interface" },
 				{ "<leader>cy", desc = "Go to type definition" },
 				{ "<leader>cu", desc = "Find usages" },
 				{ "<leader>cF", desc = "LSP finder (all)" },

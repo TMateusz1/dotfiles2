@@ -467,7 +467,7 @@ return {
 						map("n", "<leader>cgE", function()
 							require("config.go").remove_env_tags(bufnr)
 						end, "Remove env tags")
-						map("n", "<leader>ci", function()
+						map("n", "<leader>cgi", function()
 							require("config.go").implement_interface(bufnr)
 						end, "Implement interface")
 					end
