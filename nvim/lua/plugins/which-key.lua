@@ -75,6 +75,7 @@ return {
 				{ "<leader>at", desc = "AI Codex terminal" },
 
 				-- Git
+				{ "<leader>gg", desc = "LazyGit" },
 				{ "<leader>gc", desc = "Git commits" },
 				{ "<leader>gC", desc = "Git buffer commits" },
 				{ "<leader>gb", desc = "Git branches" },
