@@ -1,3 +1,5 @@
+local todo_keywords = "(TODO|FIX|FIXME|BUG):"
+
 local picker_exclude = {
 	".git",
 	".vscode",
@@ -160,6 +162,13 @@ return {
 					fzf().blines()
 				end,
 				desc = "Search buffer lines",
+			},
+			{
+				"<leader>ft",
+				function()
+					fzf().grep({ search = todo_keywords, no_esc = true, prompt = "Todos> " })
+				end,
+				desc = "Todo comments",
 			},
 			{
 				"<leader>fG",

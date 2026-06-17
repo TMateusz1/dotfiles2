@@ -178,8 +178,6 @@ return {
 				{ "[d", desc = "Previous diagnostic" },
 				{ "]q", desc = "Next quickfix item" },
 				{ "[q", desc = "Previous quickfix item" },
-				{ "]t", desc = "Next todo comment" },
-				{ "[t", desc = "Previous todo comment" },
 				{ "]f", desc = "Next function start" },
 				{ "[f", desc = "Previous function start" },
 
