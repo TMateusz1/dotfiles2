@@ -55,11 +55,6 @@ return {
 		},
 		keys = {
 			{
-				"<leader>fn",
-				"<cmd>Noice history<CR>",
-				desc = "Notification history",
-			},
-			{
 				"<leader>un",
 				"<cmd>Noice dismiss<CR>",
 				desc = "Dismiss notifications",

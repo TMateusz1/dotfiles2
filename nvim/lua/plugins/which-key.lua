@@ -43,7 +43,6 @@ return {
 				{ "<leader>M", group = "Markdown" },
 				{ "<leader>t", group = "Tests" },
 				{ "<leader>u", group = "UI / Toggles" },
-				{ "<leader>x", group = "Lists" },
 
 				-- Direct leader mappings
 				{ "<leader>e", desc = "File explorer (mini.files)" },
@@ -151,6 +150,8 @@ return {
 				{ "<leader>cC", desc = "Refresh code lens" },
 
 				-- <leader>c — diagnostics & LSP management
+				{ "<leader>x", group = "Lists" },
+				{ "<leader>xq", desc = "Toggle quickfix" },
 				{ "<leader>cx", desc = "Line diagnostics" },
 				{ "<leader>cq", desc = "Diagnostics quickfix" },
 				{ "<leader>cL", desc = "LSP info" },
@@ -206,7 +207,6 @@ return {
 				{ "[d", desc = "Previous diagnostic" },
 				{ "]q", desc = "Next quickfix item" },
 				{ "[q", desc = "Previous quickfix item" },
-				{ "<leader>xq", desc = "Quickfix list" },
 				{ "]t", desc = "Next todo comment" },
 				{ "[t", desc = "Previous todo comment" },
 				{ "]f", desc = "Next function start" },
@@ -222,7 +222,6 @@ return {
 
 				-- UI / toggles
 				{ "<leader>uc", desc = "Toggle VSCode code colors" },
-				{ "<leader>fn", desc = "Notification history" },
 				{ "<leader>un", desc = "Dismiss notifications" },
 				{ "<leader>uf", desc = "Toggle format on save" },
 				{ "<leader>uh", desc = "Toggle inlay hints" },

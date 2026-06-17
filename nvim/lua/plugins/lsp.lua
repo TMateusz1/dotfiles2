@@ -424,7 +424,7 @@ return {
 							vim.notify("No diagnostics", vim.log.levels.INFO, { title = "Diagnostics" })
 							return
 						end
-						require("fzf-lua").quickfix()
+						vim.cmd("copen")
 					end, "Diagnostics quickfix")
 					-- ]d / [d / <leader>uv are global (config/keymaps.lua) so they also
 					-- work with nvim-lint diagnostics in buffers without an LSP client.

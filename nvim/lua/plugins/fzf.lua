@@ -124,6 +124,15 @@ return {
 				},
 			},
 		},
+		config = function(_, opts)
+			local actions = require("fzf-lua.actions")
+			opts.actions = {
+				files = {
+					["ctrl-q"] = actions.file_sel_to_qf,
+				},
+			}
+			require("fzf-lua").setup(opts)
+		end,
 		keys = {
 			{
 				"<leader>ff",
@@ -255,13 +264,6 @@ return {
 					fzf().lsp_document_symbols()
 				end,
 				desc = "Document symbols",
-			},
-			{
-				"<leader>xq",
-				function()
-					fzf().quickfix()
-				end,
-				desc = "Quickfix list",
 			},
 			{
 				"<leader>gc",

@@ -62,6 +62,15 @@ keymap("n", "[q", function()
 	end
 	vim.cmd("normal! zz")
 end, { desc = "Previous quickfix item" })
+keymap("n", "<leader>xq", function()
+	for _, win in pairs(vim.fn.getwininfo()) do
+		if win.quickfix == 1 then
+			vim.cmd("cclose")
+			return
+		end
+	end
+	vim.cmd("copen")
+end, { desc = "Toggle quickfix" })
 -- Diagnostics. Global (not LspAttach-local) so they also cover nvim-lint
 -- diagnostics in buffers without an LSP client.
 keymap("n", "]d", function()
