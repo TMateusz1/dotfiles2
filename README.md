@@ -611,9 +611,8 @@ Mappings:
 
 `mini.files` (`<leader>e`, declared in `nvim/lua/plugins/minis.lua`) is the file explorer:
 
-- `<leader>e` toggles a floating miller-columns explorer, opened focused on the current file (or the cwd for unnamed buffers); pressing it again closes it.
-- A preview column shows the file or directory under the cursor.
-- `l` / `<CR>` go into a directory or open a file, `h` goes up a level; `<BS>` resets, `q` closes.
+- `<leader>e` toggles a floating miller-columns explorer, opened focused on the current file (or the cwd for unnamed buffers); pressing it again closes it. Preview is disabled.
+- `<CR>` / `<Right>` go **in**: a directory is entered (explorer stays open), a file is opened **and the explorer closes**. `<BS>` / `<Left>` go **back** out one level (collapsing that column). `l` / `h` keep mini.files' default soft go-in / go-out; `q` closes.
 - The explorer buffer is editable: create/rename/move/delete entries as text and apply with `=` (synchronize).
 - Deletes go to trash; rename/move use LSP file methods. Icons come from mini.icons.
 
