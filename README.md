@@ -118,7 +118,7 @@ ls -l ~/.config/starship.toml
 - Leader and local leader are both space.
 - Absolute and relative line numbers are enabled.
 - Mouse support is enabled.
-- netrw is disabled because file exploration is handled by neo-tree and Oil.
+- netrw is disabled because file exploration is handled by mini.files.
 - Clipboard uses `unnamedplus`.
 - Indentation uses spaces with a width of 4.
 - Search uses ignorecase plus smartcase; `:substitute` shows a live preview with off-screen matches in a split (`inccommand=split`).
@@ -222,17 +222,10 @@ Files and project navigation:
 
 | Key | Action |
 | --- | --- |
-| `<leader>e` | Toggle the neo-tree file explorer (reveals the current file) |
-| `<leader>E` | Open Oil multi-file edit manager |
+| `<leader>e` | Toggle the mini.files explorer (focused on the current file) |
 | `<leader>F` | Toggle the code outline (Trouble symbols, focused) |
-| `-` | Open Oil parent directory in a float |
-| Oil `<CR>`, `l`, `<Right>` | Smart open file or directory |
-| Oil `h`, `<Left>`, `<BS>` | Smart back |
-| Oil `<C-v>`, `<C-s>`, `<C-t>` | Open in vertical split, split, or tab |
-| Oil `q`, `<Esc>` | Close all Oil columns |
-| Oil `-`, `_` | Parent directory/current working directory |
-| Oil `` ` ``, `~` | Set cwd/tab cwd to selected directory |
-| Oil `g.`, `R` | Toggle hidden files/refresh |
+
+> Oil (`<leader>E`) is temporarily disabled — `oil.lua` is mocked out (`if true then return {} end`) while trialling mini.files. The full Oil config is kept for re-enabling.
 
 Code, LSP, diagnostics, and formatting:
 
@@ -352,7 +345,6 @@ UI and toggles:
 | `<leader>uf` | Toggle format-on-save |
 | `<leader>uh` | Toggle inlay hints |
 | `<leader>un` | Dismiss visible notifications |
-| `<leader>uC` | Toggle sticky context (pinned enclosing function header) |
 | `<leader>uv` | Toggle rich virtual-line diagnostics on the cursor line |
 | `<leader>ut` | Toggle terminal |
 | `<leader>uz` | Toggle zen mode |
@@ -425,7 +417,7 @@ The lockfile is `nvim/lazy-lock.json`.
 - Terminal colors enabled.
 - Transparent background disabled.
 - Comment text is italic.
-- Integrations are enabled for Treesitter, native LSP, which-key, gitsigns, Mason, completion, neo-tree, noice, and the mini plugins.
+- Integrations are enabled for Treesitter, native LSP, which-key, gitsigns, Mason, completion, noice, and the mini plugins.
 - `<leader>uc` toggles a VSCode Dark+ palette over the **code text only** (foreground overrides on top of catppuccin); the UI chrome, statusline, and backgrounds stay catppuccin.
 
 The same Catppuccin Mocha direction is used by Ghostty, tmux, and Starship, so the terminal, status bar, prompt, and editor share one visual language.
@@ -596,8 +588,6 @@ Installed parsers:
 
 Treesitter highlighting is enabled on filetype events for the supported languages. `jsonc` is registered to use the JSON parser.
 
-`nvim/lua/plugins/treesitter-context.lua` adds `nvim-treesitter-context`: while scrolling inside a long function, the enclosing function/type header stays pinned at the top of the window (max 3 lines). `<leader>uC` toggles it; the plugin is on trial — delete the file to drop it.
-
 ### Fuzzy Finding and Picker
 
 `nvim/lua/plugins/snacks.lua` configures `snacks.picker` as the unified fuzzy finder.
@@ -635,31 +625,15 @@ Mappings:
 
 ### File Explorers
 
-Two complementary file tools are provided.
+`mini.files` (`<leader>e`, declared in `nvim/lua/plugins/minis.lua`) is the file explorer:
 
-neo-tree (`<leader>e`) is the main sidebar file explorer (`nvim/lua/plugins/neo-tree.lua`):
+- `<leader>e` toggles a floating miller-columns explorer, opened focused on the current file (or the cwd for unnamed buffers); pressing it again closes it.
+- A preview column shows the file or directory under the cursor.
+- `l` / `<CR>` go into a directory or open a file, `h` goes up a level; `<BS>` resets, `q` closes.
+- The explorer buffer is editable: create/rename/move/delete entries as text and apply with `=` (synchronize).
+- Deletes go to trash; rename/move use LSP file methods. Icons come from mini.icons.
 
-- `<leader>e` toggles a left-side tree and reveals the current file when it is a real on-disk buffer (otherwise it just opens at the cwd).
-- It hijacks netrw, so starting Neovim on a directory (`nvim .`) opens the tree in that window.
-- A source selector in the winbar switches between Files, Buffers, and Git status.
-- `l` / `<CR>` open a node, `h` closes it; `s` / `<C-s>` open in a horizontal split and `v` / `<C-v>` in a vertical split.
-- The tree auto-closes as soon as a file is opened from it, and closes itself if it is the last window.
-- Git status and LSP diagnostics are shown inline; hidden files are visible, but `.git`, `.idea`, and `.vscode` are filtered out.
-- `-` and `=` are inert inside the tree (reserved globally for window splits).
-- Icons come from mini.icons (via its `nvim-web-devicons` mock).
-
-Oil is used as an editable, column-mode file manager:
-
-- `<leader>E` opens the custom floating column-mode file manager.
-- `-` opens Oil at the parent directory.
-- Directory navigation opens additional floating columns up to a depth of 3.
-- Selecting a file opens it in the original editor window and closes the Oil columns.
-- `h`, left arrow, and backspace go back; `l`, right arrow, and enter open.
-- `<C-v>`, `<C-s>`, and `<C-t>` open in vertical split, split, and tab.
-- `q` and `<Esc>` close all Oil columns.
-- `g.` toggles hidden files.
-- Deletes go to trash.
-- Oil uses LSP file methods for rename/move support.
+> Oil (the editable column-mode manager, `<leader>E`) is temporarily mocked out in `oil.lua` (`if true then return {} end`); its full config is kept for re-enabling. neo-tree was removed.
 
 ### Git
 
@@ -717,14 +691,15 @@ Both are mini.nvim modules (declared in `nvim/lua/plugins/minis.lua` and `nvim/l
 - `mini.ai` — extra text objects, including Treesitter-powered ones (see Text Objects below).
 - `mini.surround` — surround operations (mappings below).
 - `mini.pairs` — autopairs.
-- `mini.icons` — icons plus `nvim-web-devicons` compatibility (used by neo-tree, Oil, mini.tabline, mini.statusline, blink, and more).
+- `mini.icons` — icons plus `nvim-web-devicons` compatibility (used by mini.files, mini.tabline, mini.statusline, blink, and more).
 - `mini.bufremove` — layout-preserving buffer deletion, wired into `<leader>q`, `<leader>Q`, `<leader>W`, and `<leader>bx`.
+- `mini.files` — the file explorer (`<leader>e`, see the File Explorers section).
 - `mini.tabline` — buffer tabs (see the Tabline and Statusline section).
 - `mini.statusline` — the global statusline (see the Tabline and Statusline section).
-- `mini.starter` — the start screen shown when Neovim opens with no file (Find File / Find Text / Recent Files / Config / Lazy / Quit, plus recent files).
-- `mini.animate` — smooth scrolling only (cursor/resize/window animations are disabled). Small scrolls of ≤ 6 lines (short `<C-d>`/`<C-u>`/`n`/`N`) jump instantly; larger scrolls animate at a steady per-step rate.
 
-Notifications are handled by **snacks.notifier** (see the Notifications section); the command line is owned by **noice**. The file explorer is **neo-tree**, not mini.files (see File Explorers).
+`mini.starter` (start screen) and `mini.animate` (smooth scrolling) are currently **commented out** in `minis.lua` — their specs are kept behind a block comment for easy re-enabling.
+
+Notifications are handled by **snacks.notifier** (see the Notifications section); the command line is owned by **noice**. The file explorer is **mini.files** (see File Explorers).
 
 Surround mappings:
 
@@ -878,10 +853,10 @@ Active modules:
 - `quickfile` — fast file rendering on startup.
 - `scratch` — scratch buffers; `<leader>.` toggles, `<leader>f.` lists.
 - `terminal` — `<leader>ut` toggles a terminal.
-- `toggle` — toggle utilities with visual on/off feedback; used for dim (`<leader>ud`), inlay hints (`<leader>uh`), and sticky context (`<leader>uC`).
+- `toggle` — toggle utilities with visual on/off feedback; used for dim (`<leader>ud`) and inlay hints (`<leader>uh`).
 - `zen` — `<leader>uz` toggles zen mode; `<leader>uZ` toggles zoom.
 
-Buffer deletion, the start screen, tabline, statusline, and smooth scrolling are handled by mini.nvim (`mini.bufremove`, `mini.starter`, `mini.tabline`, `mini.statusline`, `mini.animate`); the file explorer is neo-tree; the command line is handled by noice. See the Mini Plugins, File Explorers, and Notifications sections.
+Buffer deletion, the tabline, and the statusline are handled by mini.nvim (`mini.bufremove`, `mini.tabline`, `mini.statusline`); the file explorer is mini.files; the command line is handled by noice. (`mini.starter` and `mini.animate` are currently commented out.) See the Mini Plugins, File Explorers, and Notifications sections.
 
 ### Notifications and Command Line
 

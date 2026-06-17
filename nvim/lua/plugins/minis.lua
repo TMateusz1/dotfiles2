@@ -195,6 +195,38 @@ return {
 	},
 
 	{
+		"nvim-mini/mini.files",
+		version = false,
+		dependencies = {
+			"nvim-mini/mini.icons",
+		},
+		opts = {
+			windows = {
+				preview = true,
+				width_preview = 40,
+			},
+		},
+		keys = {
+			{
+				"<leader>e",
+				function()
+					local mf = require("mini.files")
+					-- Toggle: close if already open, otherwise open focused on the
+					-- current file (falls back to cwd for unnamed buffers).
+					if not mf.close() then
+						local buf = vim.api.nvim_buf_get_name(0)
+						mf.open(buf ~= "" and buf or vim.uv.cwd())
+					end
+				end,
+				desc = "File explorer (mini.files)",
+			},
+		},
+	},
+
+	-- mini.starter and mini.animate are commented out for now. Re-enable by
+	-- removing the --[[ ... --]] block-comment markers around them.
+	--[[
+	{
 		"nvim-mini/mini.starter",
 		version = false,
 		lazy = false,
@@ -257,4 +289,5 @@ return {
 			})
 		end,
 	},
+	--]]
 }

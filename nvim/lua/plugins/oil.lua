@@ -1,3 +1,9 @@
+-- Oil is temporarily mocked out while trialling mini.files. The full config
+-- below is kept intact — flip this early return off to re-enable Oil.
+if true then
+	return {}
+end
+
 local oil_max_column_depth = 3
 
 local function is_oil_win(win)

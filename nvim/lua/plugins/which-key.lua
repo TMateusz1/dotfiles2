@@ -47,7 +47,7 @@ return {
 				{ "<leader>x", group = "Lists (quickfix)" },
 
 				-- Direct leader mappings
-				{ "<leader>e", desc = "File explorer (neo-tree toggle)" },
+				{ "<leader>e", desc = "File explorer (mini.files)" },
 				{ "<leader>E", desc = "Oil multi-file edit" },
 				{ "<leader>F", desc = "Code outline (Trouble symbols)" },
 				{ "<leader>w", desc = "Save file" },
@@ -255,7 +255,6 @@ return {
 				{ "<leader>ud", desc = "Toggle code dimming" },
 				{ "<leader>uf", desc = "Toggle format on save" },
 				{ "<leader>uh", desc = "Toggle inlay hints" },
-				{ "<leader>uC", desc = "Toggle sticky context" },
 				{ "<leader>uv", desc = "Toggle virtual-line diagnostics" },
 				{ "<leader>ut", desc = "Toggle terminal" },
 				{ "<leader>uz", desc = "Toggle zen mode" },
