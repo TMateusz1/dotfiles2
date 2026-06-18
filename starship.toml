@@ -1,7 +1,8 @@
 # ~/.config/starship.toml
 
 add_newline = true
-command_timeout = 1000
+command_timeout = 500
+scan_timeout = 10
 
 format = """
 $directory\
@@ -88,8 +89,8 @@ format = "[$symbol]($style) "
 [python]
 symbol = " "
 style = "yellow"
-format = "[$symbol$version]($style) "
-python_binary = ["python3", "python"]
+format = "[$symbol]($style) "
+python_binary = ["python3"]
 
 [docker_context]
 symbol = " "
