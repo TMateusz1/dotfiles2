@@ -9,7 +9,8 @@ window-padding-balance = false
 window-decoration = auto
 macos-titlebar-style = native
 
-font-family = FiraCode Nerd Font
+font-family = JetBrainsMono Nerd Font
+font-style = Light
 font-size = 16
 
 font-feature = calt=1
