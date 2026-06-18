@@ -75,6 +75,20 @@ vim.api.nvim_create_autocmd("WinLeave", {
 	desc = "Hide cursorline in inactive windows",
 })
 
+-- Open mini.files instead of a raw directory buffer (e.g. nvim .)
+vim.api.nvim_create_autocmd("BufEnter", {
+	group = augroup,
+	callback = function()
+		local bufname = vim.api.nvim_buf_get_name(0)
+		if vim.fn.isdirectory(bufname) == 1 then
+			local dir = bufname
+			vim.cmd("bwipeout")
+			require("mini.files").open(dir)
+		end
+	end,
+	desc = "Open mini.files when entering a directory buffer",
+})
+
 -- Disable auto comment on new line
 vim.api.nvim_create_autocmd("FileType", {
 	group = augroup,

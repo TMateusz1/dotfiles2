@@ -44,6 +44,14 @@ return {
 				{ "<leader>t", group = "Tests" },
 				{ "<leader>u", group = "UI / Toggles" },
 
+				-- Harpoon
+				{ "<leader>a", desc = "Harpoon add file" },
+				{ "<leader>A", desc = "Harpoon edit list" },
+				{ "<leader>1", desc = "Harpoon file 1" },
+				{ "<leader>2", desc = "Harpoon file 2" },
+				{ "<leader>3", desc = "Harpoon file 3" },
+				{ "<leader>4", desc = "Harpoon file 4" },
+
 				-- Direct leader mappings
 				{ "<leader>e", desc = "File explorer (mini.files)" },
 				{ "<leader>w", desc = "Save file" },
@@ -190,6 +198,8 @@ return {
 				{ "<A-k>", desc = "Move line up", mode = { "n", "v" } },
 
 				-- UI / toggles
+				{ "<leader>uz", desc = "Toggle zen mode" },
+				{ "<leader>ud", desc = "Toggle dim (twilight)" },
 				{ "<leader>uc", desc = "Toggle VSCode code colors" },
 				{ "<leader>un", desc = "Dismiss notifications" },
 				{ "<leader>uf", desc = "Toggle format on save" },
