@@ -196,6 +196,19 @@ return {
 				},
 			})
 
+			vim.lsp.config("rust_analyzer", {
+				settings = {
+					["rust-analyzer"] = {
+						cargo = {
+							allFeatures = true,
+						},
+						check = {
+							command = "clippy",
+						},
+					},
+				},
+			})
+
 			vim.lsp.config("dockerls", {})
 
 			vim.lsp.config("docker_compose_language_service", {})
@@ -276,6 +289,7 @@ return {
 				ensure_installed = {
 					"gopls",
 					"lua_ls",
+					"rust_analyzer",
 					"dockerls",
 					"docker_compose_language_service",
 					"yamlls",
@@ -395,7 +409,6 @@ return {
 					end, "Diagnostics quickfix")
 					-- ]d / [d / <leader>uv are global (config/keymaps.lua) so they also
 					-- work with nvim-lint diagnostics in buffers without an LSP client.
-
 
 					-- Go tools (gopls)
 					if client.name == "gopls" then

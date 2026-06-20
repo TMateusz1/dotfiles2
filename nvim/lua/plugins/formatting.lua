@@ -50,6 +50,7 @@ return {
 			formatters_by_ft = {
 				go = { "goimports", "gofumpt" },
 				lua = { "stylua" },
+				rust = { "rustfmt" },
 				sh = { "shfmt" },
 				bash = { "shfmt" },
 				yaml = { "yamlfmt" },
@@ -74,7 +75,6 @@ return {
 
 			notify_on_error = true,
 			notify_no_formatters = false,
-
 		},
 	},
 }

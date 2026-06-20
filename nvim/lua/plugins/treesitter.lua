@@ -32,6 +32,7 @@ return {
 				"python",
 				"query",
 				"regex",
+				"rust",
 				"sql",
 				"tsx",
 				"typescript",
@@ -64,6 +65,7 @@ return {
 					"markdown",
 					"python",
 					"query",
+					"rust",
 					"sql",
 					"tsx",
 					"typescript",
@@ -72,7 +74,7 @@ return {
 					"yaml",
 				},
 				callback = function()
-					vim.treesitter.start()
+					pcall(vim.treesitter.start)
 				end,
 				desc = "Enable Treesitter highlighting",
 			})

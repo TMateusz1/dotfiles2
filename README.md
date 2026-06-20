@@ -66,12 +66,13 @@ This setup expects these tools to be available on the machine:
 - `yazi` for the tmux file manager popup.
 - `codex` and `npx` for CodeCompanion's Codex integrations.
 - `go` for Go tooling, tests, and helper commands.
+- `rustup` / the Rust toolchain for `cargo`, `rustfmt`, and `clippy`.
 - `kubectl` for generating Kubernetes CRD schemas.
 - `starship` for the prompt.
 - `ghostty` for terminal configuration.
 - A Nerd Font, specifically `FiraCode Nerd Font` in the Ghostty config.
 
-Neovim uses Mason to install many language tools automatically, but system binaries such as `git`, `go`, `kubectl`, `tmux`, `fzf`, `rg`, `fd`, `starship`, `lazygit`, and `yazi` should be installed outside Neovim.
+Neovim uses Mason to install many language tools automatically, but system binaries such as `git`, `go`, `cargo`, `rustfmt`, `clippy`, `kubectl`, `tmux`, `fzf`, `rg`, `fd`, `starship`, `lazygit`, and `yazi` should be installed outside Neovim.
 
 ## Creating Symlinks
 
@@ -436,6 +437,7 @@ Installed LSP servers:
 
 - `gopls`
 - `lua_ls`
+- `rust_analyzer`
 - `dockerls`
 - `docker_compose_language_service`
 - `yamlls`
@@ -455,6 +457,7 @@ LSP behavior:
 - On attach, the default Neovim 0.11+ LSP maps that shadow the bare `gr` (`grr`, `gri`, `grn`, `gra`, `grt`, `grx`, `gO`) are deleted so the FZF-backed `gr` fires instantly with no `timeoutlen` delay.
 - `gopls` enables gofumpt, unimported package completions, staticcheck, govulncheck (`vulncheck = "Imports"` — vulnerability diagnostics on `go.mod` requires whose vulnerable code is reachable), semantic tokens, selected analyses, code lenses, and inlay hints support.
 - `lua_ls` runs with a minimal static config; workspace libraries (the Neovim runtime and plugin type definitions) are injected per-`require` by `folke/lazydev.nvim`, which also adds a blink completion source so plugin APIs (`FzfLua`, `require("conform")`, ...) complete while editing this config.
+- `rust_analyzer` enables all Cargo features and runs `clippy` for checks.
 - `yamlls` validates YAML, uses schemastore data, supports Kubernetes schemas, and reads the local CRD schema cache. Its formatter is disabled — conform owns YAML formatting via `yamlfmt`.
 - `helm_ls` delegates YAML behavior to `yaml-language-server` and recognizes `values*.yaml`.
 
@@ -526,6 +529,7 @@ Formatters by filetype:
 
 - Go: `goimports`, `gofumpt`, `golines`
 - Lua: `stylua`
+- Rust: `rustfmt`
 - Shell: `shfmt`
 - YAML: `yamlfmt`
 - Docker Compose YAML: `yamlfmt`
@@ -562,7 +566,7 @@ Linters run on read, write, and leaving insert mode. Diagnostics appear through 
 
 Installed parsers:
 
-- `bash`, `c`, `css`, `dockerfile`, `go`, `gomod`, `gosum`, `gowork`, `helm`, `html`, `javascript`, `json`, `lua`, `markdown`, `markdown_inline`, `python`, `query`, `regex`, `sql`, `tsx`, `typescript`, `vim`, `vimdoc`, `yaml`
+- `bash`, `c`, `css`, `dockerfile`, `go`, `gomod`, `gosum`, `gowork`, `helm`, `html`, `javascript`, `json`, `lua`, `markdown`, `markdown_inline`, `python`, `query`, `regex`, `rust`, `sql`, `tsx`, `typescript`, `vim`, `vimdoc`, `yaml`
 
 Treesitter highlighting is enabled on filetype events for the supported languages. `jsonc` is registered to use the JSON parser.
 
