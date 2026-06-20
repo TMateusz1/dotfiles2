@@ -9,6 +9,7 @@ The whole stack shares one visual language — **Catppuccin Mocha** — across N
 ```text
 .
 ├── README.md
+├── .zshrc
 ├── .tmux.conf
 ├── ghostty/
 │   └── config
@@ -30,6 +31,7 @@ The repo is split by tool:
 - `nvim/` is the complete Neovim configuration.
 - `ghostty/config` configures the Ghostty terminal.
 - `starship.toml` configures the shell prompt.
+- `.zshrc` configures Zsh, guarded shell integrations, aliases, and PATH entries.
 - `.tmux.conf` configures tmux.
 - `yazi/` configures the Yazi file manager used from tmux.
 
@@ -90,6 +92,7 @@ ln -s ~/dev/dotfiles2/yazi ~/.config/yazi
 ln -s ~/dev/dotfiles2/ghostty/config ~/.config/ghostty/config
 ln -s ~/dev/dotfiles2/starship.toml ~/.config/starship.toml
 ln -s ~/dev/dotfiles2/.tmux.conf ~/.tmux.conf
+ln -s ~/dev/dotfiles2/.zshrc ~/.zshrc
 ```
 
 If a target file already exists, move it out of the way first:
@@ -99,6 +102,7 @@ mv ~/.config/nvim ~/.config/nvim.backup
 mv ~/.config/yazi ~/.config/yazi.backup
 mv ~/.config/starship.toml ~/.config/starship.toml.backup
 mv ~/.config/ghostty/config ~/.config/ghostty/config.backup
+mv ~/.zshrc ~/.zshrc.backup
 ```
 
 To verify the links:
@@ -107,6 +111,7 @@ To verify the links:
 ls -l ~/.config/nvim
 ls -l ~/.config/ghostty/config
 ls -l ~/.config/starship.toml
+ls -l ~/.zshrc
 ```
 
 ## Neovim Configuration
