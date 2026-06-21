@@ -388,6 +388,14 @@ The lockfile is `nvim/lazy-lock.json`.
 
 ## Neovim Plugins
 
+### Sessions
+
+`nvim/lua/plugins/session.lua` configures `rmagatti/auto-session`.
+
+Neovim sessions are saved and restored per current working directory. Starting Neovim with a single directory argument, for example `nvim .`, restores the session for that directory if one exists. Opening a specific file, for example `nvim main.rs`, does not auto-save a directory session.
+
+Global last-session restore, git-branch-specific sessions, cwd-change session switching, legacy `Session*` commands, and startup session picker setup are disabled; the intended workflow is one session per project directory.
+
 ### Theme
 
 `nvim/lua/plugins/colorscheme.lua` installs and configures Catppuccin:

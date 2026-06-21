@@ -71,6 +71,21 @@ opt.jumpoptions = "stack"
 -- Show the current file in the terminal / tmux window title
 opt.title = true
 
+-- Session restore: keep buffers, tabs, splits, window sizes, cwd, folds, and
+-- buffer-local options such as filetype.
+opt.sessionoptions = {
+	"blank",
+	"buffers",
+	"curdir",
+	"folds",
+	"help",
+	"tabpages",
+	"winsize",
+	"winpos",
+	"terminal",
+	"localoptions",
+}
+
 -- Files
 opt.swapfile = false
 opt.backup = false
