@@ -669,13 +669,18 @@ Both are mini.nvim modules (declared in `nvim/lua/plugins/minis.lua` and `nvim/l
 - Filename is shown as the name only (`%t`), not the path.
 - Uses global statusline mode (`laststatus=3`, already set in `options.lua`).
 
+### Autopairs
+
+`nvim/lua/plugins/pairs.lua` configures `nvim-autopairs`. It skips generated
+closing delimiters for `(`, `[`, `{`, quotes, and backticks; its built-in
+multi-character rules also pair Markdown fences (` ``` `).
+
 ### Mini Plugins
 
 `nvim/lua/plugins/minis.lua` uses the mini.nvim suite for several core behaviors:
 
 - `mini.ai` — extra text objects, including Treesitter-powered ones (see Text Objects below).
 - `mini.surround` — surround operations (mappings below).
-- `mini.pairs` — autopairs.
 - `mini.icons` — icons plus `nvim-web-devicons` compatibility (used by mini.files, mini.tabline, mini.statusline, blink, and more).
 - `mini.bufremove` — layout-preserving buffer deletion, wired into `<leader>q`, `<leader>Q`, `<leader>W`, and `<leader>bx`.
 - `mini.files` — the file explorer (`<leader>e`, see the File Explorers section).

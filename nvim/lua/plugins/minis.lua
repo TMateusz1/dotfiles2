@@ -124,13 +124,6 @@ return {
 	},
 
 	{
-		"nvim-mini/mini.pairs",
-		version = false,
-		event = "InsertEnter",
-		opts = {},
-	},
-
-	{
 		"nvim-mini/mini.icons",
 		version = false,
 		lazy = true,
