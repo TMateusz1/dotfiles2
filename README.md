@@ -159,8 +159,10 @@ Core editing and window movement:
 | `<C-d>`, `<C-u>` | Half-page down/up and keep the cursor centered |
 | `n`, `N` | Next/previous search result and keep the cursor centered |
 | `]q`, `[q` | Next/previous quickfix item |
+| `<leader>xx` | Close the current buffer, prompting for unsaved changes |
+| `<leader>xX` | Close all listed file or scratch buffers except the current one |
+| `<leader>xn` | Open a new scratch buffer |
 | `<leader>xq`, `<leader>xl` | Toggle the quickfix/location list in Trouble |
-| `<leader>xx`, `<leader>xX` | Toggle the Trouble problems panel (workspace / current buffer) |
 | `<leader>xs` | Trouble symbols outline (peek) |
 | `<leader>xr` | Trouble LSP references/definitions panel |
 | `<leader>xt` | Trouble todo-comment list |
@@ -174,8 +176,7 @@ Save, quit, and buffers:
 | `<leader>k` | Close window, keep the buffer open |
 | `<leader>q` | Smart close: close special/floating window or delete current buffer (keeps window) |
 | `<leader>W` | Save and delete current buffer |
-| `<leader>Q` | Close window and delete the buffer it showed (special/floating windows just close) |
-| `<leader>X` | Quit all windows, prompting to save unsaved buffers |
+| `<leader>Q` | Quit Neovim, prompting to save unsaved buffers |
 | `<leader>=` | Split window right (vsplit) — mirrors tmux `prefix =` |
 | `<leader>-` | Split window below (split) — mirrors tmux `prefix -` |
 | `[b`, `]b` | Previous/next buffer |
@@ -682,7 +683,7 @@ multi-character rules also pair Markdown fences (` ``` `).
 - `mini.ai` — extra text objects, including Treesitter-powered ones (see Text Objects below).
 - `mini.surround` — surround operations (mappings below).
 - `mini.icons` — icons plus `nvim-web-devicons` compatibility (used by mini.files, mini.tabline, mini.statusline, blink, and more).
-- `mini.bufremove` — layout-preserving buffer deletion, wired into `<leader>q`, `<leader>Q`, `<leader>W`, and `<leader>bx`.
+- `mini.bufremove` — layout-preserving buffer deletion, wired into `<leader>q`, `<leader>W`, and `<leader>bx`.
 - `mini.files` — the file explorer (`<leader>e`, see the File Explorers section).
 - `mini.tabline` — buffer tabs (see the Tabline and Statusline section).
 - `mini.statusline` — the global statusline (see the Tabline and Statusline section).
@@ -779,7 +780,6 @@ Mappings (all under the `<leader>d` group):
 | --- | --- |
 | `<leader>F` | Code outline — focused symbols panel on the right (jump in and navigate) |
 | `<leader>xs` | Symbols outline — peek without leaving the code window |
-| `<leader>xx` / `<leader>xX` | Problems panel (workspace / current buffer) |
 | `<leader>xt` | Todo-comment list |
 | `<leader>xr` | LSP references / definitions panel |
 | `<leader>xq` / `<leader>xl` | Quickfix / location list |
@@ -854,7 +854,7 @@ Top-level groups:
 - `<leader>M` Markdown
 - `<leader>t` tests
 - `<leader>u` UI/toggles
-- `<leader>x` lists (quickfix, location list, Trouble)
+- `<leader>x` buffer actions and lists (quickfix, location list, Trouble)
 
 Every leader mapping in the config carries a `desc`, and the spec also documents the bare-key and bracket-pair mappings (`gd`/`gr`/`gi`, `]h`/`[h`, `]d`/`[d`, `]t`/`[t`, `]q`/`[q`, `]b`/`[b`), so `which-key` and `<leader>fk` stay an accurate map of the whole keyboard layout.
 

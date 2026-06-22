@@ -19,6 +19,52 @@ local function close_floating_windows()
 	return closed
 end
 
+local function confirm_delete_buffer(bufnr)
+	if not vim.api.nvim_buf_is_valid(bufnr) then
+		return true
+	end
+
+	local ok, err = pcall(vim.cmd, string.format("confirm bdelete %d", bufnr))
+	if not ok then
+		vim.notify("Could not close buffer: " .. tostring(err), vim.log.levels.ERROR, {
+			title = "Buffer",
+		})
+		return false
+	end
+
+	-- `:confirm bdelete` returns normally when its prompt is cancelled.
+	return not vim.api.nvim_buf_is_valid(bufnr) or not vim.bo[bufnr].buflisted
+end
+
+local function is_closable_buffer(bufnr)
+	if not vim.api.nvim_buf_is_valid(bufnr) or not vim.bo[bufnr].buflisted then
+		return false
+	end
+
+	local buftype = vim.bo[bufnr].buftype
+	return buftype == "" or buftype == "nofile"
+end
+
+local function close_other_buffers()
+	local current = vim.api.nvim_get_current_buf()
+	local buffers = vim.api.nvim_list_bufs()
+
+	for _, bufnr in ipairs(buffers) do
+		if bufnr ~= current and is_closable_buffer(bufnr) and not confirm_delete_buffer(bufnr) then
+			return
+		end
+	end
+end
+
+local function new_scratch_buffer()
+	local bufnr = vim.api.nvim_create_buf(true, true)
+
+	vim.bo[bufnr].bufhidden = "hide"
+	vim.bo[bufnr].buftype = "nofile"
+	vim.bo[bufnr].swapfile = false
+	vim.api.nvim_win_set_buf(0, bufnr)
+end
+
 keymap("n", "<Esc>", function()
 	if close_floating_windows() then
 		return
@@ -75,6 +121,18 @@ keymap("n", "<leader>xq", function()
 	end
 	vim.cmd("copen")
 end, { desc = "Toggle quickfix" })
+keymap("n", "<leader>xx", function()
+	local bufnr = vim.api.nvim_get_current_buf()
+
+	if is_closable_buffer(bufnr) then
+		confirm_delete_buffer(bufnr)
+		return
+	end
+
+	pcall(vim.cmd, "close")
+end, { desc = "Close current buffer" })
+keymap("n", "<leader>xX", close_other_buffers, { desc = "Close other buffers" })
+keymap("n", "<leader>xn", new_scratch_buffer, { desc = "New scratch buffer" })
 -- Diagnostics. Global (not LspAttach-local) so they also cover nvim-lint
 -- diagnostics in buffers without an LSP client.
 keymap("n", "]d", function()
@@ -96,35 +154,11 @@ end, { desc = "Toggle virtual-line diagnostics" })
 -- leaderW is mapped in minis.bufremove as save + buffer delete, same as leaderw + leaderq
 keymap("n", "<leader>w", "<cmd>write<CR>", { desc = "Save file" })
 -- Quit
--- Leader<q> is mapped in minis.bufremove as buffer delete
--- this mean:
--- leaderk - close window only (keep the buffer open)
--- leaderq - buffer delete (keep the window)
--- leaderQ - close window + delete the buffer that window was showing
--- leaderX - quit all (prompts to save unsaved buffers)
+-- <leader>q is mapped in mini.bufremove: it closes special/floating windows
+-- and otherwise deletes the current buffer while keeping the window.
+-- <leader>k closes only a window; <leader>Q quits Neovim with confirmation.
 keymap("n", "<leader>k", "<cmd>close<CR>", { desc = "Close window (keep buffer)" })
-keymap("n", "<leader>Q", function()
-	-- Special / floating windows (quickfix, help, terminal, neotest, ...) have
-	-- no real file buffer to delete - just close the window.
-	local floating = vim.api.nvim_win_get_config(0).relative ~= ""
-	if floating or vim.bo.buftype ~= "" then
-		pcall(vim.cmd, "close")
-		return
-	end
-
-	local buf = vim.api.nvim_get_current_buf()
-
-	-- Close the window first; abort if it refuses (e.g. unsaved changes).
-	if not pcall(vim.cmd, "quit") then
-		return
-	end
-
-	-- Then remove the buffer that window was displaying.
-	if vim.api.nvim_buf_is_valid(buf) then
-		require("mini.bufremove").delete(buf)
-	end
-end, { desc = "Quit window + delete buffer" })
-keymap("n", "<leader>X", "<cmd>confirm qall<CR>", { desc = "Quit all (confirm save)" })
+keymap("n", "<leader>Q", "<cmd>confirm qall<CR>", { desc = "Quit all (confirm save)" })
 
 -- Splits, mirroring tmux prefix bindings:
 --   tmux `=` -> split-window -h (side by side)  => vsplit

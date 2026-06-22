@@ -58,8 +58,7 @@ return {
 				{ "<leader>W", desc = "Save and close buffer" },
 				{ "<leader>k", desc = "Close window (keep buffer)" },
 				{ "<leader>q", desc = "Smart close" },
-				{ "<leader>Q", desc = "Quit window + delete buffer" },
-				{ "<leader>X", desc = "Quit all (confirm save)" },
+				{ "<leader>Q", desc = "Quit all (confirm save)" },
 				{ "<leader>=", desc = "Split window right (vsplit)" },
 				{ "<leader>-", desc = "Split window below (split)" },
 				{ "<leader>/", desc = "Search buffer lines" },
@@ -127,7 +126,10 @@ return {
 				{ "<leader>cl", desc = "Format file" },
 
 				-- <leader>c — diagnostics & LSP management
-				{ "<leader>x", group = "Lists" },
+				{ "<leader>x", group = "Buffers / Lists" },
+				{ "<leader>xx", desc = "Close current buffer" },
+				{ "<leader>xX", desc = "Close other buffers" },
+				{ "<leader>xn", desc = "New scratch buffer" },
 				{ "<leader>xq", desc = "Toggle quickfix" },
 				{ "<leader>cx", desc = "Line diagnostics" },
 				{ "<leader>cq", desc = "Diagnostics quickfix" },
