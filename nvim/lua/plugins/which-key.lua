@@ -206,6 +206,7 @@ return {
 				{ "<leader>un", desc = "Dismiss notifications" },
 				{ "<leader>uf", desc = "Toggle format on save" },
 				{ "<leader>uh", desc = "Toggle inlay hints" },
+				{ "<leader>um", desc = "Toggle minimap" },
 				{ "<leader>uv", desc = "Toggle virtual-line diagnostics" },
 			},
 		},

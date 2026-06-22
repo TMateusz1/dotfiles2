@@ -19,6 +19,39 @@ local function close_floating_windows()
 	return closed
 end
 
+local function with_scroll_animation()
+	local ok, animate = pcall(require, "mini.animate")
+
+	return ok and animate or nil
+end
+
+local function after_scroll(animate, action)
+	if animate then
+		animate.execute_after("scroll", action)
+		return
+	end
+
+	action()
+end
+
+local function scroll_and_center(keys)
+	local animate = with_scroll_animation()
+
+	vim.cmd.normal({ args = { vim.keycode(keys) }, bang = true })
+	after_scroll(animate, function()
+		vim.cmd("normal! zz")
+	end)
+end
+
+local function search_and_center(keys)
+	local animate = with_scroll_animation()
+
+	vim.cmd.normal({ args = { keys }, bang = true })
+	after_scroll(animate, function()
+		vim.cmd("normal! zvzz")
+	end)
+end
+
 local function confirm_delete_buffer(bufnr)
 	if not vim.api.nvim_buf_is_valid(bufnr) then
 		return true
@@ -92,10 +125,18 @@ keymap("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 keymap("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 
 -- Keep cursor centered when jumping
-keymap("n", "<C-d>", "<C-d>zz", { desc = "Half page down and center" })
-keymap("n", "<C-u>", "<C-u>zz", { desc = "Half page up and center" })
-keymap("n", "n", "nzzzv", { desc = "Next search result and center" })
-keymap("n", "N", "Nzzzv", { desc = "Previous search result and center" })
+keymap("n", "<C-d>", function()
+	scroll_and_center("<C-d>")
+end, { desc = "Half page down and center" })
+keymap("n", "<C-u>", function()
+	scroll_and_center("<C-u>")
+end, { desc = "Half page up and center" })
+keymap("n", "n", function()
+	search_and_center("n")
+end, { desc = "Next search result and center" })
+keymap("n", "N", function()
+	search_and_center("N")
+end, { desc = "Previous search result and center" })
 keymap("n", "]q", function()
 	if not pcall(vim.cmd, "cnext") then
 		pcall(vim.cmd, "cfirst")

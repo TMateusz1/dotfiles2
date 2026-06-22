@@ -292,8 +292,8 @@ return {
 		end,
 	},
 
-	-- mini.starter and mini.animate are commented out for now. Re-enable by
-	-- removing the --[[ ... --]] block-comment markers around them.
+	-- mini.starter is commented out for now. Re-enable it by removing the
+	-- --[[ ... --]] block-comment markers around its spec.
 	--[[
 	{
 		"nvim-mini/mini.starter",
@@ -325,6 +325,7 @@ return {
 			})
 		end,
 	},
+	--]]
 
 	{
 		"nvim-mini/mini.animate",
@@ -332,23 +333,22 @@ return {
 		event = "VeryLazy",
 		config = function()
 			local animate = require("mini.animate")
-			-- Smooth scrolling only; leave the
-			-- cursor/window animations off to match the previous behaviour.
+
+			-- Scroll-only animation: a short, high-frequency sequence feels fluid
+			-- without making page navigation feel delayed.
 			animate.setup({
 				scroll = {
-					-- Fixed per-step delay keeps the perceived frame rate constant
-					-- regardless of scroll distance (unlike "total", which spreads
-					-- a short scroll over only a couple of choppy frames).
-					timing = animate.gen_timing.linear({ duration = 12, unit = "step" }),
+					-- Fixed per-step timing maintains smooth motion for both <C-d>/<C-u>
+					-- and PageUp/PageDown, while easing out avoids an abrupt stop.
+					timing = animate.gen_timing.linear({
+						duration = 8,
+						easing = "out",
+						unit = "step",
+					}),
 					subscroll = animate.gen_subscroll.equal({
-						-- Don't animate small scrolls (e.g. short C-d/C-u or n/N
-						-- jumps of a few lines) — those are the ones that looked
-						-- like the screen was freezing. Cap steps so huge jumps
-						-- stay snappy too.
-						predicate = function(total_scroll)
-							return total_scroll > 6
-						end,
-						max_output_steps = 60,
+						-- One-line moves stay instant; page jumps use at most 40 frames
+						-- (320ms), preventing long-distance scrolling from becoming slow.
+						max_output_steps = 40,
 					}),
 				},
 				cursor = { enable = false },
@@ -358,5 +358,4 @@ return {
 			})
 		end,
 	},
-	--]]
 }

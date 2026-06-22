@@ -328,6 +328,7 @@ UI and toggles:
 | `<leader>fn` | Notification history |
 | `<leader>uf` | Toggle format-on-save |
 | `<leader>uh` | Toggle inlay hints |
+| `<leader>um` | Toggle the compact, right-side minimap |
 | `<leader>un` | Dismiss visible notifications |
 | `<leader>uv` | Toggle rich virtual-line diagnostics on the cursor line |
 
@@ -682,6 +683,8 @@ multi-character rules also pair Markdown fences (` ``` `).
 
 - `mini.ai` — extra text objects, including Treesitter-powered ones (see Text Objects below).
 - `mini.surround` — surround operations (mappings below).
+- `mini.animate` — smooth scroll animation for Page Up/Down, `<C-d>`, `<C-u>`, and other viewport changes; cursor and window animations stay off.
+- `mini.map` — optional compact right-side file overview, toggled with `<leader>um`.
 - `mini.icons` — icons plus `nvim-web-devicons` compatibility (used by mini.files, mini.tabline, mini.statusline, blink, and more).
 - `mini.bufremove` — layout-preserving buffer deletion, wired into `<leader>q`, `<leader>W`, and `<leader>bx`.
 - `mini.files` — the file explorer (`<leader>e`, see the File Explorers section).
@@ -689,7 +692,9 @@ multi-character rules also pair Markdown fences (` ``` `).
 - `mini.statusline` — the global statusline (see the Tabline and Statusline section).
 - `mini.indentscope` — bolder line for the active indent scope (indentation-based), layered on the static indent-blankline guides (see Indent Guides). Disabled in special buffers; themed by the catppuccin `mini` integration.
 
-`mini.starter` (start screen) and `mini.animate` (smooth scrolling) are currently **commented out** in `minis.lua` — their specs are kept behind a block comment for easy re-enabling.
+`mini.starter` (start screen) remains **commented out** in `minis.lua`; its spec is kept behind a block comment for easy re-enabling.
+
+`nvim/lua/plugins/map.lua` configures `mini.map`: it is hidden by default and toggled with `<leader>um`. It appears on the right at a compact width and marks the current line and visible viewport.
 
 Notifications and the command line are handled by **noice** (see the Notifications section). The file explorer is **mini.files** (see File Explorers).
 
@@ -827,7 +832,7 @@ It owns:
 - `vim.ui.select`, so code actions and other selection prompts use the same picker backend.
 - FZF-Lua's builtin previewer for file, grep, git, and diagnostic results.
 
-Buffer deletion, the tabline, and the statusline are handled by mini.nvim (`mini.bufremove`, `mini.tabline`, `mini.statusline`); the file explorer is mini.files; notifications and the command line are handled by noice, while ordinary messages stay native. (`mini.starter` and `mini.animate` are currently commented out.) See the Mini Plugins, File Explorers, and Notifications sections.
+Buffer deletion, the tabline, the statusline, scrolling animation, and the minimap are handled by mini.nvim (`mini.bufremove`, `mini.tabline`, `mini.statusline`, `mini.animate`, `mini.map`); the file explorer is mini.files; notifications and the command line are handled by noice, while ordinary messages stay native. (`mini.starter` is currently commented out.) See the Mini Plugins, File Explorers, and Notifications sections.
 
 ### Notifications and Command Line
 
