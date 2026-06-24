@@ -47,6 +47,13 @@ return {
 			end, { desc = "Re-enable autoformat-on-save" })
 		end,
 		opts = {
+			formatters = {
+				-- Keep intentional whitespace between logical YAML sections, such as
+				-- Taskfile tasks and test-plan cases.
+				yamlfmt = {
+					prepend_args = { "-formatter", "retain_line_breaks=true" },
+				},
+			},
 			formatters_by_ft = {
 				go = { "goimports", "gofumpt" },
 				lua = { "stylua" },
