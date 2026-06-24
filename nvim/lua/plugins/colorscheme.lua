@@ -180,6 +180,7 @@ return {
 				which_key = true,
 				gitsigns = true,
 				mason = true,
+				neotree = true,
 				cmp = true,
 				mini = true,
 				noice = true,

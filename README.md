@@ -124,7 +124,7 @@ ls -l ~/.zshrc
 - Leader and local leader are both space.
 - Absolute and relative line numbers are enabled.
 - Mouse support is enabled.
-- netrw is disabled because file exploration is handled by mini.files.
+- netrw is disabled because file exploration is handled by neo-tree.
 - Clipboard uses `unnamedplus`.
 - Indentation uses spaces with a width of 4.
 - Search uses ignorecase plus smartcase; `:substitute` shows a live preview with off-screen matches in a split (`inccommand=split`).
@@ -223,10 +223,9 @@ Files and project navigation:
 
 | Key | Action |
 | --- | --- |
-| `<leader>e` | Toggle the mini.files explorer (focused on the current file) |
+| `<leader>e` | Toggle the right-side Neo-tree explorer (focused on the current file) |
 | `<leader>F` | Toggle the code outline (Trouble symbols, focused) |
 
-> Oil (`<leader>E`) is temporarily disabled — `oil.lua` is mocked out (`if true then return {} end`) while trialling mini.files. The full Oil config is kept for re-enabling.
 
 Code, LSP, diagnostics, and formatting:
 
@@ -618,14 +617,11 @@ Mappings:
 
 ### File Explorers
 
-`mini.files` (`<leader>e`, declared in `nvim/lua/plugins/minis.lua`) is the file explorer:
+`neo-tree` (`<leader>e`, declared in `nvim/lua/plugins/neo-tree.lua`) is the file explorer:
 
-- `<leader>e` toggles a floating miller-columns explorer, opened focused on the current file (or the cwd for unnamed buffers); pressing it again closes it. Preview is disabled.
-- `<CR>` / `<Right>` go **in**: a directory is entered (explorer stays open), a file is opened **and the explorer closes**. `<BS>` / `<Left>` go **back** out one level (collapsing that column). `l` / `h` keep mini.files' default soft go-in / go-out; `q` closes.
-- The explorer buffer is editable: create/rename/move/delete entries as text and apply with `=` (synchronize).
-- Deletes go to trash; rename/move use LSP file methods. Icons come from mini.icons.
-
-> Oil (the editable column-mode manager, `<leader>E`) is temporarily mocked out in `oil.lua` (`if true then return {} end`); its full config is kept for re-enabling. neo-tree was removed.
+- `<leader>e` toggles a 38-column sidebar on the right and reveals the current file. The tree follows subsequent buffer changes while keeping expanded directories open.
+- `<CR>` / `l` open an entry; `h` collapses a directory; `<BS>` navigates to the parent directory; and `q` closes the tree.
+- Git state, diagnostics, modified buffers, and file-type icons are shown in the tree. Dotfiles and Git-ignored files remain visible; `.DS_Store` and `thumbs.db` do not.
 
 ### Git
 
@@ -685,9 +681,8 @@ multi-character rules also pair Markdown fences (` ``` `).
 - `mini.surround` — surround operations (mappings below).
 - `mini.animate` — smooth scroll animation for Page Up/Down, `<C-d>`, `<C-u>`, and other viewport changes; cursor and window animations stay off.
 - `mini.map` — optional compact right-side file overview, toggled with `<leader>um`.
-- `mini.icons` — icons plus `nvim-web-devicons` compatibility (used by mini.files, mini.tabline, mini.statusline, blink, and more).
+- `mini.icons` — icons plus `nvim-web-devicons` compatibility (used by neo-tree, mini.tabline, mini.statusline, blink, and more).
 - `mini.bufremove` — layout-preserving buffer deletion, wired into `<leader>q`, `<leader>W`, and `<leader>bx`.
-- `mini.files` — the file explorer (`<leader>e`, see the File Explorers section).
 - `mini.tabline` — buffer tabs (see the Tabline and Statusline section).
 - `mini.statusline` — the global statusline (see the Tabline and Statusline section).
 - `mini.indentscope` — bolder line for the active indent scope (indentation-based), layered on the static indent-blankline guides (see Indent Guides). Disabled in special buffers; themed by the catppuccin `mini` integration.
@@ -696,7 +691,7 @@ multi-character rules also pair Markdown fences (` ``` `).
 
 `nvim/lua/plugins/map.lua` configures `mini.map`: it is hidden by default and toggled with `<leader>um`. It appears on the right at a compact width and marks the current line and visible viewport.
 
-Notifications and the command line are handled by **noice** (see the Notifications section). The file explorer is **mini.files** (see File Explorers).
+Notifications and the command line are handled by **noice** (see the Notifications section). The file explorer is **neo-tree** (see File Explorers).
 
 Surround mappings:
 
@@ -832,7 +827,7 @@ It owns:
 - `vim.ui.select`, so code actions and other selection prompts use the same picker backend.
 - FZF-Lua's builtin previewer for file, grep, git, and diagnostic results.
 
-Buffer deletion, the tabline, the statusline, scrolling animation, and the minimap are handled by mini.nvim (`mini.bufremove`, `mini.tabline`, `mini.statusline`, `mini.animate`, `mini.map`); the file explorer is mini.files; notifications and the command line are handled by noice, while ordinary messages stay native. (`mini.starter` is currently commented out.) See the Mini Plugins, File Explorers, and Notifications sections.
+Buffer deletion, the tabline, the statusline, scrolling animation, and the minimap are handled by mini.nvim (`mini.bufremove`, `mini.tabline`, `mini.statusline`, `mini.animate`, `mini.map`); the file explorer is neo-tree; notifications and the command line are handled by noice, while ordinary messages stay native. (`mini.starter` is currently commented out.) See the Mini Plugins, File Explorers, and Notifications sections.
 
 ### Notifications and Command Line
 

@@ -193,6 +193,7 @@ return {
 		},
 	},
 
+	--[[
 	{
 		"nvim-mini/mini.files",
 		version = false,
@@ -249,6 +250,7 @@ return {
 			},
 		},
 	},
+	--]]
 
 	{
 		"nvim-mini/mini.indentscope",

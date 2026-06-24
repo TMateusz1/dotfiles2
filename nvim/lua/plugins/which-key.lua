@@ -53,7 +53,7 @@ return {
 				{ "<leader>4", desc = "Harpoon file 4" },
 
 				-- Direct leader mappings
-				{ "<leader>e", desc = "File explorer (mini.files)" },
+				{ "<leader>e", desc = "Toggle file explorer" },
 				{ "<leader>w", desc = "Save file" },
 				{ "<leader>W", desc = "Save and close buffer" },
 				{ "<leader>k", desc = "Close window (keep buffer)" },
