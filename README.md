@@ -620,7 +620,7 @@ Mappings:
 `neo-tree` (`<leader>e`, declared in `nvim/lua/plugins/neo-tree.lua`) is the file explorer:
 
 - `<leader>e` toggles a 38-column sidebar on the right and reveals the current file. The tree follows subsequent buffer changes while keeping expanded directories open.
-- `<CR>` / `l` open an entry; `h` collapses a directory; `<BS>` navigates to the parent directory; and `q` closes the tree.
+- `<CR>` / `l` open an entry; `<C-s>` opens in a split; `<C-v>` opens in a vertical split; `h` collapses a directory; `=` collapses all directories; `<BS>` navigates to the parent directory; and `q` closes the tree.
 - Git state, diagnostics, modified buffers, and file-type icons are shown in the tree. Dotfiles and Git-ignored files remain visible; `.DS_Store` and `thumbs.db` do not.
 
 ### Git
