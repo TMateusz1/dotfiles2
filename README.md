@@ -64,7 +64,6 @@ This setup expects these tools to be available on the machine:
 - `rg` and `fd` for fast search and file discovery.
 - `lazygit` for the Neovim LazyGit integration.
 - `yazi` for the tmux file manager popup.
-- `codex` and `npx` for CodeCompanion's Codex integrations.
 - `go` for Go tooling, tests, and helper commands.
 - `rustup` / the Rust toolchain for `cargo`, `rustfmt`, and `clippy`.
 - `kubectl` for generating Kubernetes CRD schemas.
@@ -143,7 +142,7 @@ The config also customizes separator fill characters and highlights `WinSeparato
 
 ### Keymaps
 
-Leader is `<Space>`. Most mappings are discoverable in Neovim with `<leader>` through which-key, and `<leader>fk` opens a searchable list of keymaps.
+Leader is `<Space>`. Most mappings are discoverable in Neovim with `<leader>` through which-key.
 
 Core editing and window movement:
 
@@ -162,10 +161,6 @@ Core editing and window movement:
 | `<leader>xx` | Close the current buffer, prompting for unsaved changes |
 | `<leader>xX` | Close all listed file or scratch buffers except the current one |
 | `<leader>xn` | Open a new scratch buffer |
-| `<leader>xq`, `<leader>xl` | Toggle the quickfix/location list in Trouble |
-| `<leader>xs` | Trouble symbols outline (peek) |
-| `<leader>xr` | Trouble LSP references/definitions panel |
-| `<leader>xt` | Trouble todo-comment list |
 | `q`, `<Esc>` in temporary windows | Close quickfix, help, man, notify, and neotest windows |
 
 Save, quit, and buffers:
@@ -204,27 +199,20 @@ Find and search with FZF-Lua:
 | `<leader>ff` | Find files |
 | `<leader>fg` | Live grep |
 | `<leader>/` | Fuzzy search lines in the current buffer |
-| `<leader>fu` | Undo history (preview and restore any undo state) |
 | `<leader>fG` | Git changed files |
 | `<leader>fb` | Find buffers |
 | `<leader>fr` | Recent files |
-| `<leader>fc` | Find Neovim config files |
-| `<leader>fw`, `<leader>fW` | Grep word/WORD under cursor |
-| `<leader>fh` | Help tags |
-| `<leader>fk` | Keymaps |
+| `<leader>fw` | Grep word under cursor |
 | `<leader>fs`, `<leader>fS` | Document/workspace symbols |
 | `<leader>fd`, `<leader>fD` | Document/workspace diagnostics |
 | `<leader>fq` | Quickfix list |
-| `<leader>fR` | Resume last picker |
-| `<leader>ft` | All todo comments |
-| `<leader>fT` | Todo/Fix/Fixme only |
+| `<leader>ft` | Grep todo/fix comments |
 
 Files and project navigation:
 
 | Key | Action |
 | --- | --- |
 | `<leader>e` | Toggle the right-side Neo-tree explorer (focused on the current file) |
-| `<leader>F` | Toggle the code outline (Trouble symbols, focused) |
 
 
 Code, LSP, diagnostics, and formatting:
@@ -324,7 +312,6 @@ UI and toggles:
 | Key | Action |
 | --- | --- |
 | `<leader>uc` | Toggle VSCode Dark+ code colors (fg-only overlay on catppuccin) |
-| `<leader>fn` | Notification history |
 | `<leader>uf` | Toggle format-on-save |
 | `<leader>uh` | Toggle inlay hints |
 | `<leader>um` | Toggle the compact, right-side minimap |
@@ -599,21 +586,16 @@ Mappings:
 - `<leader>ff` find files
 - `<leader>fg` live grep
 - `<leader>/` fuzzy search lines in the current buffer
-- `<leader>fu` undo history
 - `<leader>fG` Git changed files
 - `<leader>fb` buffers
 - `<leader>fr` recent files
-- `<leader>fc` config files
 - `<leader>fw` grep word under cursor
-- `<leader>fW` grep WORD under cursor
-- `<leader>fh` help tags
-- `<leader>fk` keymaps
 - `<leader>fs` document symbols
 - `<leader>fS` workspace symbols (live, via LSP)
 - `<leader>fd` document diagnostics
 - `<leader>fD` workspace diagnostics
 - `<leader>fq` quickfix list
-- `<leader>fR` resume last picker
+- `<leader>ft` grep todo/fix comments
 
 ### File Explorers
 
@@ -658,7 +640,7 @@ The tabline is `bufferline.nvim` (`nvim/lua/plugins/bufferline.lua`) and the sta
 - `]b` / `[b` and `<leader>bl` / `<leader>bh` move next/previous in bufferline order.
 - `<leader>fb` opens the FZF-Lua buffer picker.
 - `<leader>bb` picks a visible buffer by label; `<leader>bp` pins/unpins the current buffer.
-- `<leader>1`..`<leader>9` jump to visible buffer slots; `<A-1>`..`<A-9>` and `<leader>b1`..`<leader>b9` are aliases. `<leader>b0` jumps to the last visible buffer.
+- `<leader>1`..`<leader>9` jump to visible buffer slots; `<A-1>`..`<A-9>` are aliases. `<leader>b0` jumps to the last visible buffer.
 - `<leader>b,` / `<leader>b.` move the current buffer left/right; `<leader>bH` / `<leader>bL` / `<leader>bX` close buffers left/right/other.
 - `<leader>bx` still uses `mini.bufremove` for layout-preserving deletion.
 
@@ -688,8 +670,6 @@ multi-character rules also pair Markdown fences (` ``` `).
 - `mini.bufremove` — layout-preserving buffer deletion, wired into `<leader>q`, `<leader>W`, and `<leader>bx`.
 - `mini.statusline` — the global statusline (see the Tabline and Statusline section).
 - `mini.indentscope` — bolder line for the active indent scope (indentation-based), layered on the static indent-blankline guides (see Indent Guides). Disabled in special buffers; themed by the catppuccin `mini` integration.
-
-`mini.starter` (start screen) remains **commented out** in `minis.lua`; its spec is kept behind a block comment for easy re-enabling.
 
 `nvim/lua/plugins/map.lua` configures `mini.map`: it is hidden by default and toggled with `<leader>um`. It appears on the right at a compact width and marks the current line and visible viewport.
 
@@ -774,68 +754,23 @@ Mappings (all under the `<leader>d` group):
 | `<leader>df`, `<leader>ds`, `<leader>dS` | Float frames / scopes / wide scopes |
 | `<leader>dg`, `<leader>dG` | Debug current / last Go test |
 
-### Trouble (panel for diagnostics, symbols, lists)
-
-`nvim/lua/plugins/trouble.lua` configures `folke/trouble.nvim` as the single panel for diagnostics, the symbol outline, todos, LSP references, and the quickfix/location lists. It replaced **aerial** (outline) and **quicker** (quickfix window).
-
-| Key | Action |
-| --- | --- |
-| `<leader>F` | Code outline — focused symbols panel on the right (jump in and navigate) |
-| `<leader>xs` | Symbols outline — peek without leaving the code window |
-| `<leader>xt` | Todo-comment list |
-| `<leader>xr` | LSP references / definitions panel |
-| `<leader>xq` / `<leader>xl` | Quickfix / location list |
-
-Trouble also **hijacks the native quickfix and location list windows**: any `:copen`, `:grep`, `:vimgrep`, `:make`, or picker "send to quickfix" opens in Trouble instead of the plain window (a `BufWinEnter` autocmd registered in the plugin's `init`). The config's own lists — diagnostics (`<leader>cq`), failed tests (`<leader>tq`), and failed Go commands (`<leader>cg…`) — populate the quickfix list with `setqflist` and then call `:Trouble qflist open` directly.
-
-Inside any Trouble panel, `<CR>` jumps to the item, `o` jumps and stays, and `q` / `<Esc>` close. `]q` / `[q` still navigate the underlying quickfix list as usual.
-
-> Note: this drops quicker's **editable quickfix** (`:w` from the qf buffer to apply edits back to files) and `>` / `<` context expansion — Trouble has no equivalent. Use `:cdo` / `:cfdo` if you need batch edits across quickfix entries.
-
-### Todo Comments
-
-`nvim/lua/plugins/todo.lua` configures `folke/todo-comments.nvim`.
-
-Highlights `TODO`, `FIXME`, `FIX`, `HACK`, `WARN`, `PERF`, `NOTE`, `TEST` keywords in comments with distinct colors. Works in all filetypes.
-
-- `]t` / `[t` jump to the next/previous todo comment in the buffer.
-- `<leader>ft` opens an FZF picker with all todo comments in the project.
-- `<leader>fT` filter to `TODO`, `FIX`, `FIXME` only — the actionable ones.
-
-### AI with CodeCompanion
-
-`nvim/lua/plugins/codecompanion.lua` configures `olimorris/codecompanion.nvim` around OpenAI Codex:
-
-- Codex is the default chat adapter, connected through `@zed-industries/codex-acp`.
-- The ACP adapter uses the existing ChatGPT subscription login and is launched through `npx`.
-- The CLI interaction opens the locally installed `codex` command in a Neovim terminal.
-- The action palette uses FZF-Lua and chat opens in a vertical side window.
-
-Key mappings:
-
-- `<leader>aa` open CodeCompanion actions.
-- `<leader>ac` toggle the Codex chat.
-- `<leader>ad` add the visual selection to the current chat.
-- `<leader>an` open a new Codex chat.
-- `<leader>at` open the Codex CLI terminal.
-
 ### Picker Stack
 
 `nvim/lua/plugins/fzf.lua` is the central picker integration (`ibhagwan/fzf-lua`).
 
 It owns:
 
-- File, grep, buffer, history, help, command, diagnostic, quickfix/location, git, todo, and LSP pickers.
+- File, grep, buffer, diagnostic, quickfix, git, todo-grep, and LSP pickers.
 - `vim.ui.select`, so code actions and other selection prompts use the same picker backend.
 - FZF-Lua's builtin previewer for file, grep, git, and diagnostic results.
 
-Buffer deletion, the statusline, scrolling animation, and the minimap are handled by mini.nvim (`mini.bufremove`, `mini.statusline`, `mini.animate`, `mini.map`); the tabline is handled by bufferline.nvim; the file explorer is neo-tree; notifications and the command line are handled by noice, while ordinary messages stay native. (`mini.starter` is currently commented out.) See the Mini Plugins, File Explorers, and Notifications sections.
+Buffer deletion, the statusline, scrolling animation, and the minimap are handled by mini.nvim (`mini.bufremove`, `mini.statusline`, `mini.animate`, `mini.map`); the tabline is handled by bufferline.nvim; the file explorer is neo-tree; notifications and the command line are handled by noice, while ordinary messages stay native. See the Mini Plugins, File Explorers, and Notifications sections.
 
 ### Notifications and Command Line
 
-Notifications and the command line are owned by one plugin: `folke/noice.nvim` (`nvim/lua/plugins/noice.lua`, depending only on `nui.nvim`). Ordinary command output such as `:echo 'xxx'` stays in Neovim's native message area.
+Notifications and the command line are owned by `folke/noice.nvim` (`nvim/lua/plugins/noice.lua`) with `nvim-notify` as the notification backend. Ordinary command output such as `:echo 'xxx'` stays in Neovim's native message area.
 
-- **Notifications**: `vim.notify` is routed through noice's own `mini` view, so there is no `nvim-notify` dependency. `<leader>fn` runs `:Noice history`; `<leader>un` runs `:Noice dismiss`.
+- **Notifications**: `vim.notify` is routed through Noice's `notify` view backed by `nvim-notify`; `<leader>un` runs `:Noice dismiss`.
 - The command line (`:`) renders on the **bottom line** (`cmdline` view, with the `command_palette` preset off so it isn't re-centered); search (`/`, `?`) uses the classic bottom line too (`bottom_search` preset).
 - LSP progress is shown, and LSP hover/signature markdown is rendered with a border (`lsp_doc_border`).
 
@@ -845,20 +780,20 @@ Notifications and the command line are owned by one plugin: `folke/noice.nvim` (
 
 Top-level groups:
 
-- `<leader>a` AI (CodeCompanion)
 - `<leader>b` buffers
 - `<leader>f` find
 - `<leader>g` Git
 - `<leader>gh` Git hunks
 - `<leader>c` code
 - `<leader>cg` Go
+- `<leader>ck` Kubernetes
 - `<leader>d` debug
 - `<leader>M` Markdown
 - `<leader>t` tests
 - `<leader>u` UI/toggles
-- `<leader>x` buffer actions and lists (quickfix, location list, Trouble)
+- `<leader>x` buffer actions and lists
 
-Every leader mapping in the config carries a `desc`, and the spec also documents the bare-key and bracket-pair mappings (`gd`/`gr`/`gi`, `]h`/`[h`, `]d`/`[d`, `]t`/`[t`, `]q`/`[q`, `]b`/`[b`), so `which-key` and `<leader>fk` stay an accurate map of the whole keyboard layout.
+Every leader mapping in the config carries a `desc`; the which-key spec only adds group labels so mapping descriptions stay owned by the actual keymaps.
 
 The UI uses the modern preset, rounded borders, compact key labels, and a shorter delay for leader-triggered mappings.
 

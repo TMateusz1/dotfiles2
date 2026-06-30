@@ -175,65 +175,6 @@ return {
 		},
 	},
 
-	--[[
-	{
-		"nvim-mini/mini.files",
-		version = false,
-		dependencies = {
-			"nvim-mini/mini.icons",
-		},
-		opts = {
-			-- Preview disabled per request.
-			windows = {
-				preview = false,
-			},
-			mappings = {
-				-- Enter: directory → go in (explorer stays); file → open it and
-				-- close the explorer ("hard in").
-				go_in_plus = "<CR>",
-				-- Backspace: go back out one level and collapse that column.
-				go_out_plus = "<BS>",
-				-- Freed up from its default <BS> binding.
-				reset = "",
-			},
-		},
-		init = function()
-			-- Arrow aliases: <Right> = in (mirrors <CR>), <Left> = back (mirrors
-			-- <BS>). Done per-buffer because mini.files binds one key per action.
-			vim.api.nvim_create_autocmd("User", {
-				pattern = "MiniFilesBufferCreate",
-				group = vim.api.nvim_create_augroup("user_minifiles_arrows", { clear = true }),
-				callback = function(args)
-					local mf = require("mini.files")
-					local buf = args.data.buf_id
-					vim.keymap.set("n", "<Right>", function()
-						mf.go_in({ close_on_file = true })
-					end, { buffer = buf, desc = "Go in (file: open & close)" })
-					vim.keymap.set("n", "<Left>", function()
-						mf.go_out()
-						mf.trim_right()
-					end, { buffer = buf, desc = "Go back" })
-				end,
-			})
-		end,
-		keys = {
-			{
-				"<leader>e",
-				function()
-					local mf = require("mini.files")
-					-- Toggle: close if already open, otherwise open focused on the
-					-- current file (falls back to cwd for unnamed buffers).
-					if not mf.close() then
-						local buf = vim.api.nvim_buf_get_name(0)
-						mf.open(buf ~= "" and buf or vim.uv.cwd())
-					end
-				end,
-				desc = "File explorer (mini.files)",
-			},
-		},
-	},
-	--]]
-
 	{
 		"nvim-mini/mini.indentscope",
 		version = false,
@@ -275,41 +216,6 @@ return {
 			})
 		end,
 	},
-
-	-- mini.starter is commented out for now. Re-enable it by removing the
-	-- --[[ ... --]] block-comment markers around its spec.
-	--[[
-	{
-		"nvim-mini/mini.starter",
-		version = false,
-		lazy = false,
-		config = function()
-			local starter = require("mini.starter")
-
-			starter.setup({
-				items = {
-					{ section = "Menu", name = "Find File", action = function() require("fzf-lua").files() end },
-					{ section = "Menu", name = "Find Text", action = function() require("fzf-lua").live_grep() end },
-					{ section = "Menu", name = "Recent Files", action = function() require("fzf-lua").oldfiles() end },
-					{
-						section = "Menu",
-						name = "Config",
-						action = function()
-							require("fzf-lua").files({ cwd = vim.fn.stdpath("config") })
-						end,
-					},
-					{ section = "Menu", name = "Lazy", action = "Lazy" },
-					{ section = "Menu", name = "Quit", action = "qa" },
-					starter.sections.recent_files(5, false),
-				},
-				content_hooks = {
-					starter.gen_hook.adding_bullet(),
-					starter.gen_hook.aligning("center", "center"),
-				},
-			})
-		end,
-	},
-	--]]
 
 	{
 		"nvim-mini/mini.animate",

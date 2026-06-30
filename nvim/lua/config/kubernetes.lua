@@ -589,6 +589,16 @@ function M.setup()
 	end, {
 		desc = "Attach Kubernetes schema to the current YAML buffer",
 	})
+
+	vim.keymap.set("n", "<leader>cks", "<cmd>KubeCrdSchemas<CR>", {
+		desc = "Generate CRD schemas from cluster",
+	})
+	vim.keymap.set("n", "<leader>ckl", "<cmd>KubeCrdSchemasLocal<CR>", {
+		desc = "Generate CRD schemas from local files",
+	})
+	vim.keymap.set("n", "<leader>cka", "<cmd>KubeSchemaAttach<CR>", {
+		desc = "Attach Kubernetes schema to buffer",
+	})
 end
 
 return M

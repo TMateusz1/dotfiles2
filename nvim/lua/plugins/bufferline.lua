@@ -24,11 +24,6 @@ for i = 1, 9 do
 		("<cmd>BufferLineGoToBuffer %d<CR>"):format(i),
 		desc = ("Go to buffer %d"):format(i),
 	})
-	table.insert(keys, {
-		("<leader>b%d"):format(i),
-		("<cmd>BufferLineGoToBuffer %d<CR>"):format(i),
-		desc = ("Go to buffer %d"):format(i),
-	})
 end
 
 return {

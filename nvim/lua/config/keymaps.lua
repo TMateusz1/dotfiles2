@@ -149,10 +149,6 @@ keymap("n", "[q", function()
 	end
 	vim.cmd("normal! zz")
 end, { desc = "Previous quickfix item" })
-keymap("n", "<leader>cks", "<cmd>KubeCrdSchemas<CR>", { desc = "Generate CRD schemas from cluster" })
-keymap("n", "<leader>ckl", "<cmd>KubeCrdSchemasLocal<CR>", { desc = "Generate CRD schemas from local files" })
-keymap("n", "<leader>cka", "<cmd>KubeSchemaAttach<CR>", { desc = "Attach Kubernetes schema to buffer" })
-
 keymap("n", "<leader>xq", function()
 	for _, win in pairs(vim.fn.getwininfo()) do
 		if win.quickfix == 1 then
