@@ -73,4 +73,9 @@ if [[ -r "$HOME/.zshrc.local" ]]; then
   source "$HOME/.zshrc.local"
 fi
 
+if [[ -r $HOME/.funcs.zshrc ]]; then
+  source "$HOME/.funcs.zshrc"
+fi
+
+
 unfunction path_append_if_dir zsh_plugin_exists 2>/dev/null

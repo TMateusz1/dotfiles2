@@ -1,0 +1,13 @@
+# Languages Support
+golang.go
+redhat.vscode-yaml
+ms-kubernetes-tools.vscode-kubernetes-tools
+tim-koehler.helm-intellisense
+
+
+# AI
+openai.chatgpt
+
+# UI
+catppuccin.catppuccin-vsc
+catppuccin.catppuccin-vsc-icons
