@@ -175,24 +175,6 @@ return {
 		},
 	},
 
-	{
-		"nvim-mini/mini.tabline",
-		version = false,
-		dependencies = {
-			"nvim-mini/mini.icons",
-		},
-		event = "VeryLazy",
-		opts = {
-			show_icons = true,
-		},
-		keys = {
-			-- mini.tabline has no custom cycle commands; plain buffer nav keeps
-			-- the same ]b / [b motions bufferline used.
-			{ "]b", "<cmd>bnext<CR>", desc = "Next buffer" },
-			{ "[b", "<cmd>bprevious<CR>", desc = "Previous buffer" },
-		},
-	},
-
 	--[[
 	{
 		"nvim-mini/mini.files",

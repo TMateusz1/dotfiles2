@@ -651,13 +651,16 @@ Mappings:
 
 ### Tabline and Statusline
 
-Both are mini.nvim modules (declared in `nvim/lua/plugins/minis.lua` and `nvim/lua/plugins/statusline.lua`), themed automatically by catppuccin's `mini` integration (`MiniTabline*` / `MiniStatusline*` groups) — no hand-built palette table.
+The tabline is `bufferline.nvim` (`nvim/lua/plugins/bufferline.lua`) and the statusline is `mini.statusline` (`nvim/lua/plugins/statusline.lua`). Both are themed by Catppuccin integrations — no hand-built palette table.
 
-`mini.tabline` renders buffer tabs:
+`bufferline.nvim` renders buffer tabs:
 
-- `]b` next buffer, `[b` previous buffer (plain `:bnext` / `:bprevious`).
-- File icons come from mini.icons; modified buffers and same-name disambiguation are handled automatically.
-- Note: it has no buffer-pick or close-button equivalents (the old `<leader>bp`/`bX`/`bL`/`bH` are gone); use `<leader>fb` to jump buffers and `<leader>bx` to delete one.
+- `]b` / `[b` and `<leader>bl` / `<leader>bh` move next/previous in bufferline order.
+- `<leader>fb` opens the FZF-Lua buffer picker.
+- `<leader>bb` picks a visible buffer by label; `<leader>bp` pins/unpins the current buffer.
+- `<leader>1`..`<leader>9` jump to visible buffer slots; `<A-1>`..`<A-9>` and `<leader>b1`..`<leader>b9` are aliases. `<leader>b0` jumps to the last visible buffer.
+- `<leader>b,` / `<leader>b.` move the current buffer left/right; `<leader>bH` / `<leader>bL` / `<leader>bX` close buffers left/right/other.
+- `<leader>bx` still uses `mini.bufremove` for layout-preserving deletion.
 
 `mini.statusline` configures the global statusline (intentionally compact):
 
@@ -681,9 +684,8 @@ multi-character rules also pair Markdown fences (` ``` `).
 - `mini.surround` — surround operations (mappings below).
 - `mini.animate` — smooth scroll animation for Page Up/Down, `<C-d>`, `<C-u>`, and other viewport changes; cursor and window animations stay off.
 - `mini.map` — optional compact right-side file overview, toggled with `<leader>um`.
-- `mini.icons` — icons plus `nvim-web-devicons` compatibility (used by neo-tree, mini.tabline, mini.statusline, blink, and more).
+- `mini.icons` — icons plus `nvim-web-devicons` compatibility (used by neo-tree, bufferline, mini.statusline, blink, and more).
 - `mini.bufremove` — layout-preserving buffer deletion, wired into `<leader>q`, `<leader>W`, and `<leader>bx`.
-- `mini.tabline` — buffer tabs (see the Tabline and Statusline section).
 - `mini.statusline` — the global statusline (see the Tabline and Statusline section).
 - `mini.indentscope` — bolder line for the active indent scope (indentation-based), layered on the static indent-blankline guides (see Indent Guides). Disabled in special buffers; themed by the catppuccin `mini` integration.
 
@@ -827,7 +829,7 @@ It owns:
 - `vim.ui.select`, so code actions and other selection prompts use the same picker backend.
 - FZF-Lua's builtin previewer for file, grep, git, and diagnostic results.
 
-Buffer deletion, the tabline, the statusline, scrolling animation, and the minimap are handled by mini.nvim (`mini.bufremove`, `mini.tabline`, `mini.statusline`, `mini.animate`, `mini.map`); the file explorer is neo-tree; notifications and the command line are handled by noice, while ordinary messages stay native. (`mini.starter` is currently commented out.) See the Mini Plugins, File Explorers, and Notifications sections.
+Buffer deletion, the statusline, scrolling animation, and the minimap are handled by mini.nvim (`mini.bufremove`, `mini.statusline`, `mini.animate`, `mini.map`); the tabline is handled by bufferline.nvim; the file explorer is neo-tree; notifications and the command line are handled by noice, while ordinary messages stay native. (`mini.starter` is currently commented out.) See the Mini Plugins, File Explorers, and Notifications sections.
 
 ### Notifications and Command Line
 

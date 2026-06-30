@@ -44,13 +44,16 @@ return {
 				{ "<leader>t", group = "Tests" },
 				{ "<leader>u", group = "UI / Toggles" },
 
-				-- Harpoon
-				{ "<leader>a", desc = "Harpoon add file" },
-				{ "<leader>A", desc = "Harpoon edit list" },
-				{ "<leader>1", desc = "Harpoon file 1" },
-				{ "<leader>2", desc = "Harpoon file 2" },
-				{ "<leader>3", desc = "Harpoon file 3" },
-				{ "<leader>4", desc = "Harpoon file 4" },
+				-- Direct buffer slots
+				{ "<leader>1", desc = "Go to buffer 1" },
+				{ "<leader>2", desc = "Go to buffer 2" },
+				{ "<leader>3", desc = "Go to buffer 3" },
+				{ "<leader>4", desc = "Go to buffer 4" },
+				{ "<leader>5", desc = "Go to buffer 5" },
+				{ "<leader>6", desc = "Go to buffer 6" },
+				{ "<leader>7", desc = "Go to buffer 7" },
+				{ "<leader>8", desc = "Go to buffer 8" },
+				{ "<leader>9", desc = "Go to buffer 9" },
 
 				-- Direct leader mappings
 				{ "<leader>e", desc = "Toggle file explorer" },
@@ -66,8 +69,14 @@ return {
 				-- Buffers
 				{ "[b", desc = "Previous buffer" },
 				{ "]b", desc = "Next buffer" },
+				{ "<leader>bh", desc = "Previous buffer" },
+				{ "<leader>bl", desc = "Next buffer" },
 				{ "<leader>bx", desc = "Delete buffer" },
-				{ "<leader>bp", desc = "Pick buffer" },
+				{ "<leader>bb", desc = "Pick buffer" },
+				{ "<leader>bp", desc = "Pin buffer" },
+				{ "<leader>b,", desc = "Move buffer left" },
+				{ "<leader>b.", desc = "Move buffer right" },
+				{ "<leader>b0", desc = "Go to last visible buffer" },
 				{ "<leader>bX", desc = "Delete other buffers" },
 				{ "<leader>bL", desc = "Delete buffers to the right" },
 				{ "<leader>bH", desc = "Delete buffers to the left" },
@@ -97,6 +106,7 @@ return {
 
 				-- FZF picker
 				{ "<leader>ff", desc = "Find files" },
+				{ "<leader>fb", desc = "Find buffers" },
 				{ "<leader>fG", desc = "Git changed files" },
 				{ "<leader>fg", desc = "Live grep" },
 				{ "<leader>fr", desc = "Recent files" },

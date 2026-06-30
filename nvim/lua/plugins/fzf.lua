@@ -131,10 +131,10 @@ return {
 			opts.actions = {
 				files = {
 					["default"] = actions.file_edit_or_qf,
-					["ctrl-s"]  = actions.file_split,
-					["ctrl-v"]  = actions.file_vsplit,
-					["ctrl-t"]  = actions.file_tabedit,
-					["ctrl-q"]  = actions.file_sel_to_qf,
+					["ctrl-s"] = actions.file_split,
+					["ctrl-v"] = actions.file_vsplit,
+					["ctrl-t"] = actions.file_tabedit,
+					["ctrl-q"] = actions.file_sel_to_qf,
 				},
 			}
 			require("fzf-lua").setup(opts)
@@ -183,6 +183,20 @@ return {
 					fzf().oldfiles()
 				end,
 				desc = "Recent files",
+			},
+			{
+				"<leader>fb",
+				function()
+					local nbsp = require("fzf-lua.utils").nbsp
+					fzf().buffers({
+						fzf_opts = {
+							["--delimiter"] = string.format("[%s]", nbsp),
+							["--with-nth"] = "4..",
+							["--nth"] = "4..",
+						},
+					})
+				end,
+				desc = "Find buffers",
 			},
 			{
 				"<leader>fw",

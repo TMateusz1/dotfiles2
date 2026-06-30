@@ -182,6 +182,7 @@ return {
 				mason = true,
 				neotree = true,
 				cmp = true,
+				bufferline = true,
 				mini = true,
 				noice = true,
 				notify = true,
@@ -193,26 +194,6 @@ return {
 		config = function(_, opts)
 			require("catppuccin").setup(opts)
 			vim.cmd.colorscheme("catppuccin")
-
-			-- Active buffer tab: keep catppuccin's bold + italic but strip the
-			-- red underline it draws under the current label. Done as a full
-			-- nvim_set_hl replace (not custom_highlights, whose deep-merge keeps
-			-- the underline flag); re-applied on the <leader>uc colorscheme reload.
-			local function fix_tabline_hl()
-				local hl = vim.api.nvim_get_hl(0, { name = "MiniTablineCurrent", link = false })
-				hl.underline = nil
-				hl.undercurl = nil
-				hl.sp = nil
-				hl.bold = true
-				hl.italic = true
-				vim.api.nvim_set_hl(0, "MiniTablineCurrent", hl)
-			end
-			fix_tabline_hl()
-			vim.api.nvim_create_autocmd("ColorScheme", {
-				pattern = "catppuccin",
-				callback = fix_tabline_hl,
-				desc = "Strip the red underline from the active mini.tabline label",
-			})
 
 			vim.keymap.set("n", "<leader>uc", function()
 				set_vscode_syntax(not vscode_syntax_enabled)
