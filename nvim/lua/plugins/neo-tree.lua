@@ -1,3 +1,5 @@
+-- Disabled while trying mini.files. Kept here intact for easy rollback.
+--[[
 return {
 	{
 		"nvim-neo-tree/neo-tree.nvim",
@@ -90,3 +92,6 @@ return {
 		},
 	},
 }
+]]
+
+return {}

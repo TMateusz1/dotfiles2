@@ -37,7 +37,187 @@ local function smart_close()
 
 	require("mini.bufremove").delete(0)
 end
+
+local root_markers = {
+	".git",
+	"go.mod",
+	"package.json",
+	"Cargo.toml",
+	"pyproject.toml",
+	"flake.nix",
+	"Makefile",
+}
+
+local function existing_path_or_cwd(path)
+	if path ~= "" and vim.uv.fs_stat(path) ~= nil then
+		return path
+	end
+
+	return vim.fn.getcwd()
+end
+
+local function current_buffer_path()
+	return existing_path_or_cwd(vim.api.nvim_buf_get_name(0))
+end
+
+local function project_root()
+	local path = current_buffer_path()
+	local stat = vim.uv.fs_stat(path)
+	local start = stat and stat.type == "directory" and path or vim.fs.dirname(path)
+	local marker = vim.fs.find(root_markers, { path = start, upward = true })[1]
+
+	return marker and vim.fs.dirname(marker) or vim.fn.getcwd()
+end
+
+local minifiles_preview_scheduled = false
+
+local function focused_minifiles_entry()
+	local files = require("mini.files")
+	local state = files.get_explorer_state()
+
+	if state == nil then
+		return nil, nil
+	end
+
+	local focused_path = state.branch[state.depth_focus]
+
+	for _, window in ipairs(state.windows) do
+		if window.path == focused_path and vim.api.nvim_win_is_valid(window.win_id) then
+			local buf_id = vim.api.nvim_win_get_buf(window.win_id)
+			local line = vim.api.nvim_win_get_cursor(window.win_id)[1]
+			if line < 1 or line > vim.api.nvim_buf_line_count(buf_id) then
+				return nil, state
+			end
+
+			local ok, entry = pcall(files.get_fs_entry, buf_id, line)
+			if not ok then
+				return nil, state
+			end
+
+			return entry, state
+		end
+	end
+
+	return nil, state
+end
+
+local function update_minifiles_directory_preview()
+	if minifiles_preview_scheduled then
+		return
+	end
+
+	minifiles_preview_scheduled = true
+
+	vim.schedule(function()
+		minifiles_preview_scheduled = false
+
+		local entry, state = focused_minifiles_entry()
+		if entry == nil or state == nil then
+			return
+		end
+
+		local next_path = state.branch[state.depth_focus + 1]
+
+		if entry.fs_type == "directory" and next_path == entry.path then
+			return
+		end
+
+		if entry.fs_type ~= "directory" and next_path == nil then
+			return
+		end
+
+		local branch = {}
+		for depth = 1, state.depth_focus do
+			branch[depth] = state.branch[depth]
+		end
+		if entry.fs_type == "directory" then
+			branch[state.depth_focus + 1] = entry.path
+		end
+
+		require("mini.files").set_branch(branch, { depth_focus = state.depth_focus })
+	end)
+end
+
 return {
+	{
+		"nvim-mini/mini.files",
+		version = false,
+		lazy = false,
+		dependencies = {
+			"nvim-mini/mini.icons",
+		},
+		opts = {
+			mappings = {
+				close = "q",
+				go_in = "<CR>",
+				go_in_plus = "<S-CR>",
+				go_out = "<Left>",
+				go_out_plus = "<S-Left>",
+				mark_goto = "'",
+				mark_set = "m",
+				reset = "",
+				reveal_cwd = "@",
+				show_help = "g?",
+				synchronize = "=",
+				trim_left = "<",
+				trim_right = ">",
+			},
+			options = {
+				permanent_delete = false,
+				use_as_default_explorer = true,
+				lsp_timeout = 1000,
+			},
+			windows = {
+				preview = false,
+				width_focus = 44,
+				width_nofocus = 22,
+			},
+		},
+		config = function(_, opts)
+			require("mini.files").setup(opts)
+
+			vim.api.nvim_create_autocmd("User", {
+				group = vim.api.nvim_create_augroup("user_minifiles", { clear = true }),
+				pattern = "MiniFilesBufferCreate",
+				callback = function(args)
+					local map_opts = { buffer = args.data.buf_id, desc = "Open entry" }
+
+					vim.keymap.set("n", "<Right>", function()
+						require("mini.files").go_in()
+					end, map_opts)
+					vim.keymap.set("n", "l", function()
+						require("mini.files").go_in()
+					end, map_opts)
+					vim.keymap.set("n", "h", function()
+						require("mini.files").go_out()
+					end, { buffer = args.data.buf_id, desc = "Go to parent" })
+				end,
+			})
+
+			vim.api.nvim_create_autocmd("User", {
+				group = vim.api.nvim_create_augroup("user_minifiles", { clear = false }),
+				pattern = "MiniFilesWindowUpdate",
+				callback = update_minifiles_directory_preview,
+			})
+		end,
+		keys = {
+			{
+				"<leader>e",
+				function()
+					require("mini.files").open(current_buffer_path(), false)
+				end,
+				desc = "Explore current file directory",
+			},
+			{
+				"<leader>E",
+				function()
+					require("mini.files").open(project_root(), false)
+				end,
+				desc = "Explore project root",
+			},
+		},
+	},
+
 	{
 		"nvim-mini/mini.ai",
 		version = false,

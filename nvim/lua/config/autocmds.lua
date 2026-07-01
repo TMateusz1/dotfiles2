@@ -66,7 +66,7 @@ vim.api.nvim_create_autocmd("WinLeave", {
 	group = augroup,
 	callback = function()
 		-- Only normal file windows: special buffers (FZF picker,
-		-- quickfix, neo-tree) manage their own cursorline and would lose
+		-- quickfix, file explorers) manage their own cursorline and would lose
 		-- their selection highlight if this fired for them.
 		if vim.bo.buftype == "" then
 			vim.wo.cursorline = false

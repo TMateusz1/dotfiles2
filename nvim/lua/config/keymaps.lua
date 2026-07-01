@@ -98,6 +98,23 @@ local function new_scratch_buffer()
 	vim.api.nvim_win_set_buf(0, bufnr)
 end
 
+local function confirm_save()
+	local name = vim.api.nvim_buf_get_name(0)
+	local label = name ~= "" and vim.fn.fnamemodify(name, ":~:.") or "[No Name]"
+
+	if vim.fn.confirm("Save " .. label .. "?", "&Yes\n&No", 1, "Question") ~= 1 then
+		return
+	end
+
+	local ok, err = pcall(vim.cmd.write)
+
+	if not ok then
+		vim.notify("Save failed: " .. tostring(err), vim.log.levels.ERROR, {
+			title = "Buffer",
+		})
+	end
+end
+
 keymap("n", "<Esc>", function()
 	if close_floating_windows() then
 		return
@@ -189,7 +206,8 @@ end, { desc = "Toggle virtual-line diagnostics" })
 
 -- Save
 -- leaderW is mapped in minis.bufremove as save + buffer delete, same as leaderw + leaderq
-keymap("n", "<leader>w", "<cmd>write<CR>", { desc = "Save file" })
+keymap("n", "=", confirm_save, { desc = "Save file" })
+keymap("n", "<leader>w", confirm_save, { desc = "Save file" })
 -- Quit
 -- <leader>q is mapped in mini.bufremove: it closes special/floating windows
 -- and otherwise deletes the current buffer while keeping the window.
