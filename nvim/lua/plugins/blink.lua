@@ -168,6 +168,10 @@ return {
 					},
 					lsp = {
 						fallbacks = {},
+						score_offset = 5,
+					},
+					buffer = {
+						score_offset = -3,
 					},
 					snippets = {
 						opts = {
