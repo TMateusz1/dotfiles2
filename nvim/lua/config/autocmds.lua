@@ -32,9 +32,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
 	group = augroup,
 	callback = function()
-		if vim.bo.buftype == "" then
-			vim.cmd("checktime")
-		end
+		vim.cmd("checktime")
 	end,
 	desc = "Reload files changed on disk",
 })

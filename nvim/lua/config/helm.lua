@@ -84,14 +84,15 @@ local function parse_values_file(file, root)
 			local indent, key = line:match("^(%s*)([%w_.-]+)%s*:")
 
 			if key then
-				local level = math.floor(#indent / 2) + 1
-				stack[level] = key
-
-				for index = level + 1, #stack do
-					stack[index] = nil
+				while #stack > 0 and stack[#stack].indent >= #indent do
+					table.remove(stack)
 				end
+				stack[#stack + 1] = { indent = #indent, key = key }
 
-				local path = table.concat(stack, ".", 1, level)
+				local keys = vim.tbl_map(function(entry)
+					return entry.key
+				end, stack)
+				local path = table.concat(keys, ".")
 				items[#items + 1] = {
 					label = path,
 					path = path,

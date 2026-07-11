@@ -11,7 +11,7 @@ local root_markers = {
 }
 
 local function existing_path_or_cwd(path)
-	if path ~= "" and vim.uv.fs_stat(path) ~= nil then
+	if path ~= "" then
 		return path
 	end
 

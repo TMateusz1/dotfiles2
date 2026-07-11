@@ -125,26 +125,47 @@ return {
 				end, "Toggle inline blame")
 
 				-- Diff
-				local function close_git_diff()
-					vim.cmd("diffoff!")
-					vim.cmd("only")
-				end
+				local function map_q_to_close_diff(source_win)
+					local diff_win = vim.api.nvim_get_current_win()
 
-				local function map_q_to_close_diff()
-					vim.keymap.set("n", "q", close_git_diff, {
-						buffer = true,
+					if diff_win == source_win then
+						for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+							if win ~= source_win and vim.wo[win].diff then
+								diff_win = win
+								break
+							end
+						end
+					end
+
+					local diff_buf = vim.api.nvim_win_get_buf(diff_win)
+					vim.keymap.set("n", "q", function()
+						if vim.api.nvim_win_is_valid(diff_win) then
+							vim.api.nvim_win_close(diff_win, false)
+						end
+						if vim.api.nvim_win_is_valid(source_win) then
+							vim.api.nvim_set_current_win(source_win)
+							vim.cmd("diffoff")
+						end
+					end, {
+						buffer = diff_buf,
 						desc = "Close git diff",
 					})
 				end
 
 				map("n", "<leader>ghd", function()
+					local source_win = vim.api.nvim_get_current_win()
 					gitsigns.diffthis()
-					vim.schedule(map_q_to_close_diff)
+					vim.schedule(function()
+						map_q_to_close_diff(source_win)
+					end)
 				end, "Diff this file")
 
 				map("n", "<leader>ghD", function()
+					local source_win = vim.api.nvim_get_current_win()
 					gitsigns.diffthis("~")
-					vim.schedule(map_q_to_close_diff)
+					vim.schedule(function()
+						map_q_to_close_diff(source_win)
+					end)
 				end, "Diff this file against previous commit")
 
 				-- Toggles

@@ -272,9 +272,13 @@ local function configure_keymaps()
 				})
 			end
 
-			map("n", "gd", function()
-				require("fzf-lua").lsp_definitions()
-			end, "Go to definition")
+			if vim.bo[bufnr].filetype == "helm" or vim.bo[bufnr].filetype == "yaml.helm-values" then
+				map("n", "gd", require("config.helm").smart_definition, "Helm value definition")
+			else
+				map("n", "gd", function()
+					require("fzf-lua").lsp_definitions()
+				end, "Go to definition")
+			end
 			map("n", "gD", function()
 				require("fzf-lua").lsp_declarations()
 			end, "Go to declaration")

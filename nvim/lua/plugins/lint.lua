@@ -29,7 +29,7 @@ return {
 
 			lint.linters.robocop.args = {
 				"check",
-				"--format",
+				"--issue-format",
 				"{source}:{line}:{col}:{severity}:{rule_id}:{desc}",
 			}
 
