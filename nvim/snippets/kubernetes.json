@@ -1,0 +1,410 @@
+{
+  "Kubernetes Deployment": {
+    "prefix": [
+      "k-deploy",
+      "k-deployment"
+    ],
+    "description": "Minimal Kubernetes Deployment",
+    "body": [
+      "apiVersion: apps/v1",
+      "kind: Deployment",
+      "metadata:",
+      "  name: ${1:app}",
+      "  labels:",
+      "    app: ${1:app}",
+      "spec:",
+      "  replicas: ${2:1}",
+      "  selector:",
+      "    matchLabels:",
+      "      app: ${1:app}",
+      "  template:",
+      "    metadata:",
+      "      labels:",
+      "        app: ${1:app}",
+      "    spec:",
+      "      containers:",
+      "        - name: ${1:app}",
+      "          image: ${3:image:tag}",
+      "          ports:",
+      "            - containerPort: ${4:8080}",
+      "          ${0}"
+    ]
+  },
+  "Kubernetes StatefulSet": {
+    "prefix": "k-sts",
+    "description": "Minimal Kubernetes StatefulSet",
+    "body": [
+      "apiVersion: apps/v1",
+      "kind: StatefulSet",
+      "metadata:",
+      "  name: ${1:app}",
+      "spec:",
+      "  serviceName: ${1:app}",
+      "  replicas: ${2:1}",
+      "  selector:",
+      "    matchLabels:",
+      "      app: ${1:app}",
+      "  template:",
+      "    metadata:",
+      "      labels:",
+      "        app: ${1:app}",
+      "    spec:",
+      "      containers:",
+      "        - name: ${1:app}",
+      "          image: ${3:image:tag}",
+      "          ports:",
+      "            - containerPort: ${4:8080}",
+      "          ${0}",
+      "  volumeClaimTemplates:",
+      "    - metadata:",
+      "        name: data",
+      "      spec:",
+      "        accessModes: [\"ReadWriteOnce\"]",
+      "        resources:",
+      "          requests:",
+      "            storage: ${5:1Gi}"
+    ]
+  },
+  "Kubernetes Service": {
+    "prefix": "k-svc",
+    "description": "Minimal Kubernetes Service",
+    "body": [
+      "apiVersion: v1",
+      "kind: Service",
+      "metadata:",
+      "  name: ${1:app}",
+      "spec:",
+      "  selector:",
+      "    app: ${1:app}",
+      "  ports:",
+      "    - port: ${2:80}",
+      "      targetPort: ${3:8080}",
+      "      protocol: TCP",
+      "  type: ${4:ClusterIP}",
+      "  ${0}"
+    ]
+  },
+  "Kubernetes ConfigMap": {
+    "prefix": "k-cm",
+    "description": "Minimal Kubernetes ConfigMap",
+    "body": [
+      "apiVersion: v1",
+      "kind: ConfigMap",
+      "metadata:",
+      "  name: ${1:config}",
+      "data:",
+      "  ${2:key}: ${3:value}",
+      "${0}"
+    ]
+  },
+  "Kubernetes Secret": {
+    "prefix": "k-secret",
+    "description": "Minimal Kubernetes Secret",
+    "body": [
+      "apiVersion: v1",
+      "kind: Secret",
+      "metadata:",
+      "  name: ${1:secret}",
+      "type: ${2:Opaque}",
+      "stringData:",
+      "  ${3:key}: ${4:value}",
+      "${0}"
+    ]
+  },
+  "Kubernetes ServiceAccount": {
+    "prefix": "k-sa",
+    "description": "Minimal Kubernetes ServiceAccount",
+    "body": [
+      "apiVersion: v1",
+      "kind: ServiceAccount",
+      "metadata:",
+      "  name: ${1:controller}",
+      "  namespace: ${2:default}",
+      "${0}"
+    ]
+  },
+  "Kubernetes Ingress": {
+    "prefix": "k-ingress",
+    "description": "Minimal Kubernetes Ingress",
+    "body": [
+      "apiVersion: networking.k8s.io/v1",
+      "kind: Ingress",
+      "metadata:",
+      "  name: ${1:app}",
+      "spec:",
+      "  rules:",
+      "    - host: ${2:example.local}",
+      "      http:",
+      "        paths:",
+      "          - path: /",
+      "            pathType: Prefix",
+      "            backend:",
+      "              service:",
+      "                name: ${1:app}",
+      "                port:",
+      "                  number: ${3:80}",
+      "  ${0}"
+    ]
+  },
+  "Kubernetes Namespace": {
+    "prefix": "k-ns",
+    "description": "Minimal Kubernetes Namespace",
+    "body": [
+      "apiVersion: v1",
+      "kind: Namespace",
+      "metadata:",
+      "  name: ${1:namespace}",
+      "${0}"
+    ]
+  },
+  "Kubernetes Job": {
+    "prefix": "k-job",
+    "description": "Minimal Kubernetes Job",
+    "body": [
+      "apiVersion: batch/v1",
+      "kind: Job",
+      "metadata:",
+      "  name: ${1:job}",
+      "spec:",
+      "  template:",
+      "    spec:",
+      "      restartPolicy: Never",
+      "      containers:",
+      "        - name: ${1:job}",
+      "          image: ${2:image:tag}",
+      "          ${0}"
+    ]
+  },
+  "Kubernetes CronJob": {
+    "prefix": "k-cronjob",
+    "description": "Minimal Kubernetes CronJob",
+    "body": [
+      "apiVersion: batch/v1",
+      "kind: CronJob",
+      "metadata:",
+      "  name: ${1:cronjob}",
+      "spec:",
+      "  schedule: ${2:\"*/5 * * * *\"}",
+      "  jobTemplate:",
+      "    spec:",
+      "      template:",
+      "        spec:",
+      "          restartPolicy: OnFailure",
+      "          containers:",
+      "            - name: ${1:cronjob}",
+      "              image: ${3:image:tag}",
+      "              ${0}"
+    ]
+  },
+  "Kubernetes Pod": {
+    "prefix": "k-pod",
+    "description": "Minimal Kubernetes Pod",
+    "body": [
+      "apiVersion: v1",
+      "kind: Pod",
+      "metadata:",
+      "  name: ${1:pod}",
+      "  labels:",
+      "    app: ${1:pod}",
+      "spec:",
+      "  containers:",
+      "    - name: ${1:pod}",
+      "      image: ${2:image:tag}",
+      "      ${0}"
+    ]
+  },
+  "Kubernetes PVC": {
+    "prefix": "k-pvc",
+    "description": "Minimal PersistentVolumeClaim",
+    "body": [
+      "apiVersion: v1",
+      "kind: PersistentVolumeClaim",
+      "metadata:",
+      "  name: ${1:pvc}",
+      "spec:",
+      "  accessModes:",
+      "    - ReadWriteOnce",
+      "  storageClassName: ${2:standard}",
+      "  resources:",
+      "    requests:",
+      "      storage: ${3:1Gi}",
+      "${0}"
+    ]
+  },
+  "Kubernetes CRD": {
+    "prefix": "k-crd",
+    "description": "Minimal Kubernetes CustomResourceDefinition",
+    "body": [
+      "apiVersion: apiextensions.k8s.io/v1",
+      "kind: CustomResourceDefinition",
+      "metadata:",
+      "  name: ${1:resources}.${2:example.com}",
+      "spec:",
+      "  group: ${2:example.com}",
+      "  names:",
+      "    kind: ${3:Kind}",
+      "    listKind: ${3:Kind}List",
+      "    plural: ${1:resources}",
+      "    singular: ${4:resource}",
+      "  scope: ${5:Namespaced}",
+      "  versions:",
+      "    - name: ${6:v1alpha1}",
+      "      served: true",
+      "      storage: true",
+      "      schema:",
+      "        openAPIV3Schema:",
+      "          type: object",
+      "          properties:",
+      "            spec:",
+      "              type: object",
+      "            status:",
+      "              type: object",
+      "      ${0}"
+    ]
+  },
+  "Kubernetes Custom Resource": {
+    "prefix": "k-cr",
+    "description": "Operator Custom Resource sample",
+    "body": [
+      "apiVersion: ${1:example.com}/${2:v1alpha1}",
+      "kind: ${3:MyKind}",
+      "metadata:",
+      "  name: ${4:sample}",
+      "  namespace: ${5:default}",
+      "spec:",
+      "  ${0}"
+    ]
+  },
+  "Kubernetes RBAC Role": {
+    "prefix": "k-role",
+    "description": "Minimal Kubernetes Role",
+    "body": [
+      "apiVersion: rbac.authorization.k8s.io/v1",
+      "kind: Role",
+      "metadata:",
+      "  name: ${1:role}",
+      "  namespace: ${2:default}",
+      "rules:",
+      "  - apiGroups: [\"${3:example.com}\"]",
+      "    resources: [\"${4:resources}\"]",
+      "    verbs: [\"get\", \"list\", \"watch\", \"create\", \"update\", \"patch\", \"delete\"]",
+      "${0}"
+    ]
+  },
+  "Kubernetes ClusterRole": {
+    "prefix": "k-clusterrole",
+    "description": "Minimal Kubernetes ClusterRole",
+    "body": [
+      "apiVersion: rbac.authorization.k8s.io/v1",
+      "kind: ClusterRole",
+      "metadata:",
+      "  name: ${1:role}",
+      "rules:",
+      "  - apiGroups: [\"${2:example.com}\"]",
+      "    resources: [\"${3:resources}\"]",
+      "    verbs: [\"get\", \"list\", \"watch\", \"create\", \"update\", \"patch\", \"delete\"]",
+      "${0}"
+    ]
+  },
+  "Kubernetes RoleBinding": {
+    "prefix": "k-rb",
+    "description": "Minimal Kubernetes RoleBinding",
+    "body": [
+      "apiVersion: rbac.authorization.k8s.io/v1",
+      "kind: RoleBinding",
+      "metadata:",
+      "  name: ${1:rolebinding}",
+      "  namespace: ${2:default}",
+      "subjects:",
+      "  - kind: ServiceAccount",
+      "    name: ${3:serviceaccount}",
+      "    namespace: ${2:default}",
+      "roleRef:",
+      "  apiGroup: rbac.authorization.k8s.io",
+      "  kind: Role",
+      "  name: ${4:role}",
+      "${0}"
+    ]
+  },
+  "Kubernetes ClusterRoleBinding": {
+    "prefix": "k-crb",
+    "description": "Minimal Kubernetes ClusterRoleBinding",
+    "body": [
+      "apiVersion: rbac.authorization.k8s.io/v1",
+      "kind: ClusterRoleBinding",
+      "metadata:",
+      "  name: ${1:rolebinding}",
+      "subjects:",
+      "  - kind: ServiceAccount",
+      "    name: ${2:serviceaccount}",
+      "    namespace: ${3:default}",
+      "roleRef:",
+      "  apiGroup: rbac.authorization.k8s.io",
+      "  kind: ClusterRole",
+      "  name: ${4:clusterrole}",
+      "${0}"
+    ]
+  },
+  "Kubernetes HPA": {
+    "prefix": "k-hpa",
+    "description": "Minimal HorizontalPodAutoscaler (autoscaling/v2)",
+    "body": [
+      "apiVersion: autoscaling/v2",
+      "kind: HorizontalPodAutoscaler",
+      "metadata:",
+      "  name: ${1:app}",
+      "spec:",
+      "  scaleTargetRef:",
+      "    apiVersion: apps/v1",
+      "    kind: Deployment",
+      "    name: ${1:app}",
+      "  minReplicas: ${2:1}",
+      "  maxReplicas: ${3:10}",
+      "  metrics:",
+      "    - type: Resource",
+      "      resource:",
+      "        name: cpu",
+      "        target:",
+      "          type: Utilization",
+      "          averageUtilization: ${4:80}",
+      "${0}"
+    ]
+  },
+  "Kubernetes PDB": {
+    "prefix": "k-pdb",
+    "description": "Minimal PodDisruptionBudget",
+    "body": [
+      "apiVersion: policy/v1",
+      "kind: PodDisruptionBudget",
+      "metadata:",
+      "  name: ${1:app}",
+      "spec:",
+      "  minAvailable: ${2:1}",
+      "  selector:",
+      "    matchLabels:",
+      "      app: ${1:app}",
+      "${0}"
+    ]
+  },
+  "Kubernetes NetworkPolicy": {
+    "prefix": "k-netpol",
+    "description": "Minimal Kubernetes NetworkPolicy",
+    "body": [
+      "apiVersion: networking.k8s.io/v1",
+      "kind: NetworkPolicy",
+      "metadata:",
+      "  name: ${1:allow-same-namespace}",
+      "  namespace: ${2:default}",
+      "spec:",
+      "  podSelector:",
+      "    matchLabels:",
+      "      app: ${3:app}",
+      "  policyTypes:",
+      "    - Ingress",
+      "  ingress:",
+      "    - from:",
+      "        - podSelector: {}",
+      "  ${0}"
+    ]
+  }
+}

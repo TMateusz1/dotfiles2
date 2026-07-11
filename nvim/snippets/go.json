@@ -1,0 +1,239 @@
+{
+  "if err": {
+    "prefix": "iferr",
+    "description": "if err != nil",
+    "body": ["if err != nil {", "\t${0:return err}", "}"]
+  },
+  "return wrapped error": {
+    "prefix": "errw",
+    "description": "return fmt.Errorf with wrapped error",
+    "body": [
+      "if err != nil {",
+      "\treturn fmt.Errorf(\"${1:message}: %w\", err)",
+      "}"
+    ]
+  },
+  "HTTP handler": {
+    "prefix": "httphandler",
+    "description": "net/http handler function",
+    "body": [
+      "func ${1:handler}(w http.ResponseWriter, r *http.Request) {",
+      "\t${0}",
+      "}"
+    ]
+  },
+  "HTTP handler method": {
+    "prefix": "httphandlerm",
+    "description": "net/http handler method",
+    "body": [
+      "func (${1:h} *${2:Handler}) ${3:Handle}(w http.ResponseWriter, r *http.Request) {",
+      "\t${0}",
+      "}"
+    ]
+  },
+  "test function": {
+    "prefix": "test",
+    "description": "testing function",
+    "body": ["func Test${1:Name}(t *testing.T) {", "\t${0}", "}"]
+  },
+  "subtest": {
+    "prefix": "tRun",
+    "description": "t.Run subtest",
+    "body": ["t.Run(\"${1:name}\", func(t *testing.T) {", "\t${0}", "})"]
+  },
+  "table test": {
+    "prefix": "tt",
+    "description": "table-driven test",
+    "body": [
+      "tests := []struct {",
+      "\tname string",
+      "\t${1:input} ${2:string}",
+      "\twant ${3:string}",
+      "}{",
+      "\t{",
+      "\t\tname: \"${4:name}\",",
+      "\t\t${1:input}: ${5:\"input\"},",
+      "\t\twant: ${6:\"want\"},",
+      "\t},",
+      "}",
+      "",
+      "for _, tt := range tests {",
+      "\tt.Run(tt.name, func(t *testing.T) {",
+      "\t\t${0}",
+      "\t})",
+      "}"
+    ]
+  },
+  "select with ctx": {
+    "prefix": "selectctx",
+    "description": "select statement",
+    "body": [
+      "select {",
+      "case ${1:v} := <-${2:ch}:",
+      "\t${0:_ = ${1:v}}",
+      "case <-${3:ctx}.Done():",
+      "\treturn ${3:ctx}.Err()",
+      "}"
+    ]
+  },
+  "controller reconcile": {
+    "prefix": "reconcile",
+    "description": "controller-runtime Reconcile method",
+    "body": [
+      "func (r *${1:Kind}Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {",
+      "\tlog := ctrl.LoggerFrom(ctx).WithValues(\"name\", req.NamespacedName)",
+      "\t_ = log",
+      "",
+      "\t${0:return ctrl.Result{}, nil}",
+      "}"
+    ]
+  },
+  "controller get object": {
+    "prefix": "kget",
+    "description": "controller-runtime client Get with IgnoreNotFound",
+    "body": [
+      "var ${1:obj} ${2:appv1.MyKind}",
+      "if err := r.Get(ctx, req.NamespacedName, &${1:obj}); err != nil {",
+      "\treturn ctrl.Result{}, client.IgnoreNotFound(err)",
+      "}",
+      "${0}"
+    ]
+  },
+  "controller set owner": {
+    "prefix": "ownerref",
+    "description": "controller-runtime SetControllerReference",
+    "body": [
+      "if err := ctrl.SetControllerReference(&${1:owner}, &${2:child}, r.Scheme); err != nil {",
+      "\treturn ctrl.Result{}, err",
+      "}",
+      "${0}"
+    ]
+  },
+  "controller add finalizer": {
+    "prefix": "kfinalizer",
+    "description": "Check and add finalizer",
+    "body": [
+      "if !controllerutil.ContainsFinalizer(&${1:obj}, ${2:\"example.com/finalizer\"}) {",
+      "\tcontrollerutil.AddFinalizer(&${1:obj}, ${2:\"example.com/finalizer\"})",
+      "\tif err := r.Update(ctx, &${1:obj}); err != nil {",
+      "\t\treturn ctrl.Result{}, err",
+      "\t}",
+      "}",
+      "${0}"
+    ]
+  },
+  "controller finalizer on delete": {
+    "prefix": "kfinremove",
+    "description": "Handle deletion: run cleanup and remove finalizer",
+    "body": [
+      "if !${1:obj}.DeletionTimestamp.IsZero() {",
+      "\tif controllerutil.ContainsFinalizer(&${1:obj}, ${2:\"example.com/finalizer\"}) {",
+      "\t\t${0:// cleanup logic here}",
+      "\t\tcontrollerutil.RemoveFinalizer(&${1:obj}, ${2:\"example.com/finalizer\"})",
+      "\t\tif err := r.Update(ctx, &${1:obj}); err != nil {",
+      "\t\t\treturn ctrl.Result{}, err",
+      "\t\t}",
+      "\t}",
+      "\treturn ctrl.Result{}, nil",
+      "}"
+    ]
+  },
+  "controller patch object": {
+    "prefix": "kpatch",
+    "description": "Patch object using MergeFrom",
+    "body": [
+      "patch := client.MergeFrom(${1:obj}.DeepCopy())",
+      "${0}",
+      "if err := r.Patch(ctx, &${1:obj}, patch); err != nil {",
+      "\treturn ctrl.Result{}, err",
+      "}"
+    ]
+  },
+  "controller patch status": {
+    "prefix": "kstatuspatch",
+    "description": "Patch status subresource using MergeFrom",
+    "body": [
+      "patch := client.MergeFrom(${1:obj}.DeepCopy())",
+      "${0}",
+      "if err := r.Status().Patch(ctx, &${1:obj}, patch); err != nil {",
+      "\treturn ctrl.Result{}, err",
+      "}"
+    ]
+  },
+  "controller create or update": {
+    "prefix": "kcreateupdate",
+    "description": "ctrl.CreateOrUpdate",
+    "body": [
+      "op, err := ctrl.CreateOrUpdate(ctx, r.Client, &${1:child}, func() error {",
+      "\t${0}",
+      "\treturn nil",
+      "})",
+      "if err != nil {",
+      "\treturn ctrl.Result{}, err",
+      "}",
+      "log.Info(\"reconciled\", \"resource\", client.ObjectKeyFromObject(&${1:child}), \"operation\", op)"
+    ]
+  },
+  "controller requeue after": {
+    "prefix": "krequeue",
+    "description": "Return ctrl.Result{RequeueAfter: ...}",
+    "body": ["return ctrl.Result{RequeueAfter: ${1:30 * time.Second}}, nil"]
+  },
+  "controller list objects": {
+    "prefix": "klist",
+    "description": "List objects with InNamespace selector",
+    "body": [
+      "var ${1:list} ${2:appv1.MyKindList}",
+      "if err := r.List(ctx, &${1:list},",
+      "\tclient.InNamespace(req.Namespace),",
+      "\t${0}); err != nil {",
+      "\treturn ctrl.Result{}, err",
+      "}"
+    ]
+  },
+  "controller set condition": {
+    "prefix": "kcondition",
+    "description": "Set status condition via apimeta.SetStatusCondition",
+    "body": [
+      "apimeta.SetStatusCondition(&${1:obj}.Status.Conditions, metav1.Condition{",
+      "\tType:               \"${2:Ready}\",",
+      "\tStatus:             metav1.ConditionTrue,",
+      "\tReason:             \"${3:Reconciled}\",",
+      "\tMessage:            \"${4:}\",",
+      "\tObservedGeneration: ${1:obj}.Generation,",
+      "})",
+      "${0}"
+    ]
+  },
+  "controller setup with manager": {
+    "prefix": "ksetup",
+    "description": "SetupWithManager with controller builder",
+    "body": [
+      "func (r *${1:Kind}Reconciler) SetupWithManager(mgr ctrl.Manager) error {",
+      "\treturn ctrl.NewControllerManagedBy(mgr).",
+      "\t\tFor(&${2:v1alpha1.Kind}{}).",
+      "\t\t${0}Complete(r)",
+      "}"
+    ]
+  },
+  "kubebuilder rbac marker": {
+    "prefix": "kmarker",
+    "description": "kubebuilder:rbac marker comments for controller",
+    "body": [
+      "//+kubebuilder:rbac:groups=${1:example.com},resources=${2:myresources},verbs=get;list;watch;create;update;patch;delete",
+      "//+kubebuilder:rbac:groups=${1:example.com},resources=${2:myresources}/status,verbs=get;update;patch",
+      "//+kubebuilder:rbac:groups=${1:example.com},resources=${2:myresources}/finalizers,verbs=update",
+      "${0}"
+    ]
+  },
+  "log info": {
+    "prefix": "logi",
+    "description": "log.Info with key-value pairs",
+    "body": ["log.Info(\"${1:message}\"${2:, \"${3:key}\", ${4:val}})"]
+  },
+  "log error": {
+    "prefix": "loge",
+    "description": "log.Error with key-value pairs",
+    "body": ["log.Error(err, \"${1:message}\"${2:, \"${3:key}\", ${4:val}})"]
+  }
+}

@@ -1,0 +1,30 @@
+theme = Catppuccin Mocha
+
+# Blue accent on the focused split divider (parity with kitty's active border).
+split-divider-color = #89b4fa
+
+background-opacity = 0.97
+
+window-padding-x = 0
+window-padding-y = 0
+window-padding-balance = false
+
+window-decoration = auto
+window-titlebar-background = #1e1e2e
+window-titlebar-foreground = #cdd6f4
+macos-titlebar-style = transparent
+
+font-family = FiraCode Nerd Font
+font-size = 16
+
+font-feature = calt=1
+font-feature = clig=1
+font-feature = liga=1
+
+# Allow trusted remote Neovim/tmux sessions to use OSC52 for both directions:
+# y/copy writes to the local clipboard, p/paste reads from it.
+clipboard-read = allow
+clipboard-write = allow
+
+# cursor blink
+cursor-style-blink = true

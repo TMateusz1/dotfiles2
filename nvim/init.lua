@@ -1,0 +1,8 @@
+require("config.options")
+require("config.keymaps")
+require("config.autocmds")
+require("config.filetypes")
+require("config.statusline").setup()
+require("config.helm").setup()
+require("config.kubernetes").setup()
+require("config.lazy")
