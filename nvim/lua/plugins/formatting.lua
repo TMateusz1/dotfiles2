@@ -48,6 +48,14 @@ return {
 		end,
 		opts = {
 			formatters = {
+				helm_template_spacing = {
+					command = "perl",
+					args = {
+						"-0pe",
+						[[s{\{\{(-?)(.*?)(-?)\}\}}{my $original=$&; my $body=$2; $body =~ s/^\s+|\s+$//g; $body =~ m{^/\*} ? $original : "{{".$1." ".$body." ".$3."}}"}gse]],
+					},
+				},
+
 				shfmt = {
 					prepend_args = function(_, ctx)
 						local file = vim.api.nvim_buf_get_name(ctx.buf)
@@ -86,6 +94,7 @@ return {
 				resource = { "robocop_format" },
 				sh = { "shfmt" },
 				bash = { "shfmt" },
+				helm = { "helm_template_spacing" },
 				yaml = { "yamlfmt" },
 				["yaml.docker-compose"] = { "yamlfmt" },
 				["yaml.helm-values"] = { "yamlfmt" },

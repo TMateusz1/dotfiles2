@@ -93,6 +93,7 @@ Interactive navigation uses `fzf-lua`, `mini.files`, `bufferline.nvim`, and `tog
 | Go | `goimports`, `gofumpt` |
 | Lua | `stylua` |
 | Shell | `shfmt -i 4 -ci` |
+| Helm templates | normalize Go-template delimiter spacing |
 | YAML | `yamlfmt` |
 | JSON/JSONC | `prettier` |
 | Markdown | `prettier` |

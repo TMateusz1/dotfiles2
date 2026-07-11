@@ -86,7 +86,7 @@ deleted = "✘${count} "
 
 [golang]
 symbol = " "
-style = "teal"
+style = "sapphire"
 format = "[$symbol($version )]($style) "
 
 [python]
@@ -104,7 +104,7 @@ format = "[$symbol($version )]($style) "
 # in chart directories (~700 ms measured) — symbol-only skips the subprocess.
 [helm]
 symbol = "⎈ "
-style = "teal"
+style = "blue"
 format = "[$symbol]($style) "
 
 
