@@ -18,6 +18,12 @@ return {
 			"rafamadriz/friendly-snippets",
 		},
 		opts = {
+			-- mini.files buffers are for typing file/dir names, not prose;
+			-- buffer-word completion there is just noise.
+			enabled = function()
+				return vim.bo.filetype ~= "minifiles"
+			end,
+
 			keymap = {
 				preset = "default",
 
