@@ -149,7 +149,12 @@ local keys = {
 	},
 	{
 		"<leader>0",
-		"<cmd>BufferLineGoToBuffer -1<CR>",
+		function()
+			-- The ex-command only supports visible-position jumps (hidden when
+			-- the bufferline is too narrow to show every buffer); the Lua API
+			-- takes an `absolute` flag to index the full buffer list instead.
+			require("bufferline").go_to(-1, true)
+		end,
 		desc = "Go to last buffer",
 	},
 	{
@@ -174,7 +179,9 @@ for index = 1, 9 do
 
 	keys[#keys + 1] = {
 		("<leader>%d"):format(target),
-		("<cmd>BufferLineGoToBuffer %d<CR>"):format(target),
+		function()
+			require("bufferline").go_to(target, true)
+		end,
 		desc = ("Go to buffer %d"):format(target),
 	}
 end
