@@ -52,7 +52,7 @@ format = "[$path]($style)[$read_only]($read_only_style) "
 
 [git_branch]
 symbol = " "
-style = "blue"
+style = "peach"
 format = "[$symbol$branch]($style) "
 
 # Rebase/merge/cherry-pick progress (e.g. "REBASING 2/5"). Reads .git state
