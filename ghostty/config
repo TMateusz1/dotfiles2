@@ -14,12 +14,16 @@ window-titlebar-background = #1e1e2e
 window-titlebar-foreground = #cdd6f4
 macos-titlebar-style = transparent
 
-font-family = FiraCode Nerd Font
+font-family = JetBrainsMono Nerd Font
 font-size = 16
 
 font-feature = calt=1
 font-feature = clig=1
 font-feature = liga=1
+
+# ghostty's cell-height adjustment is relative (e.g. 60% = +60% over the
+# default), so this targets a ~1.6x line height, not an absolute value.
+adjust-cell-height = 60%
 
 # Allow trusted remote Neovim/tmux sessions to use OSC52 for both directions:
 # y/copy writes to the local clipboard, p/paste reads from it.

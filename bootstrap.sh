@@ -102,7 +102,7 @@ bootstrap_macos() {
     eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv)"
     log "Installing Homebrew packages"
     brew install git
-    brew install --cask ghostty kitty font-fira-code-nerd-font
+    brew install --cask ghostty kitty font-fira-code-nerd-font font-jetbrains-mono-nerd-font
     link_common_configs
     link_macos_configs
 }
