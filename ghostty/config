@@ -5,8 +5,8 @@ split-divider-color = #89b4fa
 
 background-opacity = 0.97
 
-window-padding-x = 0
-window-padding-y = 0
+window-padding-x = 6
+window-padding-y = 3
 window-padding-balance = false
 
 window-decoration = auto
@@ -21,9 +21,8 @@ font-feature = calt=1
 font-feature = clig=1
 font-feature = liga=1
 
-# ghostty's cell-height adjustment is relative (e.g. 60% = +60% over the
-# default), so this targets a ~1.6x line height, not an absolute value.
-adjust-cell-height = 10%
+# Ghostty's adjustment is relative, so +15% produces a 115% cell height.
+adjust-cell-height = 15%
 
 # Allow trusted remote Neovim/tmux sessions to use OSC52 for both directions:
 # y/copy writes to the local clipboard, p/paste reads from it.
