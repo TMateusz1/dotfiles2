@@ -4,26 +4,42 @@ function M.setup()
 	require("catppuccin").setup({
 		flavour = "mocha",
 		transparent_background = false,
+		float = {
+			transparent = false,
+			solid = true,
+		},
 		term_colors = true,
 		dim_inactive = {
-			enabled = false,
+			enabled = true,
+			shade = "dark",
+			percentage = 0.08,
 		},
 		styles = {
 			comments = { "italic" },
 			conditionals = {},
 			loops = {},
-			functions = {},
+			functions = { "italic" },
 			keywords = {},
 			strings = {},
 			variables = {},
 			numbers = {},
 			booleans = {},
 			properties = {},
-			types = {},
+			types = { "bold" },
+			operators = {},
+		},
+		lsp_styles = {
+			inlay_hints = {
+				background = false,
+			},
 		},
 		custom_highlights = function(colors)
 			return {
 				WinSeparator = { fg = colors.lavender, bg = "NONE", bold = true },
+				CursorLine = { bg = colors.surface0 },
+				CursorLineNr = { fg = colors.mauve, bold = true },
+				Visual = { bg = colors.surface1 },
+				MatchParen = { fg = colors.peach, bg = colors.surface1, bold = true },
 				NormalFloat = { fg = colors.text, bg = colors.mantle },
 				FloatBorder = { fg = colors.blue, bg = colors.mantle },
 				FloatTitle = { fg = colors.blue, bg = colors.mantle, bold = true },
@@ -32,6 +48,9 @@ function M.setup()
 				IncSearch = { fg = colors.crust, bg = colors.peach },
 				CurSearch = { fg = colors.crust, bg = colors.peach },
 				SnippetTabstop = { bg = "NONE", fg = "NONE" },
+				LspReferenceText = { bg = colors.surface0 },
+				LspReferenceRead = { bg = colors.surface0 },
+				LspReferenceWrite = { bg = colors.surface1, underline = true },
 
 				User1 = { fg = colors.crust, bg = colors.blue, bold = true },
 				User2 = { fg = colors.text, bg = colors.surface0 },
@@ -74,7 +93,6 @@ function M.setup()
 	})
 
 	vim.cmd.colorscheme("catppuccin")
-
 end
 
 return M
