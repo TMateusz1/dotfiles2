@@ -105,6 +105,20 @@ local function filetype()
 	return "  " .. icon .. ft
 end
 
+local function filename()
+	local path = vim.api.nvim_buf_get_name(0)
+
+	if path == "" then
+		return "[No Name]"
+	end
+
+	local root = require("config.files").project_root(0)
+	local relative = vim.fs.relpath(root, path)
+	local display = relative or path
+
+	return display:gsub("%%", "%%%%")
+end
+
 local function search_count()
 	if vim.v.hlsearch == 0 then
 		return ""
@@ -132,7 +146,9 @@ function M.render()
 		" ",
 		"%<",
 		hl("User3"),
-		" %t%m%r ",
+		" ",
+		filename(),
+		"%m%r ",
 		"%=",
 		hl("User2"),
 		lsp_servers(),
