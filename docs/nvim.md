@@ -76,6 +76,7 @@ Interactive navigation uses `fzf-lua`, `mini.files`, `bufferline.nvim`, and `tog
 | `<leader>fd` / `<leader>fD` | Document/workspace diagnostics |
 | `<leader>fq` | Quickfix list |
 | `<leader>fc` | Commands |
+| `<leader>fa` | Harpoon marks with line and file preview |
 | `gd`, `gD`, `gr`, `gi`, `gy` | LSP locations through fzf-lua |
 | `<leader>ca` | LSP code actions through fzf-lua |
 | `<leader>e` / `<leader>E` | mini.files at project root / focused on the current file |
@@ -83,6 +84,17 @@ Interactive navigation uses `fzf-lua`, `mini.files`, `bufferline.nvim`, and `tog
 | `<leader>bn` / `<leader>bx` / `<leader>bX` | New buffer / close buffer / close other buffers |
 | `<leader>b,` / `<leader>b.` | Move current buffer left/right |
 | `<leader>gg` | LazyGit in a floating terminal |
+
+Harpoon marks are persistent per project and keep their file, line, column, and
+source text. They can include multiple locations in the same file. If edits
+move a marked line, Harpoon relocates it to the nearest matching line.
+
+| Key | Action |
+| --- | --- |
+| `<leader>aa` | Add the current file and line |
+| `<leader>A` | Inspect, reorder, or delete marks in a floating window |
+| `<leader>a1`-`<leader>a5` | Open mark 1-5 |
+| `<leader>fa` | Find all project marks with preview |
 
 ## Formatting
 
