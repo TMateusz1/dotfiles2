@@ -71,7 +71,7 @@ Interactive navigation uses `fzf-lua`, `mini.files`, `bufferline.nvim`, and `tog
 | `<leader>/` | Search current buffer lines |
 | `<leader>fG` | Git changed files |
 | `<leader>fb` | Find buffers |
-| `<leader>fs` / `<leader>fS` | Document/workspace symbols |
+| `<leader>fs` / `<leader>fS` | Document/live workspace symbols |
 | `<leader>cs` | Persistent symbols outline on the right |
 | `<leader>fd` / `<leader>fD` | Document/workspace diagnostics |
 | `<leader>fq` | Quickfix list |
