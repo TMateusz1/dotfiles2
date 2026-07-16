@@ -62,7 +62,7 @@ Robot Framework support uses RobotCode for `.robot` and `.resource` files. For r
 
 ## Navigation UI
 
-Interactive navigation uses `fzf-lua`, `mini.files`, `bufferline.nvim`, and `toggleterm.nvim`.
+Interactive navigation uses `fzf-lua`, Neo-tree, `bufferline.nvim`, and `toggleterm.nvim`.
 
 | Key | Action |
 | --- | --- |
@@ -76,10 +76,14 @@ Interactive navigation uses `fzf-lua`, `mini.files`, `bufferline.nvim`, and `tog
 | `<leader>fd` / `<leader>fD` | Document/workspace diagnostics |
 | `<leader>fq` | Quickfix list |
 | `<leader>fc` | Commands |
-| `<leader>fa` | Harpoon marks with line and file preview |
+| `<leader>fp` | Harpoon marks with line and file preview |
 | `gd`, `gD`, `gr`, `gi`, `gy` | LSP locations through fzf-lua |
 | `<leader>ca` | LSP code actions through fzf-lua |
-| `<leader>e` / `<leader>E` | mini.files at project root / focused on the current file |
+| `<leader>e` | Open Neo-tree on the left, focused on the current file |
+| `<leader>E` | Open Neo-tree on the left with the project root collapsed and focused |
+| `=` (in Neo-tree) | Collapse the focused directory, or the parent of a focused file |
+| `+` (in Neo-tree) | Collapse all directories and focus the root |
+| `<S-CR>` (in Neo-tree) | Open the focused file and close Neo-tree |
 | `<leader>1`-`<leader>9` / `<leader>0` | Jump to visible bufferline slots / last visible buffer |
 | `<leader>bn` / `<leader>bx` / `<leader>bX` | New buffer / close buffer / close other buffers |
 | `<leader>b,` / `<leader>b.` | Move current buffer left/right |
@@ -91,10 +95,10 @@ move a marked line, Harpoon relocates it to the nearest matching line.
 
 | Key | Action |
 | --- | --- |
-| `<leader>aa` | Add the current file and line |
-| `<leader>A` | Inspect, reorder, or delete marks in a floating window |
-| `<leader>a1`-`<leader>a5` | Open mark 1-5 |
-| `<leader>fa` | Find all project marks with preview |
+| `<leader>pp` | Add the current file and line |
+| `<leader>P` | Inspect, reorder, or delete marks in a floating window |
+| `<leader>p1`-`<leader>p5` | Open mark 1-5 |
+| `<leader>fp` | Find all project marks with preview |
 
 ## Formatting
 

@@ -84,6 +84,7 @@ function M.setup()
 			blink_cmp = true,
 			gitsigns = true,
 			mini = true,
+			neotree = true,
 			native_lsp = {
 				enabled = true,
 			},

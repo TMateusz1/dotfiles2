@@ -1,20 +1,20 @@
 local keys = {
 	{
-		"<leader>aa",
+		"<leader>pp",
 		function()
 			require("config.harpoon").add()
 		end,
 		desc = "Add Harpoon mark",
 	},
 	{
-		"<leader>A",
+		"<leader>P",
 		function()
 			require("config.harpoon").inspect()
 		end,
 		desc = "Inspect Harpoon marks",
 	},
 	{
-		"<leader>fa",
+		"<leader>fp",
 		function()
 			require("config.harpoon").fzf()
 		end,
@@ -26,7 +26,7 @@ for index = 1, 5 do
 	local slot = index
 
 	keys[#keys + 1] = {
-		("<leader>a%d"):format(slot),
+		("<leader>p%d"):format(slot),
 		function()
 			require("config.harpoon").select(slot)
 		end,

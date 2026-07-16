@@ -22,6 +22,8 @@ end
 return {
 	{
 		"nvim-mini/mini.files",
+		-- Keep the configuration around for now, but Neo-tree owns file browsing.
+		enabled = false,
 		version = false,
 		lazy = false,
 		keys = {

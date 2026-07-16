@@ -13,7 +13,7 @@ opt.relativenumber = true
 -- Mouse
 opt.mouse = "a"
 
--- Disable netrw; file exploration is handled by mini.files.
+-- Disable netrw; file exploration is handled by Neo-tree.
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 

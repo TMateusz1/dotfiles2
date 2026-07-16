@@ -18,11 +18,13 @@ return {
 			"rafamadriz/friendly-snippets",
 		},
 		opts = {
-			-- mini.files buffers are for typing file/dir names, not prose, and
+			-- File explorer buffers are for typing file/dir names, not prose, and
 			-- prompt buffers (snacks input, etc.) are single-line inputs; buffer-word
 			-- completion in either is just noise.
 			enabled = function()
-				return vim.bo.filetype ~= "minifiles" and vim.bo.buftype ~= "prompt"
+				return vim.bo.filetype ~= "minifiles"
+					and vim.bo.filetype ~= "neo-tree"
+					and vim.bo.buftype ~= "prompt"
 			end,
 
 			keymap = {

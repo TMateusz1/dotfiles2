@@ -6,6 +6,17 @@ local function close_minifiles()
 	end
 end
 
+local function close_neotree()
+	if package.loaded["neo-tree"] then
+		pcall(require("neo-tree.command").execute, { action = "close" })
+	end
+end
+
+local function close_file_explorers()
+	close_minifiles()
+	close_neotree()
+end
+
 return {
 	{
 		"rmagatti/auto-session",
@@ -16,6 +27,7 @@ return {
 			close_filetypes_on_save = {
 				"checkhealth",
 				"minifiles",
+				"neo-tree",
 			},
 			cwd_change_handling = false,
 			git_use_branch_name = false,
@@ -23,10 +35,10 @@ return {
 			args_allow_files_auto_save = false,
 			legacy_cmds = false,
 			pre_save_cmds = {
-				close_minifiles,
+				close_file_explorers,
 			},
 			post_restore_cmds = {
-				close_minifiles,
+				close_file_explorers,
 			},
 			suppressed_dirs = {
 				"~/",
