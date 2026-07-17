@@ -85,6 +85,7 @@ Interactive navigation uses `fzf-lua`, Neo-tree, `bufferline.nvim`, and `togglet
 | `+` (in Neo-tree) | Collapse all directories and focus the root |
 | `<S-CR>` (in Neo-tree) | Open the focused file and close Neo-tree |
 | `<leader>1`-`<leader>9` / `<leader>0` | Jump to visible bufferline slots / last visible buffer |
+| `<leader>q` | Delete the current buffer while preserving the editing window |
 | `<leader>bn` / `<leader>bx` / `<leader>bX` | New buffer / close buffer / close other buffers |
 | `<leader>b,` / `<leader>b.` | Move current buffer left/right |
 | `<leader>gg` | LazyGit in a floating terminal |
