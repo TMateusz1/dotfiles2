@@ -43,6 +43,10 @@ local function diagnostic_jump(count)
 	end, 20)
 end
 
+-- Avoid opening the command-history window by accident. Search-history
+-- windows (`q/` and `q?`) remain available.
+keymap("n", "q:", "<Nop>", { desc = "Disable command-line history window" })
+
 keymap("n", "<Esc>", function()
 	if close_floating_windows() then
 		return
