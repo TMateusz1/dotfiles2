@@ -35,6 +35,7 @@ return {
 				{ "<leader>p", group = "Harpoon" },
 				{ "<leader>b", group = "Buffers" },
 				{ "<leader>f", group = "Find" },
+				{ "<leader>j", group = "Join / Split" },
 				{ "<leader>g", group = "Git" },
 				{ "<leader>gh", group = "Git Hunks" },
 				{ "<leader>h", group = "Helm" },
