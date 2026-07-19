@@ -122,10 +122,18 @@ return {
 				},
 
 				ghost_text = {
-					enabled = true,
+					enabled = function()
+						return vim.bo.filetype ~= "grug-far"
+					end,
 				},
 
 				menu = {
+					-- Grug Far is an editable search form; keep completion available
+					-- on demand without opening the menu after every keystroke.
+					auto_show = function()
+						return vim.bo.filetype ~= "grug-far"
+					end,
+
 					border = "rounded",
 
 					draw = {

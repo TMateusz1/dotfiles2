@@ -196,6 +196,19 @@ local function close_others()
 end
 
 local function smart_close()
+	if vim.bo.filetype == "grug-far" then
+		local bufnr = vim.api.nvim_get_current_buf()
+		local ok, instance = pcall(require("grug-far").get_instance, bufnr)
+
+		if ok then
+			instance:close()
+		else
+			confirm_delete(bufnr)
+		end
+
+		return
+	end
+
 	if is_floating_window() or is_special_buffer() then
 		vim.cmd("close")
 		return
