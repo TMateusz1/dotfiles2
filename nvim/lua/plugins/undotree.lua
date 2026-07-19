@@ -8,7 +8,7 @@ return {
 		},
 		keys = {
 			{
-				"<leader>uu",
+				"<leader>U",
 				"<cmd>UndotreeToggle<CR>",
 				desc = "Toggle undo history",
 			},

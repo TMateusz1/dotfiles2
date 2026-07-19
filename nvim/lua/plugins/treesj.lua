@@ -6,25 +6,11 @@ return {
 		},
 		keys = {
 			{
-				"<leader>jt",
+				"<leader>s",
 				function()
 					require("treesj").toggle()
 				end,
 				desc = "Toggle split/join",
-			},
-			{
-				"<leader>js",
-				function()
-					require("treesj").split()
-				end,
-				desc = "Split syntax node",
-			},
-			{
-				"<leader>jj",
-				function()
-					require("treesj").join()
-				end,
-				desc = "Join syntax node",
 			},
 		},
 		opts = {

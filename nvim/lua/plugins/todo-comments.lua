@@ -21,7 +21,7 @@ return {
 				desc = "Previous TODO comment",
 			},
 			{
-				"<leader>ft",
+				"<leader>fo",
 				"<cmd>TodoFzfLua<CR>",
 				desc = "Find TODO comments",
 			},

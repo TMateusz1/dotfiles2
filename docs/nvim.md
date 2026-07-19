@@ -76,7 +76,7 @@ Interactive navigation uses `fzf-lua`, Neo-tree, `bufferline.nvim`, and `togglet
 | `<leader>fd` / `<leader>fD` | Document/workspace diagnostics |
 | `<leader>fq` | Quickfix list |
 | `<leader>fc` | Commands |
-| `<leader>ft` | Find TODO/FIXME/BUG comments with fzf-lua |
+| `<leader>fo` | Find TODO/FIXME/BUG comments with fzf-lua |
 | `<leader>fp` | Harpoon marks with line and file preview |
 | `gd`, `gD`, `gr`, `gi`, `gy` | LSP locations through fzf-lua |
 | `<leader>ca` | LSP code actions through fzf-lua |
@@ -91,9 +91,8 @@ Interactive navigation uses `fzf-lua`, Neo-tree, `bufferline.nvim`, and `togglet
 | `<leader>b,` / `<leader>b.` | Move current buffer left/right |
 | `<leader>gg` | LazyGit in a floating terminal |
 | `[o` / `]o` | Previous/next TODO comment |
-| `<leader>uu` | Toggle visual undo history |
-| `<leader>jt` | Toggle the syntax node between joined and split forms |
-| `<leader>js` / `<leader>jj` | Split/join the syntax node |
+| `<leader>U` | Toggle visual undo history |
+| `<leader>s` | Toggle the syntax node between joined and split forms |
 
 Harpoon marks are persistent per project and keep their file, line, column, and
 source text. They can include multiple locations in the same file. If edits
