@@ -31,7 +31,6 @@ return {
 					"help",
 					"lazy",
 					"man",
-					"minifiles",
 					"neotest-output",
 					"neotest-output-panel",
 					"neotest-summary",

@@ -1,20 +1,7 @@
-local function close_minifiles()
-	local ok, MiniFiles = pcall(require, "mini.files")
-
-	if ok then
-		pcall(MiniFiles.close)
-	end
-end
-
 local function close_neotree()
 	if package.loaded["neo-tree"] then
 		pcall(require("neo-tree.command").execute, { action = "close" })
 	end
-end
-
-local function close_file_explorers()
-	close_minifiles()
-	close_neotree()
 end
 
 return {
@@ -26,7 +13,6 @@ return {
 			close_unsupported_windows = true,
 			close_filetypes_on_save = {
 				"checkhealth",
-				"minifiles",
 				"neo-tree",
 			},
 			cwd_change_handling = false,
@@ -35,10 +21,10 @@ return {
 			args_allow_files_auto_save = false,
 			legacy_cmds = false,
 			pre_save_cmds = {
-				close_file_explorers,
+				close_neotree,
 			},
 			post_restore_cmds = {
-				close_file_explorers,
+				close_neotree,
 			},
 			suppressed_dirs = {
 				"~/",
