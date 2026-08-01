@@ -8,6 +8,10 @@ local function stop_active_vim_snippet()
 	end
 end
 
+local function is_friendly_snippet(file, relative_path)
+	return file:match("friendly%-snippets.*/snippets/" .. relative_path .. "$") ~= nil
+end
+
 return {
 	{
 		"saghen/blink.cmp",
@@ -36,6 +40,11 @@ return {
 						if cmp.is_visible() then
 							return cmp.select_and_accept()
 						end
+
+						if cmp.snippet_active({ direction = 1 }) then
+							cmp.hide()
+							return cmp.snippet_forward()
+						end
 					end,
 					"fallback",
 				},
@@ -47,7 +56,9 @@ return {
 					"fallback",
 				},
 
-				-- Snippet placeholders own Tab. Enter accepts completion items.
+				-- Completion owns Enter when visible; otherwise Enter and Tab both
+				-- advance snippet placeholders. Shift-Enter exits the snippet and
+				-- inserts a regular newline through the autopairs fallback.
 				["<Tab>"] = {
 					function(cmp)
 						if cmp.snippet_active({ direction = 1 }) then
@@ -76,7 +87,7 @@ return {
 				},
 
 				["<C-j>"] = { "select_next", "fallback" },
-				["<C-k>"] = { "select_prev", "fallback" },
+				["<C-k>"] = { "show_signature", "hide_signature", "fallback" },
 				["<C-n>"] = { "select_next", "fallback" },
 				["<C-p>"] = { "select_prev", "fallback" },
 				["<Down>"] = { "select_next", "fallback" },
@@ -158,7 +169,7 @@ return {
 			signature = {
 				enabled = true,
 				trigger = {
-					enabled = false,
+					enabled = true,
 				},
 				window = {
 					border = "rounded",
@@ -191,17 +202,33 @@ return {
 					snippets = {
 						opts = {
 							friendly_snippets = true,
-							-- Only Kubernetes is filtered (local snippets take
-							-- precedence there). friendly-snippets' Go set stays:
-							-- it provides the general-purpose snippets (tys, for,
-							-- forr, meth, ...) while local go.json adds the
-							-- specialized ones with non-colliding prefixes.
+							-- Local Kubernetes snippets replace friendly-snippets'
+							-- Kubernetes set. Docker Compose snippets are isolated in
+							-- their own provider below instead of leaking into every
+							-- YAML buffer. friendly-snippets' Go set remains enabled.
 							filter_snippets = function(_, file)
-								return not file:match("friendly%-snippets.*/snippets/kubernetes%.json$")
+								return not is_friendly_snippet(file, "kubernetes%.json")
+									and not is_friendly_snippet(file, "docker/docker%-compose%.json")
 							end,
 							search_paths = {
 								vim.fn.stdpath("config") .. "/snippets",
 							},
+							use_label_description = true,
+						},
+					},
+					docker_snippets = {
+						name = "Docker Compose",
+						module = "blink.cmp.sources.snippets",
+						score_offset = -1,
+						opts = {
+							friendly_snippets = true,
+							global_snippets = {},
+							get_filetype = function()
+								return "yaml"
+							end,
+							filter_snippets = function(_, file)
+								return is_friendly_snippet(file, "docker/docker%-compose%.json")
+							end,
 							use_label_description = true,
 						},
 					},
@@ -221,8 +248,15 @@ return {
 						inherit_defaults = true,
 					},
 
-					["yaml.helm-values"] = {
+					-- Blink splits dotted filetypes before applying this table, so
+					-- these keys match yaml.helm-values and yaml.docker-compose.
+					["helm-values"] = {
 						inherit_defaults = true,
+					},
+
+					["docker-compose"] = {
+						inherit_defaults = true,
+						"docker_snippets",
 					},
 				},
 			},

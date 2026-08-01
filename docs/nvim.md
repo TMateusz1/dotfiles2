@@ -203,20 +203,28 @@ the same libraries as the test runner. It reads `robot.toml` or
 
 Blink provides LSP, path, snippet, and buffer completion. Its menu is automatic
 in ordinary editing buffers. In Grug Far it is manual to avoid suggestions
-opening while search text is entered.
+opening while search text is entered. Signature help opens automatically after
+function-call trigger characters such as `(`.
 
 | Key | Action while completing |
 | --- | --- |
 | `<C-Space>` | Open completion and documentation manually |
-| `<CR>` | Accept the selected item |
+| `<CR>` | Accept the visible item, otherwise advance a snippet placeholder or insert a newline |
 | `<Tab>` | Next snippet placeholder, or accept the visible item |
 | `<S-Tab>` | Previous snippet placeholder or completion item |
 | `<C-j>` / `<C-n>` | Select next item |
-| `<C-k>` / `<C-p>` | Select previous item |
+| `<C-p>` | Select previous item |
+| `<C-k>` | Show or hide signature help |
 | `<C-d>` / `<C-u>` | Scroll completion documentation |
 | `<C-e>` | Cancel completion |
 | `<Esc>` | Hide completion, then behave normally |
 | `<S-CR>` | End an active snippet and insert a normal newline |
+
+Go buffers combine friendly-snippets' general Go set with the specialized local
+snippets. Generic YAML receives the local Kubernetes set, Helm templates receive
+both Kubernetes and Helm snippets, and Docker Compose snippets are restricted to
+the `yaml.docker-compose` filetype. Helm values files intentionally use only the
+global snippets plus schema-aware LSP completion.
 
 ## Project-wide replace
 

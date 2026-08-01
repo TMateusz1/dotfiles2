@@ -6,7 +6,10 @@ bootstrap runtimes first, and then installs the complete tool set.
 
 The Zsh configuration runs `mise activate zsh`, so selected binaries and shims
 are available in every new shell. Neovim relies on that `PATH`: it configures
-LSP servers, formatters, and linters but never downloads them.
+LSP servers, formatters, and linters but never downloads them. User binary
+directories such as `~/go/bin` are added before mise is activated, so normal
+mise activation gives the configured tool versions precedence without enabling
+aggressive activation.
 
 ## Bootstrap runtimes
 
@@ -53,6 +56,26 @@ Formatters and linters:
 
 The exact versions are deliberately not duplicated here; read
 `mise/config.toml` for the authoritative current pins.
+
+## Go tools and `gopls`
+
+Go command-line tools are installed as independent `go:` entries. In
+particular, mise owns `gopls` under its dedicated tool directory; the Go SDK
+does not contain or own that executable. This keeps the Go and `gopls` versions
+independently pinned and avoids reinstalling `gopls` for every Go version.
+
+Do not also run `go install golang.org/x/tools/gopls@...` for the global setup,
+because that creates a second unmanaged copy in `GOBIN` or `~/go/bin`. Confirm
+the active single copy with:
+
+```bash
+command -v gopls
+mise which gopls
+gopls version
+```
+
+The first two paths should be identical. If an old `~/go/bin/gopls` exists,
+remove that unmanaged binary and keep the mise-managed installation.
 
 ## Everyday commands
 
@@ -126,6 +149,9 @@ owns global developer commands; each project owns its dependency graph.
   `exec zsh -l` or run `mise activate zsh` through the configured `.zshrc`.
 - If Neovim reports missing LSP tools, compare `:echo $PATH` with
   `mise which <binary>` and start Neovim from an activated shell.
+- If `command -v <binary>` differs from `mise which <binary>`, remove any stale
+  unmanaged duplicate, ensure custom `PATH` additions occur before
+  `mise activate zsh`, and start a new login shell.
 - If an NPM or pipx command points at a stale runtime, force reinstall that
   backend group using the commands above.
 - If tmux was upgraded while a server was already running, use
