@@ -98,7 +98,6 @@ return {
 			},
 
 			appearance = {
-				use_nvim_cmp_as_default = true,
 				nerd_font_variant = "mono",
 			},
 
@@ -240,20 +239,8 @@ return {
 						"lazydev",
 					},
 
-					yaml = {
-						inherit_defaults = true,
-					},
-
-					helm = {
-						inherit_defaults = true,
-					},
-
 					-- Blink splits dotted filetypes before applying this table, so
-					-- these keys match yaml.helm-values and yaml.docker-compose.
-					["helm-values"] = {
-						inherit_defaults = true,
-					},
-
+					-- this key matches yaml.docker-compose.
 					["docker-compose"] = {
 						inherit_defaults = true,
 						"docker_snippets",

@@ -59,23 +59,25 @@ The exact versions are deliberately not duplicated here; read
 
 ## Go tools and `gopls`
 
-Go command-line tools are installed as independent `go:` entries. In
-particular, mise owns `gopls` under its dedicated tool directory; the Go SDK
-does not contain or own that executable. This keeps the Go and `gopls` versions
-independently pinned and avoids reinstalling `gopls` for every Go version.
+Go command-line tools are independent mise entries. Tools with supported
+release binaries (`golangci-lint`, `gotestsum`, and `gofumpt`) use mise's normal
+registry entries. `gopls` and `goimports` use the `go:` backend because their
+official distribution is built with `go install`. Both backends keep every
+tool separately pinned instead of coupling it to the installed Go SDK.
 
-Do not also run `go install golang.org/x/tools/gopls@...` for the global setup,
-because that creates a second unmanaged copy in `GOBIN` or `~/go/bin`. Confirm
-the active single copy with:
+Do not also install configured tools manually with `go install` or Homebrew,
+because that creates unmanaged copies in locations such as `GOBIN`,
+`~/go/bin`, or `/opt/homebrew/bin`. Confirm the active copies with:
 
 ```bash
-command -v gopls
-mise which gopls
-gopls version
+for tool in golangci-lint gopls gotestsum gofumpt goimports; do
+  command -v "$tool"
+  mise which "$tool"
+done
 ```
 
-The first two paths should be identical. If an old `~/go/bin/gopls` exists,
-remove that unmanaged binary and keep the mise-managed installation.
+For each tool, the two paths should be identical. Remove only the unmanaged
+duplicate and keep the mise-managed installation.
 
 ## Everyday commands
 

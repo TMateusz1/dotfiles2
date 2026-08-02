@@ -31,7 +31,7 @@ zsh_plugin_exists() {
 }
 
 plugins=()
-for plugin in git zsh-autosuggestions zsh-syntax-highlighting you-should-use; do
+for plugin in git zsh-autosuggestions you-should-use; do
   zsh_plugin_exists "$plugin" && plugins+=("$plugin")
 done
 
@@ -84,3 +84,8 @@ if [[ -r "$HOME/.zshrc.local" ]]; then
 fi
 
 unfunction path_append_if_dir zsh_plugin_exists 2>/dev/null
+
+# This plugin must load after every other ZLE widget and hook.
+if [[ -r "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+  source "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi

@@ -8,7 +8,8 @@ Catppuccin Mocha and Nerd Font icons are used throughout.
 
 The shell loads mise, Oh My Zsh, Starship, Atuin, zoxide, fzf, and the available
 configured Zsh plugins. Put machine-only commands and secrets in
-`~/.zshrc.local`; the tracked `.zshrc` sources it last.
+`~/.zshrc.local`; the tracked `.zshrc` sources it near the end, immediately
+before `zsh-syntax-highlighting`.
 
 | Command or key | Action |
 | --- | --- |

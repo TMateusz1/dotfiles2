@@ -76,7 +76,6 @@ local function configure_servers()
 					generate = true,
 					test = true,
 					tidy = true,
-					gc_details = false,
 					regenerate_cgo = false,
 					upgrade_dependency = false,
 					vendor = false,

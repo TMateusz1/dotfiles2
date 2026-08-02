@@ -29,29 +29,8 @@ local function notify(message, level)
 	})
 end
 
-local function context_schema_path(context)
-	local name = (context ~= "" and context or "default"):gsub("[^%w_.-]", "_")
-
-	return vim.fs.joinpath(schema_cache_dir, name .. ".json")
-end
-
 local function schema_uri(path)
 	return vim.uri_from_fname(path)
-end
-
-local function kubectl_context(callback)
-	vim.system({ "kubectl", "config", "current-context" }, {
-		text = true,
-	}, function(result)
-		vim.schedule(function()
-			if result.code ~= 0 then
-				callback("default")
-				return
-			end
-
-			callback(vim.trim(result.stdout or ""))
-		end)
-	end)
 end
 
 local function crd_api_version(group, version)
@@ -139,16 +118,14 @@ local function crd_schemas(payload)
 	}
 end
 
-local function write_schema_files(schema, context)
+local function write_schema_file(schema)
 	vim.fn.mkdir(schema_cache_dir, "p")
 
 	local encoded = vim.json.encode(schema)
-	local context_path = context_schema_path(context)
 
 	vim.fn.writefile({ encoded }, current_schema_path)
-	vim.fn.writefile({ encoded }, context_path)
 
-	return current_schema_path, context_path
+	return current_schema_path
 end
 
 local function restart_yamlls()
@@ -229,13 +206,11 @@ function M.fetch_crd_schemas()
 				return
 			end
 
-			kubectl_context(function(context)
-				local schema = crd_schemas(payload)
-				local path = write_schema_files(schema, context)
+			local schema = crd_schemas(payload)
+			local path = write_schema_file(schema)
 
-				restart_yamlls()
-				notify(("Fetched %d CRD schemas: %s"):format(#schema.oneOf, path))
-			end)
+			restart_yamlls()
+			notify(("Fetched %d CRD schemas: %s"):format(#schema.oneOf, path))
 		end)
 	end)
 end
