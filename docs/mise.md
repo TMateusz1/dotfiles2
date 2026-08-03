@@ -32,7 +32,8 @@ Editor and shell foundation:
 
 Git and infrastructure:
 
-- delta, GitLab CLI (`glab`), LazyGit, kubectl, Helm, k9s, jq, and yq.
+- delta, GitLab CLI (`glab`), LazyGit, kubectl, Helm, k9s, Skaffold, ko, jq,
+  and yq.
 
 Neovim LSP servers:
 
