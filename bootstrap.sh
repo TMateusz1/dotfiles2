@@ -32,6 +32,7 @@ link_common_configs() {
     link .tmux.conf "$HOME/.tmux.conf"
     link .zshrc "$HOME/.zshrc"
     link atuin/config.toml "$HOME/.config/atuin/config.toml"
+    link bat/config "$HOME/.config/bat/config"
     link git/delta.gitconfig "$HOME/.config/git/delta.gitconfig"
     link k9s/config.yaml "$HOME/.config/k9s/config.yaml"
     link k9s/skins/catppuccin-mocha.yaml "$HOME/.config/k9s/skins/catppuccin-mocha.yaml"

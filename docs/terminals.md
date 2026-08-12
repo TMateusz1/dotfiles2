@@ -70,11 +70,20 @@ ghostty/config -> ~/.config/ghostty/config
 
 Configured appearance and behavior:
 
-- Catppuccin Mocha theme with a blue focused-split divider.
+- Catppuccin Mocha palette inlined in the config, with a blue focused-split
+  divider.
 - JetBrainsMono Nerd Font at 16 pt and 115% cell height.
-- Background opacity `0.97` with a matching macOS titlebar.
+- Opaque background with a matching macOS titlebar.
 - Balanced terminal ligatures and a blinking cursor.
 - OSC52 clipboard reads and writes for trusted remote sessions.
+
+Ghostty and Kitty ship different ports of "Catppuccin Mocha" — the bundled
+Ghostty theme uses a darkened bright ramp, swaps ANSI slots 7 and 15, and
+inverts the selection. Neither bundled theme is used. Both terminals read the
+same sixteen slots from this repository instead, so ANSI-driven tools (delta,
+lazygit, k9s, git, eza, starship, zsh-syntax-highlighting) render identically
+in either one. `ghostty/config` and `kitty/catppuccin-mocha.conf` mirror each
+other and must be changed together.
 
 ## Kitty
 
@@ -84,9 +93,9 @@ Kitty is installed as the portable alternative and linked as:
 kitty/ -> ~/.config/kitty
 ```
 
-It uses the same Catppuccin theme, JetBrainsMono Nerd Font at 16 pt, 115% cell
-height, `0.97` opacity, and matching titlebar. Kitty reads `PATH`, `EDITOR`, and
-`VISUAL` from the login shell so actions such as `Cmd-,` see mise shims.
+It uses the same Catppuccin palette, JetBrainsMono Nerd Font at 16 pt, 115% cell
+height, opaque background, and matching titlebar. Kitty reads `PATH`, `EDITOR`,
+and `VISUAL` from the login shell so actions such as `Cmd-,` see mise shims.
 
 | Key | Action |
 | --- | --- |

@@ -11,7 +11,8 @@ WhichKey when a mapping is forgotten.
 - fzf-lua owns interactive finding. Neo-tree is used only for file browsing.
 - Bufferline represents open buffers; Harpoon represents durable project
   locations, including a line and column.
-- Catppuccin Mocha supplies the theme and Nerd Font icons.
+- Catppuccin Mocha supplies the theme and Nerd Font icons; see
+  [Colour](#colour) below.
 - The native statusline shows mode, Git branch, diagnostics, root-relative file
   path, attached LSP clients, filetype, search count, macro recording, and
   cursor position.
@@ -23,6 +24,47 @@ WhichKey when a mapping is forgotten.
 The project root is resolved from the current file using project markers and
 then the working directory. Starting `nvim` from the project root gives the
 most predictable search, terminal, test, and session scope.
+
+## Colour
+
+`lua/config/catppuccin.lua` overrides only the groups that are deliberate
+decisions; every group not listed there is the upstream flavour. Two rules hold
+the scheme together:
+
+**Colour names things, grey carries grammar.** Saturated hues are reserved for
+tokens that name something, so scanning for a hue finds a category rather than
+a syntax class.
+
+| Colour | Hex | Role |
+| --- | --- | --- |
+| Yellow | `#f9e2af` | Declared types and constructors |
+| Sapphire | `#74c7ec` | Packages and modules (see note below) |
+| Blue | `#89b4fa` | Functions and methods |
+| Mauve | `#cba6f7` | Keywords and builtin types (`int`, `string`) |
+| Teal | `#94e2d5` | Struct fields and properties |
+| Green | `#a6e3a1` | Strings |
+| Peach | `#fab387` | Constants, numbers, booleans |
+| Subtext1 | `#bac2de` | Operators |
+| Overlay2 | `#9399b2` | Punctuation |
+| Overlay1 | `#7f849c` | Comments |
+
+In Go the `@module` capture covers the `package` declaration only. A package
+qualifier inside an expression (`fmt` in `fmt.Sprintf`) is captured as
+`@variable` and renders as body text, because gopls semantic tokens are
+disabled in `lua/config/lsp.lua`. Enabling them routes it through
+`@lsp.type.namespace`, which resolves to the same sapphire.
+
+**Italic means "not code".** Comments are the only italic run on screen, so
+slant alone works as a skip signal. `styles.miscs` is set to `{}` for this
+reason; left unset, catppuccin italicises modules and tag attributes too.
+
+Chrome sits below code in a deliberate contrast ladder, so nothing in the frame
+outranks the text: indent guides `1.80:1`, window separators `2.46:1`, line
+numbers `3.36:1`, comments `4.44:1`, code `7:1` and up. The focused window is
+marked by the cursorline, not by an accent-coloured separator.
+
+The same legend is reused outside Neovim — `zsh-syntax-highlighting` and `eza`
+in `.zshrc`, and the diff colours in `git/delta.gitconfig`.
 
 ## Core editing and windows
 

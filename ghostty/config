@@ -1,9 +1,50 @@
-theme = Catppuccin Mocha
+# Catppuccin Mocha, vendored rather than inherited.
+#
+# `theme = Catppuccin Mocha` used to pull Ghostty's bundled file, which is a
+# different port from the one Kitty reads: it uses the darkened bright ramp
+# (9-14), swaps slots 7 and 15, and inverts the selection. Every ANSI-driven
+# tool — delta, lazygit, k9s, git, eza, starship, zsh-syntax-highlighting —
+# therefore rendered differently depending on which terminal was launched.
+#
+# These values are the same sixteen slots as kitty/catppuccin-mocha.conf.
+# Change both files together.
+
+background = #1e1e2e
+foreground = #cdd6f4
+
+cursor-color = #f5e0dc
+cursor-text = #1e1e2e
+
+# Selection is a surface wash with normal text on top, matching tmux copy mode
+# and Neovim's Visual rather than inverting to a bright rosewater block.
+selection-background = #585b70
+selection-foreground = #cdd6f4
+
+palette = 0=#45475a
+palette = 1=#f38ba8
+palette = 2=#a6e3a1
+palette = 3=#f9e2af
+palette = 4=#89b4fa
+palette = 5=#f5c2e7
+palette = 6=#94e2d5
+palette = 7=#bac2de
+palette = 8=#585b70
+palette = 9=#f38ba8
+palette = 10=#a6e3a1
+palette = 11=#f9e2af
+palette = 12=#89b4fa
+palette = 13=#f5c2e7
+palette = 14=#94e2d5
+palette = 15=#a6adc8
 
 # Blue accent on the focused split divider (parity with kitty's active border).
 split-divider-color = #89b4fa
 
-background-opacity = 0.97
+# Opaque. Translucency composited whatever was behind the window into the
+# background, so real text contrast drifted with the desktop — and cells with
+# an explicit background (Neovim, the tmux status bar) stayed opaque while
+# plain shell output did not, leaving a visible seam between them.
+background-opacity = 1.0
 
 window-padding-x = 6
 window-padding-y = 3

@@ -1,0 +1,9 @@
+# delta pins this theme for git diffs; without this file `bat` on its own fell
+# back to Monokai Extended, so the same file rendered in two different palettes
+# depending on which tool opened it.
+--theme="Catppuccin Mocha"
+
+--style=numbers,changes,header
+
+# Matches the Neovim rule: italic marks comments and nothing else.
+--italic-text=always

@@ -68,6 +68,7 @@ platform package manager are required for the first installation.
 ├── .zshrc                # shell integrations, aliases, and tc helper
 ├── .tmux.conf            # tmux workflow and Catppuccin statusline
 ├── atuin/                # shell history
+├── bat/                  # pager theme, shared with delta
 ├── git/                  # delta Git include
 ├── ghostty/              # primary macOS terminal
 ├── k9s/                  # Kubernetes TUI and skin
@@ -87,6 +88,7 @@ Common links:
 repo/.tmux.conf          -> ~/.tmux.conf
 repo/.zshrc              -> ~/.zshrc
 repo/atuin/config.toml   -> ~/.config/atuin/config.toml
+repo/bat/config          -> ~/.config/bat/config
 repo/git/delta.gitconfig -> ~/.config/git/delta.gitconfig
 repo/k9s/config.yaml     -> ~/.config/k9s/config.yaml
 repo/k9s/skins/catppuccin-mocha.yaml -> ~/.config/k9s/skins/catppuccin-mocha.yaml
