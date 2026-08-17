@@ -1,3 +1,6 @@
+[tool_alias]
+codex = "npm:@openai/codex"
+
 [tools]
 atuin = "18.19.0"
 bat = "0.26.1"
