@@ -328,12 +328,18 @@ function M.implement_interface(bufnr)
 			return
 		end
 		local iface = import_path .. "." .. name
-		execute_gopls(bufnr, "gopls.implement_interface", {
-			Location = { uri = vim.uri_from_bufnr(bufnr), range = range },
-			Interface = iface,
-		}, "implement " .. iface .. " on " .. struct, {
-			{ id = "interface", value = iface },
-		})
+		execute_gopls(
+			bufnr,
+			"gopls.implement_interface",
+			{
+				Location = { uri = vim.uri_from_bufnr(bufnr), range = range },
+				Interface = iface,
+			},
+			"implement " .. iface .. " on " .. struct,
+			{
+				{ id = "interface", value = iface },
+			}
+		)
 	end
 
 	local fzf = require("fzf-lua")
@@ -386,39 +392,17 @@ function M.attach(bufnr)
 	local function map(lhs, rhs, desc)
 		vim.keymap.set("n", lhs, rhs, { buffer = bufnr, desc = desc })
 	end
-	map("<leader>cgl", function()
-		M.lint(bufnr)
-	end, "Go lint")
-	map("<leader>cgo", function()
-		M.organize_imports(bufnr)
-	end, "Organize imports")
-	map("<leader>cgd", function()
-		M.doc(bufnr)
-	end, "Go doc")
-	map("<leader>cgj", function()
-		M.add_json_tags(bufnr)
-	end, "Add json tags")
-	map("<leader>cgJ", function()
-		M.remove_json_tags(bufnr)
-	end, "Remove json tags")
-	map("<leader>cgy", function()
-		M.add_yaml_tags(bufnr)
-	end, "Add yaml tags")
-	map("<leader>cgY", function()
-		M.remove_yaml_tags(bufnr)
-	end, "Remove yaml tags")
-	map("<leader>cge", function()
-		M.add_env_tags(bufnr)
-	end, "Add env tags")
-	map("<leader>cgE", function()
-		M.remove_env_tags(bufnr)
-	end, "Remove env tags")
-	map("<leader>cgi", function()
-		M.implement_interface(bufnr)
-	end, "Implement interface")
-	map("<leader>cgs", function()
-		M.fill_struct_literal(bufnr)
-	end, "Fill struct literal")
+	map("<leader>cgl", M.lint, "Go lint")
+	map("<leader>cgo", M.organize_imports, "Organize imports")
+	map("<leader>cgd", M.doc, "Go doc")
+	map("<leader>cgj", M.add_json_tags, "Add json tags")
+	map("<leader>cgJ", M.remove_json_tags, "Remove json tags")
+	map("<leader>cgy", M.add_yaml_tags, "Add yaml tags")
+	map("<leader>cgY", M.remove_yaml_tags, "Remove yaml tags")
+	map("<leader>cge", M.add_env_tags, "Add env tags")
+	map("<leader>cgE", M.remove_env_tags, "Remove env tags")
+	map("<leader>cgi", M.implement_interface, "Implement interface")
+	map("<leader>cgs", M.fill_struct_literal, "Fill struct literal")
 end
 
 return M

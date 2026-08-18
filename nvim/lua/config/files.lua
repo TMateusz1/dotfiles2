@@ -10,24 +10,35 @@ local root_markers = {
 	"Makefile",
 }
 
-local function existing_path_or_cwd(path)
-	if path ~= "" then
-		return path
+local function resolve_bufnr(bufnr)
+	if bufnr == nil or bufnr == 0 then
+		return vim.api.nvim_get_current_buf()
 	end
 
-	return vim.fn.getcwd()
+	return bufnr
 end
 
-function M.root(bufnr, markers)
-	bufnr = bufnr or 0
+function M.current_file(bufnr, fallback)
+	local path = vim.api.nvim_buf_get_name(resolve_bufnr(bufnr))
+
+	return path ~= "" and vim.fs.normalize(path) or fallback or vim.fn.getcwd()
+end
+
+function M.current_dir(bufnr, fallback)
+	local path = M.current_file(bufnr, fallback)
+
+	return vim.fn.filereadable(path) == 1 and vim.fs.dirname(path) or fallback or vim.fn.getcwd()
+end
+
+function M.root(bufnr, markers, fallback)
 	markers = markers or root_markers
-	local buffer = bufnr == 0 and vim.api.nvim_get_current_buf() or bufnr
-	local path = existing_path_or_cwd(vim.api.nvim_buf_get_name(buffer))
+	fallback = fallback or vim.fn.getcwd()
+	local path = M.current_file(bufnr, fallback)
 	local stat = vim.uv.fs_stat(path)
 	local start = stat and stat.type == "directory" and path or vim.fs.dirname(path)
 	local marker = vim.fs.find(markers, { path = start, upward = true })[1]
 
-	return marker and vim.fs.dirname(marker) or vim.fn.getcwd()
+	return marker and vim.fs.dirname(marker) or fallback
 end
 
 function M.project_root(bufnr)

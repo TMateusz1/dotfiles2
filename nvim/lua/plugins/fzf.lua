@@ -61,6 +61,12 @@ local function live_grep(cwd)
 	})
 end
 
+local function action(method)
+	return function()
+		require("fzf-lua")[method]()
+	end
+end
+
 return {
 	{
 		"ibhagwan/fzf-lua",
@@ -90,9 +96,6 @@ return {
 				formatter = "path.filename_first",
 			},
 		},
-		config = function(_, opts)
-			require("fzf-lua").setup(opts)
-		end,
 		keys = {
 			{
 				"<leader>ff",
@@ -106,65 +109,47 @@ return {
 			},
 			{
 				"<leader>/",
-				function()
-					require("fzf-lua").blines()
-				end,
+				action("blines"),
 				desc = "Search buffer lines",
 			},
 			{
 				"<leader>fG",
-				function()
-					require("fzf-lua").git_status()
-				end,
+				action("git_status"),
 				desc = "Git changed files",
 			},
 			{
 				"<leader>fb",
-				function()
-					require("fzf-lua").buffers()
-				end,
+				action("buffers"),
 				desc = "Find buffers",
 			},
 			{
 				"<leader>fs",
-				function()
-					require("fzf-lua").lsp_document_symbols()
-				end,
+				action("lsp_document_symbols"),
 				desc = "Document symbols",
 			},
 			{
 				"<leader>fS",
-				function()
-					require("fzf-lua").lsp_live_workspace_symbols()
-				end,
+				action("lsp_live_workspace_symbols"),
 				desc = "Live workspace symbols",
 			},
 			{
 				"<leader>fd",
-				function()
-					require("fzf-lua").diagnostics_document()
-				end,
+				action("diagnostics_document"),
 				desc = "Document diagnostics",
 			},
 			{
 				"<leader>fD",
-				function()
-					require("fzf-lua").diagnostics_workspace()
-				end,
+				action("diagnostics_workspace"),
 				desc = "Workspace diagnostics",
 			},
 			{
 				"<leader>fq",
-				function()
-					require("fzf-lua").quickfix()
-				end,
+				action("quickfix"),
 				desc = "Quickfix list",
 			},
 			{
 				"<leader>fc",
-				function()
-					require("fzf-lua").commands()
-				end,
+				action("commands"),
 				desc = "Commands",
 			},
 		},

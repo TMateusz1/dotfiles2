@@ -1,35 +1,18 @@
 -- ~/.config/nvim/lua/plugins/tests.lua
 
+local files = require("config.files")
+local go_root_markers = { "go.work", "go.mod", ".git" }
+
 local function current_file()
-	local file = vim.api.nvim_buf_get_name(0)
-
-	if file == "" then
-		return vim.uv.cwd()
-	end
-
-	return vim.fs.normalize(file)
+	return files.current_file(0, vim.uv.cwd())
 end
 
 local function current_package_dir()
-	local file = current_file()
-
-	if vim.fn.filereadable(file) == 1 then
-		return vim.fs.dirname(file)
-	end
-
-	return vim.uv.cwd()
+	return files.current_dir(0, vim.uv.cwd())
 end
 
 local function project_root()
-	local file = current_file()
-
-	local root = vim.fs.root(file, {
-		"go.work",
-		"go.mod",
-		".git",
-	})
-
-	return root or vim.uv.cwd()
+	return files.root(0, go_root_markers, vim.uv.cwd())
 end
 
 local function neotest()

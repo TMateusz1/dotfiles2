@@ -1,3 +1,5 @@
+local languages = require("config.languages")
+
 return {
 	{
 		"mfussenegger/nvim-lint",
@@ -7,14 +9,13 @@ return {
 
 			-- helm templates are filetype "helm" (not "yaml"), so yamllint never
 			-- runs on `{{ }}` files. Plain manifests and values files still get it.
-			lint.linters_by_ft = {
-				yaml = { "yamllint" },
-				["yaml.docker-compose"] = { "yamllint" },
-				["yaml.helm-values"] = { "yamllint" },
-				dockerfile = { "hadolint" },
-				robot = { "robocop" },
-				resource = { "robocop" },
-			}
+			lint.linters_by_ft = { dockerfile = { "hadolint" } }
+			for _, filetype in ipairs(languages.robot) do
+				lint.linters_by_ft[filetype] = { "robocop" }
+			end
+			for _, filetype in ipairs(languages.yaml) do
+				lint.linters_by_ft[filetype] = { "yamllint" }
+			end
 
 			-- "relaxed" drops the noisy warnings (line length, comment spacing,
 			-- document-start) that fire constantly on Kubernetes manifests, while

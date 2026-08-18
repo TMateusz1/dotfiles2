@@ -1,3 +1,25 @@
+local languages = require("config.languages")
+
+local formatters_by_ft = {
+	go = { "goimports", "gofumpt" },
+	lua = { "stylua" },
+	python = { "ruff_format" },
+	sh = { "shfmt" },
+	bash = { "shfmt" },
+	helm = { "helm_template_spacing" },
+	json = { "prettier" },
+	jsonc = { "prettier" },
+	markdown = { "prettier" },
+}
+
+for _, filetype in ipairs(languages.robot) do
+	formatters_by_ft[filetype] = { "robocop_format" }
+end
+
+for _, filetype in ipairs(languages.yaml) do
+	formatters_by_ft[filetype] = { "yamlfmt" }
+end
+
 return {
 	{
 		"stevearc/conform.nvim",
@@ -86,22 +108,7 @@ return {
 					stdin = false,
 				},
 			},
-			formatters_by_ft = {
-				go = { "goimports", "gofumpt" },
-				lua = { "stylua" },
-				python = { "ruff_format" },
-				robot = { "robocop_format" },
-				resource = { "robocop_format" },
-				sh = { "shfmt" },
-				bash = { "shfmt" },
-				helm = { "helm_template_spacing" },
-				yaml = { "yamlfmt" },
-				["yaml.docker-compose"] = { "yamlfmt" },
-				["yaml.helm-values"] = { "yamlfmt" },
-				json = { "prettier" },
-				jsonc = { "prettier" },
-				markdown = { "prettier" },
-			},
+			formatters_by_ft = formatters_by_ft,
 
 			format_on_save = function(bufnr)
 				-- Respect the <leader>uf toggle / :FormatDisable command.

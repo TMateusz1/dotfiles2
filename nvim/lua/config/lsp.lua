@@ -1,18 +1,5 @@
 local M = {}
-
-local servers = {
-	{ name = "gopls", executable = "gopls" },
-	{ name = "lua_ls", executable = "lua-language-server" },
-	{ name = "dockerls", executable = "docker-langserver" },
-	{ name = "docker_compose_language_service", executable = "docker-compose-langserver" },
-	{ name = "yamlls", executable = "yaml-language-server" },
-	{ name = "helm_ls", executable = { "helm_ls", "helm-ls" } },
-	{ name = "jsonls", executable = "vscode-json-language-server" },
-	{ name = "bashls", executable = "bash-language-server" },
-	{ name = "basedpyright", executable = "basedpyright-langserver" },
-	{ name = "ruff", executable = "ruff" },
-	{ name = "robotcode", executable = "robotcode" },
-}
+local languages = require("config.languages")
 
 local function executable_label(executable)
 	if type(executable) == "string" then
@@ -36,177 +23,189 @@ local function first_executable(executable)
 	return nil
 end
 
+local servers = {
+	{
+		name = "gopls",
+		executable = "gopls",
+		config = {
+			settings = {
+				gopls = {
+					gofumpt = true,
+					usePlaceholders = false,
+					completeUnimported = true,
+					staticcheck = false,
+					vulncheck = "Off",
+					symbolStyle = "Package",
+					semanticTokens = false,
+					experimentalPostfixCompletions = true,
+					directoryFilters = {
+						"-**/.git",
+						"-**/.direnv",
+						"-**/node_modules",
+						"-**/tmp",
+					},
+					analyses = {
+						unusedparams = true,
+						unusedwrite = true,
+						nilness = true,
+						lostcancel = true,
+						unreachable = true,
+						shadow = false,
+						unusedresult = false,
+					},
+					codelenses = {
+						generate = true,
+						test = true,
+						tidy = true,
+						regenerate_cgo = false,
+						upgrade_dependency = false,
+						vendor = false,
+					},
+					hints = {
+						assignVariableTypes = true,
+						compositeLiteralFields = true,
+						compositeLiteralTypes = true,
+						constantValues = true,
+						functionTypeParameters = true,
+						parameterNames = true,
+						rangeVariableTypes = true,
+					},
+				},
+			},
+		},
+	},
+	{
+		name = "lua_ls",
+		executable = "lua-language-server",
+		config = {
+			settings = {
+				Lua = {
+					runtime = { version = "LuaJIT" },
+					workspace = { checkThirdParty = false },
+					telemetry = { enable = false },
+					hint = {
+						enable = true,
+						arrayIndex = "Disable",
+						await = true,
+						paramName = "All",
+						paramType = true,
+						semicolon = "Disable",
+						setType = true,
+					},
+					completion = { callSnippet = "Replace" },
+				},
+			},
+		},
+	},
+	{ name = "dockerls", executable = "docker-langserver" },
+	{ name = "docker_compose_language_service", executable = "docker-compose-langserver" },
+	{
+		name = "yamlls",
+		executable = "yaml-language-server",
+		config = function()
+			return {
+				filetypes = vim.deepcopy(languages.yaml),
+				settings = {
+					redhat = { telemetry = { enabled = false } },
+					yaml = {
+						validate = true,
+						completion = true,
+						hover = true,
+						format = { enable = false },
+						maxItemsComputed = 10000,
+						schemaStore = { enable = false, url = "" },
+						schemas = require("config.kubernetes").yaml_schemas(),
+					},
+				},
+			}
+		end,
+	},
+	{
+		name = "helm_ls",
+		executable = { "helm_ls", "helm-ls" },
+		config = function()
+			return {
+				cmd = { first_executable({ "helm_ls", "helm-ls" }) or "helm_ls", "serve" },
+				settings = {
+					["helm-ls"] = {
+						yamlls = { path = "yaml-language-server" },
+						valuesFiles = {
+							mainValuesFile = "values.yaml",
+							lintOverlayValuesFile = "values.lint.yaml",
+							additionalValuesFilesGlobPattern = "values*.yaml",
+						},
+					},
+				},
+			}
+		end,
+	},
+	{
+		name = "jsonls",
+		executable = "vscode-json-language-server",
+		config = function()
+			return {
+				settings = {
+					json = {
+						schemas = require("schemastore").json.schemas(),
+						validate = { enable = true },
+					},
+				},
+			}
+		end,
+	},
+	{ name = "bashls", executable = "bash-language-server" },
+	{
+		name = "basedpyright",
+		executable = "basedpyright-langserver",
+		config = {
+			settings = {
+				basedpyright = {
+					analysis = {
+						autoSearchPaths = true,
+						diagnosticMode = "openFilesOnly",
+					},
+				},
+			},
+		},
+	},
+	{
+		name = "ruff",
+		executable = "ruff",
+		config = {
+			on_attach = function(client)
+				-- basedpyright owns Python hover; Ruff stays focused on lint/code actions.
+				client.server_capabilities.hoverProvider = false
+			end,
+		},
+	},
+	{
+		name = "robotcode",
+		executable = "robotcode",
+		config = {
+			cmd = { "robotcode", "language-server" },
+			filetypes = vim.deepcopy(languages.robot),
+			root_markers = { "robot.toml", "pyproject.toml", "Pipfile", ".git" },
+			cmd_env = vim.env.VIRTUAL_ENV and {
+				PYTHONPATH = vim.fn.glob(vim.env.VIRTUAL_ENV .. "/lib/python*/site-packages"):gsub("\n", ":"),
+			} or nil,
+			get_language_id = function()
+				return "robotframework"
+			end,
+		},
+	},
+}
+
 local function configure_servers()
-	local capabilities = require("blink.cmp").get_lsp_capabilities()
-	local kubernetes = require("config.kubernetes")
-
 	vim.lsp.config("*", {
-		capabilities = capabilities,
+		capabilities = require("blink.cmp").get_lsp_capabilities(),
 	})
 
-	vim.lsp.config("gopls", {
-		settings = {
-			gopls = {
-				gofumpt = true,
-				usePlaceholders = false,
-				completeUnimported = true,
-				staticcheck = false,
-				vulncheck = "Off",
-				symbolStyle = "Package",
-				semanticTokens = false,
-				experimentalPostfixCompletions = true,
-				directoryFilters = {
-					"-**/.git",
-					"-**/.direnv",
-					"-**/node_modules",
-					"-**/tmp",
-				},
-
-				analyses = {
-					unusedparams = true,
-					unusedwrite = true,
-					nilness = true,
-					lostcancel = true,
-					unreachable = true,
-					shadow = false,
-					unusedresult = false,
-				},
-
-				codelenses = {
-					generate = true,
-					test = true,
-					tidy = true,
-					regenerate_cgo = false,
-					upgrade_dependency = false,
-					vendor = false,
-				},
-
-				hints = {
-					assignVariableTypes = true,
-					compositeLiteralFields = true,
-					compositeLiteralTypes = true,
-					constantValues = true,
-					functionTypeParameters = true,
-					parameterNames = true,
-					rangeVariableTypes = true,
-				},
-			},
-		},
-	})
-
-	vim.lsp.config("lua_ls", {
-		settings = {
-			Lua = {
-				runtime = {
-					version = "LuaJIT",
-				},
-				workspace = {
-					checkThirdParty = false,
-				},
-				telemetry = {
-					enable = false,
-				},
-				hint = {
-					enable = true,
-					arrayIndex = "Disable",
-					await = true,
-					paramName = "All",
-					paramType = true,
-					semicolon = "Disable",
-					setType = true,
-				},
-				completion = {
-					callSnippet = "Replace",
-				},
-			},
-		},
-	})
-
-	vim.lsp.config("basedpyright", {
-		settings = {
-			basedpyright = {
-				analysis = {
-					autoSearchPaths = true,
-					diagnosticMode = "openFilesOnly",
-				},
-			},
-		},
-	})
-
-	vim.lsp.config("ruff", {
-		on_attach = function(client)
-			-- basedpyright owns Python hover; Ruff stays focused on lint/code actions.
-			client.server_capabilities.hoverProvider = false
-		end,
-	})
-
-	vim.lsp.config("robotcode", {
-		cmd = { "robotcode", "language-server" },
-		filetypes = { "robot", "resource" },
-		root_markers = { "robot.toml", "pyproject.toml", "Pipfile", ".git" },
-		cmd_env = vim.env.VIRTUAL_ENV and {
-			PYTHONPATH = vim.fn.glob(vim.env.VIRTUAL_ENV .. "/lib/python*/site-packages"):gsub("\n", ":"),
-		} or nil,
-		get_language_id = function()
-			return "robotframework"
-		end,
-	})
-
-	vim.lsp.config("jsonls", {
-		settings = {
-			json = {
-				schemas = require("schemastore").json.schemas(),
-				validate = {
-					enable = true,
-				},
-			},
-		},
-	})
-
-	vim.lsp.config("yamlls", {
-		filetypes = {
-			"yaml",
-			"yaml.docker-compose",
-			"yaml.helm-values",
-		},
-		settings = {
-			redhat = {
-				telemetry = {
-					enabled = false,
-				},
-			},
-			yaml = {
-				validate = true,
-				completion = true,
-				hover = true,
-				format = {
-					enable = false,
-				},
-				maxItemsComputed = 10000,
-				schemaStore = {
-					enable = false,
-					url = "",
-				},
-				schemas = kubernetes.yaml_schemas(),
-			},
-		},
-	})
-
-	vim.lsp.config("helm_ls", {
-		cmd = { first_executable({ "helm_ls", "helm-ls" }) or "helm_ls", "serve" },
-		settings = {
-			["helm-ls"] = {
-				yamlls = {
-					path = "yaml-language-server",
-				},
-				valuesFiles = {
-					mainValuesFile = "values.yaml",
-					lintOverlayValuesFile = "values.lint.yaml",
-					additionalValuesFilesGlobPattern = "values*.yaml",
-				},
-			},
-		},
-	})
+	for _, server in ipairs(servers) do
+		if server.config then
+			local config = type(server.config) == "function" and server.config() or vim.deepcopy(server.config)
+			vim.lsp.config(server.name, config)
+		end
+	end
 end
 
 local function enable_servers()
