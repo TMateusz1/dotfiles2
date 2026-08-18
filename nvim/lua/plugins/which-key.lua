@@ -32,7 +32,6 @@ return {
 			},
 
 			spec = {
-				{ "<leader>p", group = "Harpoon" },
 				{ "<leader>b", group = "Buffers" },
 				{ "<leader>f", group = "Find" },
 				{ "<leader>g", group = "Git" },

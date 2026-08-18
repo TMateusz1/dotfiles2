@@ -331,7 +331,9 @@ function M.implement_interface(bufnr)
 		execute_gopls(bufnr, "gopls.implement_interface", {
 			Location = { uri = vim.uri_from_bufnr(bufnr), range = range },
 			Interface = iface,
-		}, "implement " .. iface .. " on " .. struct, { iface })
+		}, "implement " .. iface .. " on " .. struct, {
+			{ id = "interface", value = iface },
+		})
 	end
 
 	local fzf = require("fzf-lua")

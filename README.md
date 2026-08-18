@@ -39,7 +39,6 @@ session, then open `nvim` in the project you want to work on.
 | Neovim | `Space f f` / `Space f g` | Find files / live grep |
 | Neovim | `Space e` / `Space E` | Explorer at current file / collapsed root |
 | Neovim | `Space q` | Smart-close the current buffer or tool window |
-| Neovim | `Space p p` / `Space p 1`-`5` | Add a Harpoon location / jump to it |
 | Neovim | `Space f r` | Project-wide find and replace |
 | Neovim | `Space g g` | Open LazyGit in a floating terminal |
 

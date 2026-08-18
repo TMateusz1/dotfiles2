@@ -9,8 +9,7 @@ WhichKey when a mapping is forgotten.
 
 - Lazy.nvim manages plugins; mise owns Neovim and every external binary.
 - fzf-lua owns interactive finding. Neo-tree is used only for file browsing.
-- Bufferline represents open buffers; Harpoon represents durable project
-  locations, including a line and column.
+- Bufferline represents open buffers.
 - Catppuccin Mocha supplies the theme and Nerd Font icons; see
   [Colour](#colour) below.
 - The native statusline shows mode, Git branch, diagnostics, root-relative file
@@ -145,7 +144,6 @@ one.
 | `<leader>fq` | Browse the quickfix list |
 | `<leader>fc` | Browse Ex commands |
 | `<leader>fo` | Find TODO/FIXME/BUG comments |
-| `<leader>fp` | Find Harpoon locations with line and file preview |
 | `<leader>fr` | Project-wide find and replace with Grug Far |
 | `<leader>cs` | Toggle the persistent symbols outline on the right |
 | `]f` / `[f` | Next/previous function start |
@@ -171,19 +169,6 @@ focus or expand directories.
 
 The remaining create, rename, delete, copy, filter, and help keys are Neo-tree
 defaults; press `?` inside the explorer for its current contextual list.
-
-## Harpoon locations
-
-Harpoon entries are persistent per project and store file, line, column, and
-source text. Multiple locations in one file are valid. When edits move a marked
-line, the custom integration relocates it to the nearest matching source line.
-
-| Key | Action |
-| --- | --- |
-| `<leader>pp` | Add or update the current file and cursor location |
-| `<leader>P` | Inspect, reorder, or delete locations in a floating window |
-| `<leader>p1`-`<leader>p5` | Open location 1-5 |
-| `<leader>fp` | Find every project location through fzf-lua |
 
 ## LSP and diagnostics
 
