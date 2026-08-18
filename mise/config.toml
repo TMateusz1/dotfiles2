@@ -1,5 +1,5 @@
 [tool_alias]
-codex = "npm:@openai/codex"
+codex = "aqua:openai/codex"
 
 [tools]
 atuin = "18.19.0"
