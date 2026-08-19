@@ -61,6 +61,18 @@ local function live_grep(cwd)
 	})
 end
 
+local function find_buffers()
+	require("fzf-lua").buffers({
+		prompt = "Buffers ❯ ",
+		sort_lastused = true,
+		show_unloaded = true,
+		winopts = {
+			title = " Buffers  ·  Ctrl-X delete ",
+			title_pos = "center",
+		},
+	})
+end
+
 local function action(method)
 	return function()
 		require("fzf-lua")[method]()
@@ -74,29 +86,50 @@ return {
 		dependencies = {
 			"nvim-tree/nvim-web-devicons",
 		},
-		opts = {
-			winopts = {
-				border = "rounded",
-				height = 0.86,
-				width = 0.88,
-				row = 0.45,
-				preview = {
+		opts = function()
+			local buffer_separator = require("fzf-lua.utils").nbsp
+
+			return {
+				winopts = {
 					border = "rounded",
-					layout = "flex",
-					vertical = "down:45%",
-					horizontal = "right:56%",
-					wrap = false,
+					height = 0.86,
+					width = 0.88,
+					row = 0.45,
+					preview = {
+						border = "rounded",
+						layout = "flex",
+						vertical = "down:45%",
+						horizontal = "right:56%",
+						wrap = false,
+					},
 				},
-			},
-			fzf_colors = true,
-			files = {
-				formatter = "path.filename_first",
-			},
-			grep = {
-				formatter = "path.filename_first",
-			},
-		},
+				fzf_colors = true,
+				files = {
+					formatter = "path.filename_first",
+				},
+				grep = {
+					formatter = "path.filename_first",
+				},
+				buffers = {
+					-- Keep rows predictable: buffer number, icon, project-relative
+					-- path, and cursor line. The cryptic internal buffer flags remain
+					-- in the hidden fields so actions still receive the full entry.
+					formatter = false,
+					fzf_opts = {
+						["--delimiter"] = buffer_separator,
+						["--with-nth"] = "1,4..",
+					},
+					sort_lastused = true,
+					show_unloaded = true,
+				},
+			}
+		end,
 		keys = {
+			{
+				"<leader><leader>",
+				find_buffers,
+				desc = "Switch buffer",
+			},
 			{
 				"<leader>ff",
 				find_files,
@@ -119,8 +152,13 @@ return {
 			},
 			{
 				"<leader>fb",
-				action("buffers"),
+				find_buffers,
 				desc = "Find buffers",
+			},
+			{
+				"<leader>bb",
+				find_buffers,
+				desc = "Buffer list",
 			},
 			{
 				"<leader>fs",

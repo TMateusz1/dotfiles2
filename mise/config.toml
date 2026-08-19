@@ -4,7 +4,7 @@ codex = "aqua:openai/codex"
 [tools]
 atuin = "18.19.0"
 bat = "0.26.1"
-codex = "0.147.0"
+codex = "0.148.0"
 delta = "0.19.2"
 eza = "0.23.5"
 fd = "10.4.2"

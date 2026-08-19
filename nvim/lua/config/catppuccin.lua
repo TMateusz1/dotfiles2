@@ -148,6 +148,8 @@ function M.setup()
 			gitsigns = true,
 			mini = true,
 			neotree = true,
+			noice = true,
+			notify = true,
 			native_lsp = {
 				enabled = true,
 			},

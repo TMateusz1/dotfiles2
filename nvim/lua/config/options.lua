@@ -113,11 +113,14 @@ opt.listchars = {
 	nbsp = "␣",
 }
 
--- Keep command line clean unless needed
-opt.cmdheight = 1
+-- Noice renders commands in a floating palette, so do not reserve a permanent
+-- line below the global statusline.
+opt.cmdheight = 0
 
--- Disable intro screen
-opt.shortmess:append("I")
+-- Keep routine file messages terse and disable the intro screen.
+-- `F` also suppresses redundant file info after edits and automatic reloads.
+-- Successful write messages are filtered in plugins/noice.lua.
+opt.shortmess:append("FI")
 
 opt.winborder = "rounded"
 

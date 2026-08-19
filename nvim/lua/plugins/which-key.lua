@@ -43,7 +43,6 @@ return {
 				{ "<leader>t", group = "Tests" },
 				{ "<leader>T", group = "Terminal" },
 				{ "<leader>u", group = "UI / Toggles" },
-				{ "<leader>x", group = "Lists" },
 			},
 		},
 	},

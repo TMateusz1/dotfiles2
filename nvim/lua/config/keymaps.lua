@@ -98,7 +98,7 @@ keymap("n", "[q", function()
 	end
 	vim.cmd("normal! zz")
 end, { desc = "Previous quickfix item" })
-keymap("n", "<leader>xq", function()
+keymap("n", "<leader>uq", function()
 	for _, win in pairs(vim.fn.getwininfo()) do
 		if win.quickfix == 1 then
 			vim.cmd("cclose")

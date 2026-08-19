@@ -218,7 +218,9 @@ local function smart_close()
 end
 
 local function save()
-	local ok, err = pcall(vim.cmd.write, { bang = true })
+	-- Errors still throw and are surfaced by the notification below; only the
+	-- successful filename/line/byte report is silenced.
+	local ok, err = pcall(vim.cmd, "silent write!")
 
 	if not ok then
 		notify("Save failed: " .. tostring(err), vim.log.levels.ERROR)
@@ -235,6 +237,16 @@ end
 
 local keys = {
 	{
+		"<S-l>",
+		"<cmd>BufferLineCycleNext<CR>",
+		desc = "Next buffer",
+	},
+	{
+		"<S-h>",
+		"<cmd>BufferLineCyclePrev<CR>",
+		desc = "Previous buffer",
+	},
+	{
 		"]b",
 		"<cmd>BufferLineCycleNext<CR>",
 		desc = "Next buffer",
@@ -243,6 +255,11 @@ local keys = {
 		"[b",
 		"<cmd>BufferLineCyclePrev<CR>",
 		desc = "Previous buffer",
+	},
+	{
+		"<leader>bp",
+		"<cmd>BufferLinePick<CR>",
+		desc = "Pick visible buffer",
 	},
 	{
 		"<leader>bX",
@@ -310,6 +327,11 @@ vim.list_extend(keys, {
 		"<leader>q",
 		smart_close,
 		desc = "Smart close",
+	},
+	{
+		"<leader>x",
+		close_current,
+		desc = "Delete buffer",
 	},
 	{
 		"<leader>bx",
