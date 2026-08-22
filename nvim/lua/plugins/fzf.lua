@@ -156,11 +156,6 @@ return {
 				desc = "Find buffers",
 			},
 			{
-				"<leader>bb",
-				find_buffers,
-				desc = "Buffer list",
-			},
-			{
 				"<leader>fs",
 				action("lsp_document_symbols"),
 				desc = "Document symbols",

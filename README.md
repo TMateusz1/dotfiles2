@@ -121,8 +121,8 @@ After changing a version:
 
 ```bash
 mise install
-mise prune
 ./check.sh
+mise prune
 ```
 
 See [docs/mise.md](docs/mise.md) for tool categories and troubleshooting.

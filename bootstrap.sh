@@ -122,6 +122,8 @@ bootstrap_ubuntu() {
 }
 
 main() {
+    ((EUID != 0)) || die "Run bootstrap as your normal user, not with sudo"
+
     case "$(uname -s)" in
         Darwin)
             log "Detected OS: macOS"

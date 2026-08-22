@@ -94,9 +94,10 @@ Ordinary `q` remains available for recording macros; only `q:` is disabled.
 | `<leader>w` | Save the current file |
 | `<leader>W` | Save and close the current buffer |
 | `<leader>q` | Smart-close the current buffer, float, special window, or Grug Far |
-| `<leader>bx` | Delete the current buffer while preserving the editing window |
-| `<leader>bX` | Delete every other closable buffer |
+| `<leader>x` | Delete the current buffer while preserving the editing window |
+| `<leader>X` | Delete every other closable buffer |
 | `<leader>bn` | Create a new empty buffer |
+| `<leader><leader>` / `<leader>fb` | Find open buffers |
 | `]b` / `[b` | Next/previous buffer |
 | `<leader>b0` | Alternate buffer |
 | `<leader>b,` / `<leader>b.` | Move the current buffer left/right in Bufferline |
@@ -148,7 +149,7 @@ one.
 | `<leader>cs` | Toggle the persistent symbols outline on the right |
 | `]f` / `[f` | Next/previous function start |
 | `]q` / `[q` | Next/previous quickfix item, wrapping at the ends |
-| `<leader>xq` | Toggle the quickfix window |
+| `<leader>uq` | Toggle the quickfix window |
 | `]o` / `[o` | Next/previous TODO comment |
 
 ## Neo-tree explorer
@@ -216,6 +217,13 @@ Diagnostics navigation is global, so it also covers nvim-lint diagnostics:
 | --- | --- |
 | `]d` / `[d` | Next/previous diagnostic, centered with a detail float |
 | `<leader>uv` | Toggle multi-line diagnostics for the cursor line |
+
+Message controls are global:
+
+| Key | Action |
+| --- | --- |
+| `<leader>fm` | Browse the message history |
+| `<leader>un` | Dismiss visible notifications |
 
 Fidget displays asynchronous LSP progress when a server reports it. Quiet
 servers such as YAML or Docker may attach and work without ever showing a

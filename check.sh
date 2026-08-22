@@ -16,6 +16,7 @@ bash -n bootstrap.sh check.sh
 zsh -n .zshrc
 shellcheck bootstrap.sh check.sh
 shfmt -i 4 -ci -d bootstrap.sh check.sh
+stylua --check nvim
 
 jq empty nvim/lazy-lock.json nvim/snippets/*.json
 yq -oy '.' k9s/config.yaml k9s/skins/catppuccin-mocha.yaml lazygit/config.yml >/dev/null

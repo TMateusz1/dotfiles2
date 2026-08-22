@@ -26,8 +26,13 @@ end
 
 function M.current_dir(bufnr, fallback)
 	local path = M.current_file(bufnr, fallback)
+	local stat = vim.uv.fs_stat(path)
 
-	return vim.fn.filereadable(path) == 1 and vim.fs.dirname(path) or fallback or vim.fn.getcwd()
+	if stat and stat.type == "directory" then
+		return path
+	end
+
+	return vim.fs.dirname(path) or fallback or vim.fn.getcwd()
 end
 
 function M.root(bufnr, markers, fallback)

@@ -71,11 +71,21 @@ return {
 		opts = {
 			formatters = {
 				helm_template_spacing = {
-					command = "perl",
-					args = {
-						"-0pe",
-						[[s{\{\{(-?)(.*?)(-?)\}\}}{my $original=$&; my $body=$2; $body =~ s/^\s+|\s+$//g; $body =~ m{^/\*} ? $original : "{{".$1." ".$body." ".$3."}}"}gse]],
-					},
+					-- Keep Helm formatting dependency-free and preserve template comments.
+					format = function(_, _, lines, callback)
+						local text = table.concat(lines, "\n")
+						local formatted = text:gsub("{{(%-?)(.-)(%-?)}}", function(left, body, right)
+							local trimmed = vim.trim(body)
+
+							if trimmed:match("^/%*") then
+								return "{{" .. left .. body .. right .. "}}"
+							end
+
+							return "{{" .. left .. " " .. trimmed .. " " .. right .. "}}"
+						end)
+
+						callback(nil, vim.split(formatted, "\n", { plain = true }))
+					end,
 				},
 
 				shfmt = {
