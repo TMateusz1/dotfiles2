@@ -26,4 +26,10 @@ STARSHIP_CONFIG="$ROOT/starship.toml" starship prompt --path "$ROOT" >/dev/null
 
 tmux -S "$TMUX_SOCKET" -f "$ROOT/.tmux.conf" new-session -d -s dotfiles-check
 tmux -S "$TMUX_SOCKET" show-options -g >/dev/null
+nvim --headless -n -i NONE -u NONE --cmd "set runtimepath^=$ROOT/nvim" \
+    '+lua require("tests.buffers").run()' \
+    '+if v:errmsg != "" | cquit | endif' +qa!
+nvim --headless -n -i NONE -u NONE --cmd "set runtimepath^=$ROOT/nvim" \
+    '+lua require("tests.neotest").run()' \
+    '+if v:errmsg != "" | cquit | endif' +qa!
 nvim --headless -i NONE -u "$ROOT/nvim/init.lua" '+checkhealth lazy vim.lsp nvim-treesitter' +qa!
