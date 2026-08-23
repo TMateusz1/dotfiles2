@@ -221,7 +221,9 @@ local function enable_servers()
 
 	if #missing > 0 then
 		vim.notify_once(
-			("Missing LSP tools: %s. Run `mise install`."):format(table.concat(missing, ", ")),
+			("Missing LSP tools: %s. Run `mise install` or activate the project's Python environment."):format(
+				table.concat(missing, ", ")
+			),
 			vim.log.levels.WARN
 		)
 	end

@@ -1,0 +1,19 @@
+[tasks."bootstrap:fresh"]
+description = "Bootstrap a new machine from this checkout"
+run = "./bootstrap.sh"
+
+[tasks."dotfiles:sync"]
+description = "Apply declared dotfiles with mise"
+run = "mise bootstrap dotfiles apply --yes"
+
+[tasks."dotfiles:status"]
+description = "Show whether declared dotfiles are applied"
+run = "mise bootstrap dotfiles status"
+
+[tasks."tools:sync"]
+description = "Install all pinned tools in dependency-safe order"
+run = ["mise install go node uv", "mise install"]
+
+[tasks.check]
+description = "Run the repository validation suite"
+run = "./check.sh"

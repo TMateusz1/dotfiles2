@@ -12,8 +12,22 @@ Clone the repository, enter it, and run:
 ```
 
 Run the script as your normal user, not with `sudo`. It is safe to rerun:
-existing targets are left alone when already linked, and conflicting files are
-moved to a timestamped `.backup.YYYYMMDDHHMMSS` path.
+dotfiles already applied by mise are left alone, and conflicting targets are
+moved to timestamped `.backup.YYYYMMDDHHMMSS` paths before mise creates the
+links.
+
+Once mise is installed, the common maintenance workflows are available as
+repository tasks:
+
+```bash
+mise run bootstrap:fresh  # run the complete bootstrap from this checkout
+mise run dotfiles:sync    # apply declared links with mise
+mise run dotfiles:status  # inspect link state
+mise run tools:sync       # install every pinned tool
+mise run check            # run repository validation
+```
+
+The first run on a machine without mise must still use `./bootstrap.sh`.
 
 After installation, start a login shell and verify the setup:
 
@@ -48,8 +62,7 @@ Shell, tmux, terminal, and clipboard behavior is in
 
 ## What bootstrap installs
 
-- macOS: Homebrew when missing, Git, Ghostty, Kitty, FiraCode Nerd Font, and
-  JetBrainsMono Nerd Font.
+- macOS: Homebrew when missing, Git, Kitty, and JetBrainsMono Nerd Font.
 - Ubuntu: the base build and shell packages required by this repository, then
   Zsh as the login shell. GUI terminals are not installed.
 - Both: mise, Oh My Zsh, the configured Zsh plugins, symlinked configuration,
@@ -62,18 +75,18 @@ platform package manager are required for the first installation.
 
 ```text
 .
-├── bootstrap.sh          # install packages, link config, install mise tools
+├── bootstrap.sh          # install packages and mise, then bootstrap the environment
 ├── check.sh              # static checks and headless Neovim health checks
 ├── .zshrc                # shell integrations, aliases, and tc helper
 ├── .tmux.conf            # tmux workflow and Catppuccin statusline
 ├── atuin/                # shell history
 ├── bat/                  # pager theme, shared with delta
 ├── git/                  # delta Git include
-├── ghostty/              # primary macOS terminal
 ├── k9s/                  # Kubernetes TUI and skin
 ├── kitty/                # alternative terminal
 ├── lazygit/              # Git TUI
 ├── mise/                 # pinned runtimes and command-line tools
+├── mise.toml             # repository-scoped maintenance tasks
 ├── nvim/                 # Neovim configuration, plugins, and snippets
 ├── starship.toml         # shell prompt
 └── docs/                 # focused operating guides
@@ -81,7 +94,8 @@ platform package manager are required for the first installation.
 
 ## Linked configuration
 
-Common links:
+Common links are declared in `mise/config.toml` and applied by
+`mise bootstrap dotfiles apply`:
 
 ```text
 repo/.tmux.conf          -> ~/.tmux.conf
@@ -92,7 +106,9 @@ repo/git/delta.gitconfig -> ~/.config/git/delta.gitconfig
 repo/k9s/config.yaml     -> ~/.config/k9s/config.yaml
 repo/k9s/skins/catppuccin-mocha.yaml -> ~/.config/k9s/skins/catppuccin-mocha.yaml
 repo/lazygit/config.yml  -> ~/.config/lazygit/config.yml
+repo/mise/config.macos.toml -> ~/.config/mise/config.macos.toml
 repo/mise/config.toml    -> ~/.config/mise/config.toml
+repo/.miserc.toml        -> ~/.config/mise/miserc.toml
 repo/nvim                -> ~/.config/nvim
 repo/starship.toml       -> ~/.config/starship.toml
 ```
@@ -100,10 +116,9 @@ repo/starship.toml       -> ~/.config/starship.toml
 The delta file is added to the global Git configuration with `include.path`;
 bootstrap does not replace `~/.gitconfig`.
 
-macOS also links:
+`mise/config.macos.toml` adds these links on macOS:
 
 ```text
-repo/ghostty/config      -> ~/.config/ghostty/config
 repo/kitty               -> ~/.config/kitty
 repo/k9s/config.yaml     -> ~/Library/Application Support/k9s/config.yaml
 repo/k9s/skins/catppuccin-mocha.yaml -> ~/Library/Application Support/k9s/skins/catppuccin-mocha.yaml

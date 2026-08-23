@@ -20,7 +20,7 @@ stylua --check nvim
 
 jq empty nvim/lazy-lock.json nvim/snippets/*.json
 yq -oy '.' k9s/config.yaml k9s/skins/catppuccin-mocha.yaml lazygit/config.yml >/dev/null
-yq -p toml -oy '.' atuin/config.toml mise/config.toml starship.toml >/dev/null
+yq -p toml -oy '.' .miserc.toml atuin/config.toml mise.toml mise/config.toml mise/config.macos.toml starship.toml >/dev/null
 git config --file git/delta.gitconfig --list >/dev/null
 STARSHIP_CONFIG="$ROOT/starship.toml" starship prompt --path "$ROOT" >/dev/null
 

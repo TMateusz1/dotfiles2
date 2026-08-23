@@ -109,9 +109,8 @@ Catppuccin Mocha is the repository's visual system, not a loose inspiration.
   success/additions/strings, red for errors/deletions, yellow or peach for
   warnings/search/constants, and muted overlay/surface colors for secondary
   chrome.
-- `ghostty/config` and `kitty/catppuccin-mocha.conf` contain the same ANSI
-  palette and must be changed together. When a palette role changes, inspect
-  all applicable consumers: `.tmux.conf`, `.zshrc` fzf colors,
+- `kitty/catppuccin-mocha.conf` owns the terminal ANSI palette. When a palette
+  role changes, inspect all applicable consumers: `.tmux.conf`, `.zshrc` fzf colors,
   `starship.toml`, `git/delta.gitconfig`, `lazygit/config.yml`,
   `k9s/skins/catppuccin-mocha.yaml`, and
   `nvim/lua/config/catppuccin.lua`.

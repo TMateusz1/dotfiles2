@@ -174,7 +174,9 @@ defaults; press `?` inside the explorer for its current contextual list.
 ## LSP and diagnostics
 
 Neovim enables an LSP only when its executable is available on `PATH`. Missing
-servers produce one combined notification suggesting `mise install`.
+servers produce one combined notification. Mise supplies the global servers;
+Python and Robot Framework projects supply their Python-based commands through
+their active virtual environment.
 
 | Server | Executable |
 | --- | --- |
@@ -233,6 +235,10 @@ Robot Framework uses RobotCode for `.robot` and `.resource`. Start Neovim from
 the project environment (for example with its `.venv` active) so RobotCode sees
 the same libraries as the test runner. It reads `robot.toml` or
 `pyproject.toml` when present.
+
+The project environment also supplies `ruff` and `robocop` when their LSP,
+formatting, or linting integrations are needed. Mise supplies `yamllint`
+globally.
 
 ## Completion and snippets
 

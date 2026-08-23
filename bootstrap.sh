@@ -10,46 +10,6 @@ die() {
     exit 1
 }
 
-link() {
-    local source="$ROOT/$1"
-    local target="$2"
-
-    mkdir -p "$(dirname -- "$target")"
-    if [[ -L "$target" && "$(readlink "$target")" == "$source" ]]; then
-        return
-    fi
-    if [[ -e "$target" || -L "$target" ]]; then
-        local backup
-        backup="$target.backup.$(date +%Y%m%d%H%M%S)"
-        log "Backing up $target -> $backup"
-        mv "$target" "$backup"
-    fi
-    log "Linking $target -> $source"
-    ln -s "$source" "$target"
-}
-
-link_common_configs() {
-    link .tmux.conf "$HOME/.tmux.conf"
-    link .zshrc "$HOME/.zshrc"
-    link atuin/config.toml "$HOME/.config/atuin/config.toml"
-    link bat/config "$HOME/.config/bat/config"
-    link git/delta.gitconfig "$HOME/.config/git/delta.gitconfig"
-    link k9s/config.yaml "$HOME/.config/k9s/config.yaml"
-    link k9s/skins/catppuccin-mocha.yaml "$HOME/.config/k9s/skins/catppuccin-mocha.yaml"
-    link lazygit/config.yml "$HOME/.config/lazygit/config.yml"
-    link mise/config.toml "$HOME/.config/mise/config.toml"
-    link nvim "$HOME/.config/nvim"
-    link starship.toml "$HOME/.config/starship.toml"
-}
-
-link_macos_configs() {
-    link ghostty/config "$HOME/.config/ghostty/config"
-    link kitty "$HOME/.config/kitty"
-    link k9s/config.yaml "$HOME/Library/Application Support/k9s/config.yaml"
-    link k9s/skins/catppuccin-mocha.yaml "$HOME/Library/Application Support/k9s/skins/catppuccin-mocha.yaml"
-    link lazygit/config.yml "$HOME/Library/Application Support/lazygit/config.yml"
-}
-
 configure_git_delta() {
     local path="$HOME/.config/git/delta.gitconfig"
     if git config --global --get-all include.path 2>/dev/null | grep -qxF "$path"; then
@@ -65,6 +25,46 @@ install_mise() {
     fi
     log "Installing mise"
     curl -fsSL https://mise.run | sh
+}
+
+run_mise() {
+    MISE_GLOBAL_CONFIG_FILE="$ROOT/mise/config.toml" "$MISE_BIN" -C "$ROOT" "$@"
+}
+
+backup_dotfile_target() {
+    local target="$1"
+
+    if [[ -e "$target" || -L "$target" ]]; then
+        local backup
+        backup="$target.backup.$(date +%Y%m%d%H%M%S)"
+        log "Backing up $target -> $backup"
+        mv "$target" "$backup"
+    fi
+}
+
+backup_conflicting_dotfiles() {
+    local target
+
+    while IFS= read -r target; do
+        case "$target" in
+            \~/*) target="$HOME/${target#\~/}" ;;
+            /*) ;;
+            *) die "Unsupported dotfile target from mise: $target" ;;
+        esac
+        backup_dotfile_target "$target"
+    done < <(
+        run_mise bootstrap dotfiles status --json |
+            run_mise exec -- jq -r '.files[] | select(.state == "differs") | .target'
+    )
+}
+
+apply_dotfiles() {
+    "$MISE_BIN" trust "$ROOT/mise/config.toml"
+    "$MISE_BIN" trust "$ROOT/mise/config.macos.toml"
+    run_mise install jq
+    backup_conflicting_dotfiles
+    log "Applying dotfiles with mise"
+    run_mise bootstrap dotfiles apply --yes
 }
 
 install_mise_tools() {
@@ -103,9 +103,7 @@ bootstrap_macos() {
     eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv)"
     log "Installing Homebrew packages"
     brew install git
-    brew install --cask ghostty kitty font-fira-code-nerd-font font-jetbrains-mono-nerd-font
-    link_common_configs
-    link_macos_configs
+    brew install --cask kitty font-jetbrains-mono-nerd-font
 }
 
 bootstrap_ubuntu() {
@@ -118,11 +116,11 @@ bootstrap_ubuntu() {
         log "Setting login shell to zsh"
         sudo chsh -s "$zsh_path" "$USER"
     fi
-    link_common_configs
 }
 
 main() {
     ((EUID != 0)) || die "Run bootstrap as your normal user, not with sudo"
+    (($# == 0)) || die "Usage: ./bootstrap.sh"
 
     case "$(uname -s)" in
         Darwin)
@@ -140,6 +138,7 @@ main() {
     esac
 
     install_mise
+    apply_dotfiles
     configure_git_delta
     install_oh_my_zsh
     install_zsh_plugins

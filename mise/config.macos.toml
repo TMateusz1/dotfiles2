@@ -1,0 +1,5 @@
+[dotfiles]
+"~/.config/kitty" = "../kitty"
+"~/Library/Application Support/k9s/config.yaml" = "../k9s/config.yaml"
+"~/Library/Application Support/k9s/skins/catppuccin-mocha.yaml" = "../k9s/skins/catppuccin-mocha.yaml"
+"~/Library/Application Support/lazygit/config.yml" = "../lazygit/config.yml"

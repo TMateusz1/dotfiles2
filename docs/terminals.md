@@ -1,7 +1,7 @@
 # Shell, tmux, and terminals
 
-Ghostty is the primary macOS terminal and Kitty is the fallback. Zsh and tmux
-provide the same working model locally, over SSH, and on Ubuntu servers.
+Kitty is the macOS terminal. Zsh and tmux provide the same working model
+locally, over SSH, and on Ubuntu servers.
 Catppuccin Mocha and Nerd Font icons are used throughout.
 
 ## Zsh workflow
@@ -60,42 +60,18 @@ tmux kill-server
 tmux -V
 ```
 
-## Ghostty
-
-Ghostty is installed on macOS and linked as:
-
-```text
-ghostty/config -> ~/.config/ghostty/config
-```
-
-Configured appearance and behavior:
-
-- Catppuccin Mocha palette inlined in the config, with a blue focused-split
-  divider.
-- JetBrainsMono Nerd Font at 16 pt and 115% cell height.
-- Opaque background with a matching macOS titlebar.
-- Balanced terminal ligatures and a blinking cursor.
-- OSC52 clipboard reads and writes for trusted remote sessions.
-
-Ghostty and Kitty ship different ports of "Catppuccin Mocha" — the bundled
-Ghostty theme uses a darkened bright ramp, swaps ANSI slots 7 and 15, and
-inverts the selection. Neither bundled theme is used. Both terminals read the
-same sixteen slots from this repository instead, so ANSI-driven tools (delta,
-lazygit, k9s, git, eza, starship, zsh-syntax-highlighting) render identically
-in either one. `ghostty/config` and `kitty/catppuccin-mocha.conf` mirror each
-other and must be changed together.
-
 ## Kitty
 
-Kitty is installed as the portable alternative and linked as:
+Kitty is installed on macOS and linked as:
 
 ```text
 kitty/ -> ~/.config/kitty
 ```
 
-It uses the same Catppuccin palette, JetBrainsMono Nerd Font at 16 pt, 115% cell
-height, opaque background, and matching titlebar. Kitty reads `PATH`, `EDITOR`,
-and `VISUAL` from the login shell so actions such as `Cmd-,` see mise shims.
+It uses the repository's canonical Catppuccin Mocha palette, JetBrainsMono Nerd
+Font at 16 pt, 115% cell height, opaque background, and matching titlebar.
+Kitty reads `PATH`, `EDITOR`, and `VISUAL` from the login shell so actions such
+as `Cmd-,` see mise shims.
 
 | Key | Action |
 | --- | --- |
@@ -115,9 +91,9 @@ OSC52 connects remote Neovim and tmux sessions to the local desktop clipboard:
 - Neovim uses the system clipboard by default, including ordinary `y` and `p`.
 - Inside tmux, Neovim delegates clipboard transfer to tmux instead of waiting
   for a raw terminal response.
-- tmux enables clipboard capability and passthrough for Ghostty and Kitty.
-- Both terminal configurations permit clipboard reads and writes. Only use
-  those settings with remote hosts you trust.
+- tmux enables clipboard capability and passthrough for Kitty.
+- Kitty permits clipboard reads and writes. Only use those settings with
+  remote hosts you trust.
 
 Practical behavior:
 
@@ -128,9 +104,8 @@ Practical behavior:
 
 ## Installation scope
 
-On macOS, bootstrap installs Ghostty, Kitty, and both FiraCode and JetBrainsMono
-Nerd Fonts. The active terminal configurations use JetBrainsMono Nerd Font.
+On macOS, bootstrap installs Kitty and JetBrainsMono Nerd Font.
 
-Ubuntu bootstrap intentionally installs no GUI terminal. The Ghostty or Kitty
-configuration can be linked manually on a Linux desktop where that terminal and
+Ubuntu bootstrap intentionally installs no GUI terminal. The Kitty
+configuration can be linked manually on a Linux desktop where Kitty and the
 font are already installed.

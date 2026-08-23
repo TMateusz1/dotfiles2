@@ -1,8 +1,37 @@
 # mise
 
 `mise/config.toml` is the single source of pinned runtime and global CLI
-versions. The bootstrap links it to `~/.config/mise/config.toml`, installs the
-bootstrap runtimes first, and then installs the complete tool set.
+versions. It also declares the common dotfile symlinks; `mise/config.macos.toml`
+adds the terminal and macOS application paths. The bootstrap installs mise,
+applies those declarations, installs the bootstrap runtimes first, and then
+installs the complete tool set.
+
+The repository-level `.miserc.toml` enables platform config discovery before
+mise selects configuration files. It is also linked to the global mise config
+directory, so both the first and future `mise bootstrap` runs include the
+macOS declarations automatically without `-E macos`.
+
+Bootstrap reads the declared targets and their state from
+`mise bootstrap dotfiles status --json`. It installs the pinned `jq` first,
+leaves correct links alone, backs up targets reported as different, and asks
+mise to apply the declarations. The target list therefore lives only in mise
+configuration rather than being duplicated in the shell script.
+
+## Repository tasks
+
+Project-scoped tasks live in the root `mise.toml`; they are available only from
+this checkout and are not exported by the global `mise/config.toml` link.
+
+```bash
+mise run bootstrap:fresh  # complete machine bootstrap when mise already exists
+mise run dotfiles:sync    # apply [dotfiles] directly with mise
+mise run dotfiles:status  # inspect declared link state
+mise run tools:sync       # install pinned tools in dependency-safe order
+mise run check            # run the repository checks
+```
+
+On a machine without mise, use `./bootstrap.sh` after cloning. A mise task
+cannot be the first command because its task runner is not installed yet.
 
 The Zsh configuration runs `mise activate zsh`, so selected binaries and shims
 are available in every new shell. Neovim relies on that `PATH`: it configures
@@ -18,11 +47,12 @@ them:
 
 - `go` builds Go tools and language-server helpers.
 - `node` supplies NPM language servers and formatters.
-- `uv` is the Python CLI backend used by `pipx:` entries.
+- `uv` provides Python package and virtual-environment tooling.
 
-There is intentionally no global Python runtime entry. With `uv` installed,
-mise runs Python CLI packages through `uvx`; application projects should still
-own their Python version and virtual environment.
+There is intentionally no global Python runtime. Application projects own their
+Python version, virtual environment, and application-specific commands. Mise
+supplies `uv` to create and maintain them, plus the global `yamllint` used by
+Neovim across YAML projects.
 
 ## Tool groups
 
@@ -42,8 +72,6 @@ Neovim LSP servers:
 - `yaml-language-server`
 - `helm-ls`
 - `basedpyright`
-- `ruff`
-- `robotcode`
 - `bash-language-server`
 - `dockerfile-language-server-nodejs`
 - `@microsoft/compose-language-service`
@@ -53,7 +81,7 @@ Formatters and linters:
 
 - `goimports`, `gofumpt`, `golangci-lint`, and `gotestsum`
 - `stylua`, `shfmt`, `shellcheck`, and `prettier`
-- `ruff`, `robotframework-robocop`, `yamlfmt`, `yamllint`, and `hadolint`
+- `yamlfmt`, `yamllint`, and `hadolint`
 
 The exact versions are deliberately not duplicated here; read
 `mise/config.toml` for the authoritative current pins.
@@ -114,7 +142,6 @@ Force reinstall a backend group when its underlying runtime changes:
 
 ```bash
 mise install -f "npm:*"
-mise install -f "pipx:*"
 ```
 
 Inspect mise itself when activation or tool resolution looks wrong:
@@ -132,16 +159,18 @@ mise env
 4. Run `./check.sh` from the repository root.
 5. Run `mise prune` once the replacement is known to work.
 
-For a new Neovim integration, add the executable to mise first, then configure
-Neovim to use the executable from `PATH`. Do not introduce a second installer
-such as Mason for the same binary.
+For a new Neovim integration, add a global executable to mise first, then
+configure Neovim to use it from `PATH`. Python executables are the exception:
+keep them in the application project's environment. Do not introduce a second
+global installer such as Mason for the same binary.
 
 ## Project-specific Python tools
 
-Robot Framework projects still need their own dependencies. Create or activate
-the repository's `.venv`, install Robot Framework and its test libraries there,
-and start Neovim from that environment so RobotCode sees the same imports as
-the test runner.
+Python and Robot Framework projects provide `ruff`, `robotcode`, and `robocop`
+when those integrations are needed. Create or activate the project's virtual
+environment with `uv`, install the commands alongside its application and test
+dependencies, and start Neovim from that environment so every tool sees the
+same imports as the test runner. Mise supplies `yamllint` globally.
 
 The same rule applies to application dependencies in other languages: mise
 owns global developer commands; each project owns its dependency graph.
