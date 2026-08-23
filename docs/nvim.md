@@ -62,8 +62,9 @@ outranks the text: indent guides `1.80:1`, window separators `2.46:1`, line
 numbers `3.36:1`, comments `4.44:1`, code `7:1` and up. The focused window is
 marked by the cursorline, not by an accent-coloured separator.
 
-The same legend is reused outside Neovim — `zsh-syntax-highlighting` and `eza`
-in `.zshrc`, and the diff colours in `git/delta.gitconfig`.
+The terminal palette supplies the shared Catppuccin foundation outside Neovim.
+Delta additionally declares explicit Mocha diff colours in
+`git/delta.gitconfig`.
 
 ## Core editing and windows
 
@@ -444,5 +445,4 @@ Run the repository-wide validation after configuration or plugin changes:
 ```
 
 Plugin declarations live in `nvim/lua/plugins/`; custom behavior belongs in
-`nvim/lua/config/`. Mini Files remains disabled in its plugin spec—Neo-tree is
-the active explorer.
+`nvim/lua/config/`. Neo-tree is the sole configured file explorer.

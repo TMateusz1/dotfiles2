@@ -3,7 +3,7 @@
 Terminal-first dotfiles for macOS and Ubuntu. The environment is built around
 Zsh, tmux, Neovim, mise-managed tools, Nerd Font icons, and Catppuccin Mocha.
 
-## Quick start
+## Bootstrap a machine
 
 Clone the repository, enter it, and run:
 
@@ -39,6 +39,27 @@ tc
 
 `tc` attaches to or creates the `core` tmux session. Use `tc work` for a named
 session, then open `nvim` in the project you want to work on.
+
+## Apply future repository updates
+
+After pulling changes to this repository, review the diff and synchronize the
+declared links and pinned tools:
+
+```bash
+git pull --ff-only
+git diff ORIG_HEAD -- mise/ bootstrap.sh .zshrc .tmux.conf nvim/ docs/
+mise run dotfiles:status
+mise run dotfiles:sync
+mise run tools:sync
+mise run check
+exec zsh -l
+```
+
+`dotfiles:sync` applies the links declared in mise. Use `bootstrap:fresh`
+instead when a repository update changes platform packages, Oh My Zsh setup,
+or bootstrap behavior. Do not run `mise prune` merely after pulling: prune only
+after replacement versions have been reviewed, installed, and verified. See
+[docs/mise.md](docs/mise.md) for the complete maintenance and upgrade workflow.
 
 ## Daily workflow
 
@@ -132,7 +153,12 @@ CLI versions. It owns Neovim itself, LSP servers, formatters, linters, tmux,
 Kubernetes tools, fzf/ripgrep/fd, Git TUIs, and other shell utilities. Neovim
 only starts binaries found on `PATH`; it does not install them.
 
-After changing a version:
+Version changes must pass the repository's 72-hour security gate before the
+pin is edited. After reviewing the release, advisories, backend, and platform
+compatibility, install and verify the replacement before pruning the old one.
+The complete procedure is in [docs/mise.md](docs/mise.md).
+
+The final local sequence is:
 
 ```bash
 mise install
